@@ -39,11 +39,15 @@ const ColorRect = () => {
 
 function URLImage({
   src,
-  deselect = false,
+  isSelected = false,
+  clickHandler,
   ...rest
-}: Omit<Konva.ImageConfig, "image"> & { src: string; deselect: boolean }) {
+}: Omit<Konva.ImageConfig, "image"> & {
+  src: string;
+  isSelected?: boolean;
+  clickHandler?: () => void;
+}) {
   const [image] = useImage(src);
-  const [isSelected, setIsSelected] = useState(false);
   const imageRef = useRef<Konva.Image>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
@@ -57,17 +61,13 @@ function URLImage({
     }
   }, [isSelected]);
 
-  useEffect(() => {
-    if (deselect) setIsSelected(false);
-  }, [deselect]);
-
   return (
     <>
       <Image
         ref={imageRef}
         image={image}
-        onClick={() => setIsSelected(true)}
-        onTap={() => setIsSelected(true)}
+        onClick={clickHandler}
+        onTap={clickHandler}
         {...rest}
       />
       {isSelected && (
@@ -86,18 +86,35 @@ function URLImage({
     </>
   );
 }
+interface ImageItem {
+  id: string;
+  src: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+const URLImageArr: ImageItem[] = [
+  {
+    id: "yoda",
+    src: "https://konvajs.org/assets/yoda.jpg",
+  },
+  {
+    id: "apple",
+    src: "https://images.unsplash.com/photo-1630563451961-ac2ff27616ab?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+];
 
 export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
-  const [deselect, setDeselect] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   return (
     <Stage
       width={width}
       height={height}
-      className="bg-yellow-200 border-red-500 border"
+      className="bg-yellow-100 border-red-500 border"
       onMouseDown={(e) => {
         if (e.target === e.target.getStage()) {
-          setDeselect(true);
-          setTimeout(() => setDeselect(false), 0);
+          setSelectedId(null);
         }
       }}
     >
@@ -105,22 +122,17 @@ export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
         <ColorRect />
         <Text text="Click on the box to change its color" x={20} y={150} />
         <Circle radius={50} fill={"red"} draggable />
-        <URLImage
-          width={200}
-          height={200}
-          draggable
-          src={"https://konvajs.org/assets/yoda.jpg"}
-          deselect={deselect}
-        />
-        <URLImage
-          width={200}
-          height={200}
-          draggable
-          src={
-            "https://images.unsplash.com/photo-1630563451961-ac2ff27616ab?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          }
-          deselect={deselect}
-        />
+        {URLImageArr.map((img, index) => (
+          <URLImage
+            key={index}
+            width={img.width ?? 200}
+            height={img.height}
+            draggable
+            src={img.src}
+            isSelected={selectedId === img.id}
+            onClick={() => setSelectedId(img.id)}
+          />
+        ))}
       </Layer>
     </Stage>
   );
