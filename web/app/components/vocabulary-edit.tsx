@@ -10,6 +10,7 @@ import {
   Image,
   Transformer,
   type KonvaNodeComponent,
+  Group,
 } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
@@ -105,35 +106,107 @@ const URLImageArr: ImageItem[] = [
   },
 ];
 
+interface LabelItem {
+  id: string;
+  number: number;
+  x: number;
+  y: number;
+}
+
+function NumberCircle({
+  label,
+  onSelect,
+}: {
+  label: LabelItem;
+  onSelect: () => void;
+}) {
+  return (
+    <>
+      <Group x={label.x} y={label.y} onClick={onSelect} draggable>
+        <Circle radius={12} fill={"white"} stroke={"#9ca3af"} strokeWidth={1} />
+        <Text
+          text={String(label.number)}
+          fill={"#374151"}
+          fontSize={18}
+          fontStyle={"normal"}
+          align="center"
+          verticalAlign="middle"
+          width={24}
+          height={24}
+          offsetX={12}
+          offsetY={12}
+        />
+      </Group>
+    </>
+  );
+}
+
 export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [labels, setLabels] = useState<LabelItem[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const number = Number(e.dataTransfer.getData("labelNumber"));
+    if (!number || !containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setLabels((prev) => [
+      ...prev,
+      {
+        id: `label-${Date.now()}`,
+        number,
+        x,
+        y,
+      },
+    ]);
+  };
   return (
-    <Stage
-      width={width}
-      height={height}
-      className="bg-yellow-100 border-red-500 border"
-      onMouseDown={(e) => {
-        if (e.target === e.target.getStage()) {
-          setSelectedId(null);
-        }
-      }}
+    <div
+      ref={containerRef}
+      onDrop={handleDrop}
+      onDragOver={(e) => e.preventDefault()}
     >
-      <Layer>
-        <ColorRect />
-        <Text text="Click on the box to change its color" x={20} y={150} />
-        <Circle radius={50} fill={"red"} draggable />
-        {URLImageArr.map((img, index) => (
-          <URLImage
-            key={index}
-            width={img.width ?? 200}
-            height={img.height}
-            draggable
-            src={img.src}
-            isSelected={selectedId === img.id}
-            onClick={() => setSelectedId(img.id)}
-          />
-        ))}
-      </Layer>
-    </Stage>
+      <Stage
+        width={width}
+        height={height}
+        className="bg-yellow-100 border-red-500 border"
+        onMouseDown={(e) => {
+          if (e.target === e.target.getStage()) {
+            setSelectedId(null);
+          }
+        }}
+      >
+        <Layer>
+          <ColorRect />
+          <Text text="Click on the box to change its color" x={20} y={150} />
+          <Circle radius={50} fill={"red"} draggable />
+          {URLImageArr.map((img, index) => (
+            <URLImage
+              key={index}
+              width={img.width ?? 200}
+              height={img.height}
+              draggable
+              src={img.src}
+              isSelected={selectedId === img.id}
+              onClick={() => setSelectedId(img.id)}
+            />
+          ))}
+          {labels.map((label) => (
+            <NumberCircle
+              key={label.id}
+              label={label}
+              isSelected={selectedId === label.id}
+              onSelect={() => setSelectedId(label.id)}
+            />
+          ))}
+        </Layer>
+      </Stage>
+    </div>
   );
 }

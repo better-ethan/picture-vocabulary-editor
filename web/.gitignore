@@ -1,4 +1,5 @@
 .react-router
+node_modules
 
 *.js
 
