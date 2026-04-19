@@ -5,7 +5,7 @@ import { VocabularyEditor } from "@/components/vocabulary-edit";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { TrashIcon, Volume2 } from "lucide-react";
+import { PlusIcon, TrashIcon, Volume2 } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -69,16 +69,17 @@ export default function Home() {
       <div className="mt-8 flex justify-center">
         <VocabularyEditor width={800} height={600} />
         <div className="flex flex-col gap-3 p-4 bg-gray-100 rounded-lg h-fit">
-          <p className="text-sm font-semibold text-gray-600">
-            Number Label{" "}
+          <div className="text-gray-600 flex justify-between">
+            <span>Word List</span>
             <Button
+              variant="outline"
               onClick={() => {
                 setNumbers((prev) => [...prev, prev.length + 1]);
               }}
             >
-              More
+              <PlusIcon className="w-4 h-4" />
             </Button>
-          </p>
+          </div>
           {numbers.map((item, index) => (
             <div key={item} className="flex items-center gap-2">
               <div
@@ -104,6 +105,7 @@ export default function Home() {
                 )}
               />
               <Button
+                variant="outline"
                 onClick={() => speak(wordMap[item] ?? "")}
                 disabled={!wordMap[item]}
                 size="sm"
