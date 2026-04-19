@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { PlusIcon, TrashIcon, Volume2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { fetchImagesFromPixabay } from "@/lib/image-api";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,7 +21,13 @@ export function meta({}: Route.MetaArgs) {
 
 export const loader = async () => {};
 
-export const action = async ({ request }: Route.ActionArgs) => {};
+export const action = async ({ request }: Route.ActionArgs) => {
+  const formData = await request.formData();
+  const query = formData.get("query") as string;
+  if (!query) return { images: [] };
+  const hits = await fetchImagesFromPixabay(query);
+  return { images: hits ?? [] };
+};
 
 export default function Home() {
   const initialNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -60,15 +68,66 @@ export default function Home() {
     }
   };
 
+  const [imageSearch, setImageSearch] = useState("");
+  const submit = useSubmit();
+  const handleImageSearch = () => {
+    if (!imageSearch.trim()) return;
+    const formData = new FormData();
+    formData.append("query", imageSearch);
+    submit(formData, { method: "post" });
+  };
+
+  const actionData = useActionData<typeof action>();
+
   return (
     <div className="pt-16 p-4 container mx-auto">
       <h1 className="text-3xl font-bold text-primary text-center">
         Learning Language through Picture and Audio
       </h1>
 
-      <div className="mt-8 flex justify-center">
-        <VocabularyEditor width={800} height={600} />
-        <div className="flex flex-col gap-3 p-4 bg-gray-100 rounded-lg h-fit">
+      <div className="mt-8 flex justify-center items-start gap-3">
+        <div
+          className={cn(
+            "flex flex-col p-4 bg-gray-100 rounded-lg shrink-0 w-64"
+          )}
+        >
+          <span>Image Search</span>
+          <div className="flex gap-2">
+            <Input
+              type="search"
+              placeholder="Search images..."
+              value={imageSearch}
+              onChange={(e) => setImageSearch(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleImageSearch()}
+            />
+          </div>
+          <div className={cn("max-h-[560px] overflow-y-auto mt-2")}>
+            <div className="columns-2 gap-2">
+              {actionData?.images?.length === 0 && (
+                <p className="col-span-2 text-gray-400 text-center py-4">
+                  No Results
+                </p>
+              )}
+              {actionData?.images?.map((img) => (
+                <div
+                  key={img.id}
+                  className={cn(
+                    "rounded overflow-hidden border border-gray-200 mb-2",
+                    "hover:ring-2 hover:ring-blue-400 cursor-pointer transition"
+                  )}
+                >
+                  <img
+                    src={img.previewURL}
+                    alt={img.tags}
+                    className="w-full h-auto block"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <VocabularyEditor width={700} height={600} />
+        <div className="flex flex-col p-4 bg-gray-100 rounded-lg h-fit">
           <div className="text-gray-600 flex justify-between">
             <span>Word List</span>
             <Button
