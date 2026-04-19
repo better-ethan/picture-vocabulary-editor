@@ -5,7 +5,7 @@ import { VocabularyEditor } from "@/components/vocabulary-edit";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Volume2 } from "lucide-react";
+import { TrashIcon, Volume2 } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -28,6 +28,15 @@ export default function Home() {
 
   const handleWordChange = (num: number, value: string) => {
     setWordMap((prev) => ({ ...prev, [num]: value }));
+  };
+
+  const handleDelete = (item: string) => {
+    setNumbers((prev) => prev.filter((num) => num !== Number(item)));
+    setWordMap((prev) => {
+      const newMap = { ...prev };
+      delete newMap[Number(item)];
+      return newMap;
+    });
   };
 
   const speak = (word: string) => {
@@ -70,7 +79,7 @@ export default function Home() {
               More
             </Button>
           </p>
-          {numbers.map((item) => (
+          {numbers.map((item, index) => (
             <div key={item} className="flex items-center gap-2">
               <div
                 draggable
@@ -100,6 +109,14 @@ export default function Home() {
                 size="sm"
               >
                 <Volume2 className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={index !== numbers.length - 1}
+                onClick={() => handleDelete(String(item))}
+              >
+                <TrashIcon />
               </Button>
             </div>
           ))}
