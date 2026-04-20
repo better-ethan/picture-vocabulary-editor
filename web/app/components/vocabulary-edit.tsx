@@ -42,13 +42,15 @@ function URLImage({
   src,
   isSelected = false,
   clickHandler,
+  width,
+  height,
   ...rest
 }: Omit<Konva.ImageConfig, "image"> & {
   src: string;
   isSelected?: boolean;
   clickHandler?: () => void;
 }) {
-  const [image] = useImage(src);
+  const [image] = useImage(src, "anonymous");
   const imageRef = useRef<Konva.Image>(null);
   const trRef = useRef<Konva.Transformer>(null);
 
@@ -62,6 +64,13 @@ function URLImage({
     }
   }, [isSelected]);
 
+  const finalWidth = width ?? 200;
+  const finalHeight =
+    height ??
+    (image
+      ? (image.naturalHeight / image.naturalWidth) * finalWidth
+      : undefined);
+
   return (
     <>
       <Image
@@ -69,6 +78,8 @@ function URLImage({
         image={image}
         onClick={clickHandler}
         onTap={clickHandler}
+        width={finalWidth}
+        height={finalHeight}
         {...rest}
       />
       {isSelected && (
@@ -144,27 +155,44 @@ function NumberCircle({
 export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [labels, setLabels] = useState<LabelItem[]>([]);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
 
-    const number = Number(e.dataTransfer.getData("labelNumber"));
-    if (!number || !containerRef.current) return;
+    if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    setLabels((prev) => [
-      ...prev,
-      {
-        id: `label-${Date.now()}`,
-        number,
-        x,
-        y,
-      },
-    ]);
+    const number = Number(e.dataTransfer.getData("labelNumber"));
+    if (number) {
+      setLabels((prev) => [
+        ...prev,
+        {
+          id: `label-${Date.now()}`,
+          number,
+          x,
+          y,
+        },
+      ]);
+    }
+
+    const imageUrl = e.dataTransfer.getData("imageUrl");
+    if (imageUrl) {
+      setImages((prev) => [
+        ...prev,
+        {
+          id: `image-${Date.now()}`,
+          src: imageUrl,
+          x,
+          y,
+          width: 200,
+        },
+      ]);
+    }
   };
   return (
     <div
@@ -183,16 +211,14 @@ export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
         }}
       >
         <Layer>
-          <ColorRect />
-          <Text text="Click on the box to change its color" x={20} y={150} />
-          <Circle radius={50} fill={"red"} draggable />
-          {URLImageArr.map((img, index) => (
+          {images.map((img, index) => (
             <URLImage
               key={index}
               width={img.width ?? 200}
-              height={img.height}
               draggable
               src={img.src}
+              x={img.x}
+              y={img.y}
               isSelected={selectedId === img.id}
               onClick={() => setSelectedId(img.id)}
             />
@@ -201,7 +227,6 @@ export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
             <NumberCircle
               key={label.id}
               label={label}
-              isSelected={selectedId === label.id}
               onSelect={() => setSelectedId(label.id)}
             />
           ))}

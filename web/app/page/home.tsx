@@ -111,6 +111,10 @@ export default function Home() {
               {actionData?.images?.map((img) => (
                 <div
                   key={img.id}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData("imageUrl", img.largeImageURL);
+                  }}
                   className={cn(
                     "rounded overflow-hidden border border-gray-200 mb-2",
                     "hover:ring-2 hover:ring-blue-400 cursor-pointer transition"
@@ -143,9 +147,9 @@ export default function Home() {
             <div key={item} className="flex items-center gap-2">
               <div
                 draggable
-                onDragStart={(e) =>
-                  e.dataTransfer.setData("labelNumber", String(item))
-                }
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("labelNumber", String(item));
+                }}
                 className={cn(
                   "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
                   "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
