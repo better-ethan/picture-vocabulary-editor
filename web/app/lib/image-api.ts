@@ -1,4 +1,4 @@
-const PIXABAY_API_KEY = process.env.PIXABAY_API_KEY;
+const PIXABAY_API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 
 interface PixabayImageItem {
   id: number;

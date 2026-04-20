@@ -14,6 +14,11 @@ import {
 } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
+import { Button } from "@/components/ui/button";
+import { PlusIcon, TrashIcon, Volume2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { fetchImagesFromPixabay } from "@/lib/image-api";
+import { Input } from "@/components/ui/input";
 
 interface VocabularyEditorProps {
   width: number;
@@ -106,6 +111,14 @@ interface ImageItem {
   width?: number;
   height?: number;
 }
+
+interface PixabayHit {
+  id: number;
+  previewURL: string;
+  largeImageURL: string;
+  tags: string;
+}
+
 const URLImageArr: ImageItem[] = [
   {
     id: "yoda",
@@ -158,6 +171,53 @@ export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
   const [images, setImages] = useState<ImageItem[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const [imageSearch, setImageSearch] = useState("");
+  const [searchedImages, setSearchedImages] = useState<PixabayHit[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleImageSearch = async () => {
+    if (!imageSearch.trim()) return;
+    setIsSearching(true);
+    try {
+      const hits = await fetchImagesFromPixabay(imageSearch);
+      setSearchedImages(hits ?? []);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const [numbers, setNumbers] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const [wordMap, setWordMap] = useState<Record<number, string>>({});
+
+  const handleWordChange = (num: number, value: string) => {
+    setWordMap((prev) => ({ ...prev, [num]: value }));
+  };
+
+  const handleDelete = (item: string) => {
+    setNumbers((prev) => prev.filter((n) => n !== Number(item)));
+    setWordMap((prev) => {
+      const m = { ...prev };
+      delete m[Number(item)];
+      return m;
+    });
+  };
+
+  const speak = (word: string) => {
+    if (!word) return;
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = "en-US";
+    const applyVoiceAndSpeak = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const voice =
+        voices.find((v) => v.name === "Samantha") ??
+        voices.find((v) => v.lang.startsWith("en"));
+      if (voice) utterance.voice = voice;
+      window.speechSynthesis.speak(utterance);
+    };
+    if (window.speechSynthesis.getVoices().length > 0) applyVoiceAndSpeak();
+    else window.speechSynthesis.onvoiceschanged = applyVoiceAndSpeak;
+  };
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
 
@@ -195,43 +255,139 @@ export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
     }
   };
   return (
-    <div
-      ref={containerRef}
-      onDrop={handleDrop}
-      onDragOver={(e) => e.preventDefault()}
-    >
-      <Stage
-        width={width}
-        height={height}
-        className="bg-yellow-100 border-red-500 border"
-        onMouseDown={(e) => {
-          if (e.target === e.target.getStage()) {
-            setSelectedId(null);
-          }
-        }}
+    <div className="flex items-start gap-3">
+      {/* ── Image Search Panel ── */}
+      <div className="flex flex-col p-4 bg-gray-100 rounded-lg shrink-0 w-64">
+        <span className="mb-2">Image Search</span>
+        <Input
+          type="search"
+          placeholder="Search images..."
+          value={imageSearch}
+          onChange={(e) => setImageSearch(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleImageSearch()}
+          disabled={isSearching}
+        />
+        <div className="max-h-[560px] overflow-y-auto mt-2">
+          <div className="columns-2 gap-2">
+            {!isSearching && searchedImages.length === 0 && (
+              <p className="col-span-2 text-gray-400 text-center py-4">
+                No Results
+              </p>
+            )}
+            {isSearching && (
+              <p className="col-span-2 text-gray-400 text-center py-4">
+                Searching...
+              </p>
+            )}
+            {searchedImages.map((img) => (
+              <div
+                key={img.id}
+                draggable
+                onDragStart={(e) =>
+                  e.dataTransfer.setData("imageUrl", img.largeImageURL)
+                }
+                className={cn(
+                  "rounded overflow-hidden border border-gray-200 mb-2",
+                  "hover:ring-2 hover:ring-blue-400 cursor-pointer transition"
+                )}
+              >
+                <img
+                  src={img.previewURL}
+                  alt={img.tags}
+                  className="w-full h-auto block"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div
+        ref={containerRef}
+        onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()}
       >
-        <Layer>
-          {images.map((img, index) => (
-            <URLImage
-              key={index}
-              width={img.width ?? 200}
+        <Stage
+          width={width}
+          height={height}
+          className="bg-yellow-100 border-red-500 border"
+          onMouseDown={(e) => {
+            if (e.target === e.target.getStage()) {
+              setSelectedId(null);
+            }
+          }}
+        >
+          <Layer>
+            {images.map((img, index) => (
+              <URLImage
+                key={index}
+                width={img.width ?? 200}
+                draggable
+                src={img.src}
+                x={img.x}
+                y={img.y}
+                isSelected={selectedId === img.id}
+                onClick={() => setSelectedId(img.id)}
+              />
+            ))}
+            {labels.map((label) => (
+              <NumberCircle
+                key={label.id}
+                label={label}
+                onSelect={() => setSelectedId(label.id)}
+              />
+            ))}
+          </Layer>
+        </Stage>
+      </div>
+      <div className="flex flex-col p-4 bg-gray-100 rounded-lg h-fit">
+        <div className="text-gray-600 flex justify-between mb-2">
+          <span>Word List</span>
+          <Button
+            variant="outline"
+            onClick={() => setNumbers((prev) => [...prev, prev.length + 1])}
+          >
+            <PlusIcon className="w-4 h-4" />
+          </Button>
+        </div>
+        {numbers.map((item, index) => (
+          <div key={item} className="flex items-center gap-2 mb-1">
+            <div
               draggable
-              src={img.src}
-              x={img.x}
-              y={img.y}
-              isSelected={selectedId === img.id}
-              onClick={() => setSelectedId(img.id)}
+              onDragStart={(e) =>
+                e.dataTransfer.setData("labelNumber", String(item))
+              }
+              className={cn(
+                "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
+                "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
+              )}
+            >
+              {item}
+            </div>
+            <input
+              type="text"
+              value={wordMap[item] ?? ""}
+              onChange={(e) => handleWordChange(item, e.target.value)}
+              className="w-32 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
             />
-          ))}
-          {labels.map((label) => (
-            <NumberCircle
-              key={label.id}
-              label={label}
-              onSelect={() => setSelectedId(label.id)}
-            />
-          ))}
-        </Layer>
-      </Stage>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => speak(wordMap[item] ?? "")}
+              disabled={!wordMap[item]}
+            >
+              <Volume2 className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={index !== numbers.length - 1}
+              onClick={() => handleDelete(String(item))}
+            >
+              <TrashIcon />
+            </Button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
