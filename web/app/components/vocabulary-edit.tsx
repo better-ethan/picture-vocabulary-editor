@@ -278,41 +278,66 @@ export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
   };
 
   return (
-    <Form method="post">
-      <div className="mb-4">
+    <Form method="post" className="flex flex-col bg-gray-50 h-screen">
+      <div className="flex items-center gap-4 px-6 py-3 bg-white border-b shadow-sm shrink-0">
+        <h1
+          className={cn("text-lg font-semibold text-gray-800 tracking-tight")}
+        >
+          Vocabulary Editor
+        </h1>
+        <div className="w-px h-6 bg-gray-200" />
         <Input
           type="text"
           value={title}
-          placeholder="title"
+          placeholder="Add a title"
           onChange={(e) => setTitle(e.target.value)}
-          className="w-64"
+          className="w-100 h-8"
           required
           name="title"
-        ></Input>
+        />
+        <div className="ml-auto flex items-center gap-2">
+          <Select
+            value={status}
+            onValueChange={(value) => setStatus(value as "draft" | "published")}
+            name="status"
+            required
+          >
+            <SelectTrigger className="w-36 h-8 text-sm">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+            </SelectContent>
+          </Select>
+          <input type="hidden" name="content" value={JSON.stringify(content)} />
+          <Button size="sm" type="submit" className="h-8 px-5">
+            Save
+          </Button>
+        </div>
       </div>
-      <div className="flex items-start gap-3">
-        <div className="flex flex-col p-4 bg-gray-100 rounded-lg shrink-0 w-64">
-          <span className="mb-2">Image Search</span>
-          <Input
-            type="search"
-            placeholder="Search images..."
-            value={imageSearch}
-            onChange={(e) => setImageSearch(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleImageSearch()}
-            disabled={isSearching}
-          />
+      <div className="flex flex-1 overflow-hidden py-4 bg-gray-100">
+        <aside className="flex flex-col p-4 bg-white shrink-0 w-64 rounded-lg">
+          <div className="py-3">
+            <Input
+              type="search"
+              placeholder="Search images..."
+              value={imageSearch}
+              onChange={(e) => setImageSearch(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleImageSearch()}
+              disabled={isSearching}
+            />
+          </div>
           <div className="max-h-[560px] overflow-y-auto mt-2">
+            {isSearching && (
+              <p className="col-span-2 text-gray-400 text-center py-4">
+                Searching...
+              </p>
+            )}
+            {!isSearching && searchedImages.length === 0 && (
+              <p className="text-gray-400 text-center py-4">No Results</p>
+            )}
             <div className="columns-2 gap-2">
-              {!isSearching && searchedImages.length === 0 && (
-                <p className="col-span-2 text-gray-400 text-center py-4">
-                  No Results
-                </p>
-              )}
-              {isSearching && (
-                <p className="col-span-2 text-gray-400 text-center py-4">
-                  Searching...
-                </p>
-              )}
               {searchedImages.map((img) => (
                 <div
                   key={img.id}
@@ -334,124 +359,114 @@ export function VocabularyEditor({ width, height }: VocabularyEditorProps) {
               ))}
             </div>
           </div>
-        </div>
-        <div
-          ref={containerRef}
-          onDrop={handleDrop}
-          onDragOver={(e) => e.preventDefault()}
-        >
-          <Stage
-            width={width}
-            height={height}
-            className="bg-yellow-100 border-red-500 border"
-            onMouseDown={(e) => {
-              if (e.target === e.target.getStage()) {
-                setSelectedId(null);
-              }
-            }}
+        </aside>
+        <div className="flex flex-1 flex-col items-center justify-center overflow-auto px-4">
+          <div
+            ref={containerRef}
+            onDrop={handleDrop}
+            onDragOver={(e) => e.preventDefault()}
+            className="shadow-lg rounded-lg overflow-hidden"
           >
-            <Layer>
-              {images.map((img, index) => (
-                <URLImage
-                  key={index}
-                  width={img.width ?? 200}
-                  draggable
-                  src={img.src}
-                  x={img.x}
-                  y={img.y}
-                  isSelected={selectedId === img.id}
-                  onClick={() => setSelectedId(img.id)}
-                />
-              ))}
-              {labels.map((label) => (
-                <NumberCircle
-                  key={label.id}
-                  label={label}
-                  onSelect={() => setSelectedId(label.id)}
-                />
-              ))}
-            </Layer>
-          </Stage>
+            <Stage
+              width={width}
+              height={height}
+              className="bg-white"
+              onMouseDown={(e) => {
+                if (e.target === e.target.getStage()) {
+                  setSelectedId(null);
+                }
+              }}
+            >
+              <Layer>
+                {images.map((img, index) => (
+                  <URLImage
+                    key={index}
+                    width={img.width ?? 200}
+                    draggable
+                    src={img.src}
+                    x={img.x}
+                    y={img.y}
+                    isSelected={selectedId === img.id}
+                    onClick={() => setSelectedId(img.id)}
+                  />
+                ))}
+                {labels.map((label) => (
+                  <NumberCircle
+                    key={label.id}
+                    label={label}
+                    onSelect={() => setSelectedId(label.id)}
+                  />
+                ))}
+              </Layer>
+            </Stage>
+          </div>
+          <div className="mt-4 w-full">
+            <Textarea
+              placeholder="Add a description..."
+              className="text-sm resize-none bg-white"
+              rows={2}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              name="description"
+            />
+          </div>
         </div>
-        <div className="flex flex-col p-4 bg-gray-100 rounded-lg h-fit">
-          <div className="text-gray-600 flex justify-between mb-2">
-            <span>Word List</span>
+        <aside className="flex flex-col w-72 bg-white rounded-lg h-fit shrink-0">
+          <div className="px-4 py-3 border-b flex items-center justify-between">
+            <p className="text-gray-500 tracking-wider">Word List</p>
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0"
               onClick={() => setNumbers((prev) => [...prev, prev.length + 1])}
             >
               <PlusIcon className="w-4 h-4" />
             </Button>
           </div>
-          {numbers.map((item, index) => (
-            <div key={item} className="flex items-center gap-2 mb-1">
-              <div
-                draggable
-                onDragStart={(e) =>
-                  e.dataTransfer.setData("labelNumber", String(item))
-                }
-                className={cn(
-                  "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
-                  "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
-                )}
-              >
-                {item}
+          <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
+            {numbers.map((item, index) => (
+              <div key={item} className="flex items-center gap-2 mb-1">
+                <div
+                  draggable
+                  onDragStart={(e) =>
+                    e.dataTransfer.setData("labelNumber", String(item))
+                  }
+                  className={cn(
+                    "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
+                    "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
+                  )}
+                >
+                  {item}
+                </div>
+                <input
+                  type="text"
+                  value={wordMap[item] ?? ""}
+                  onChange={(e) => handleWordChange(item, e.target.value)}
+                  className="w-32 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => speak(wordMap[item] ?? "")}
+                  disabled={!wordMap[item]}
+                >
+                  <Volume2 className="w-4 h-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  disabled={index !== numbers.length - 1}
+                  onClick={() => handleDelete(String(item))}
+                >
+                  <TrashIcon />
+                </Button>
               </div>
-              <input
-                type="text"
-                value={wordMap[item] ?? ""}
-                onChange={(e) => handleWordChange(item, e.target.value)}
-                className="w-32 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => speak(wordMap[item] ?? "")}
-                disabled={!wordMap[item]}
-              >
-                <Volume2 className="w-4 h-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                disabled={index !== numbers.length - 1}
-                onClick={() => handleDelete(String(item))}
-              >
-                <TrashIcon />
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="mt-4">
-        <Textarea
-          placeholder="description..."
-          className="w-xl"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          name="description"
-        />
-        <Select
-          value={status}
-          onValueChange={(value) => setStatus(value as "draft" | "published")}
-          name="status"
-        >
-          <SelectTrigger className="w-48 mt-2">
-            <SelectValue placeholder="Select status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="draft">Draft</SelectItem>
-            <SelectItem value="published">Published</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <input type="hidden" name="content" value={JSON.stringify(content)} />
-        <Button className="mt-4 w-48" type="submit">
-          Save
-        </Button>
+            ))}
+          </div>
+        </aside>
       </div>
     </Form>
   );

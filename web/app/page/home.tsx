@@ -21,13 +21,14 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
-  const status = formData.get("status") as "draft" | "published";
   const content = formData.get("content") as string;
+  let status = formData.get("status");
+  if (!status) status = "draft";
 
   const result = await trpc.pictureLesson.create.mutate({
     title,
     description,
-    status,
+    status: status as "draft" | "published",
     content,
   });
   return result;
