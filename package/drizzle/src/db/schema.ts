@@ -4,6 +4,8 @@ import {
   varchar,
   boolean,
   timestamp,
+  text,
+  json,
 } from "drizzle-orm/pg-core";
 
 export const todo = pgTable("todo", {
@@ -11,4 +13,14 @@ export const todo = pgTable("todo", {
   title: varchar("title", { length: 255 }).notNull(),
   completed: boolean("completed").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const pictureLesson = pgTable("picture_lesson", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  status: varchar("status", { length: 50 }).notNull().default("draft"),
+  content: json("content"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
