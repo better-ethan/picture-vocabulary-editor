@@ -20,6 +20,7 @@ export const pictureLesson = pgTable("picture_lesson", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   status: varchar("status", { length: 50 }).notNull().default("draft"),
+  slug: varchar("slug", { length: 255 }).notNull(),
   content: json("content"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

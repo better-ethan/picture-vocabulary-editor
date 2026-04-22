@@ -1,8 +1,7 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { db, pictureLesson } from "@package/drizzle";
 import { publicProcedure, router } from "../trpc.js";
-import { title } from "node:process";
 
 export const pictureLessonRouter = router({
   list: publicProcedure.query(async () => {
@@ -17,6 +16,7 @@ export const pictureLessonRouter = router({
     .input(
       z.object({
         title: z.string().min(1).max(255),
+        slug: z.string().min(1).max(255),
         description: z.string().optional(),
         status: z.enum(["draft", "published"]).default("draft"),
         content: z.json().optional(),
@@ -27,6 +27,7 @@ export const pictureLessonRouter = router({
         .insert(pictureLesson)
         .values({
           title: input.title,
+          slug: input.slug,
           description: input.description,
           status: input.status,
           content: input.content,
@@ -41,6 +42,7 @@ export const pictureLessonRouter = router({
       z.object({
         id: z.number(),
         title: z.string().min(1).max(255),
+        slug: z.string().min(1).max(255),
         description: z.string().optional(),
         status: z.enum(["draft", "published"]).default("draft"),
         content: z.json().optional(),
@@ -51,6 +53,7 @@ export const pictureLessonRouter = router({
         .update(pictureLesson)
         .set({
           title: input.title,
+          slug: input.slug,
           description: input.description,
           status: input.status,
           content: input.content,
@@ -66,5 +69,20 @@ export const pictureLessonRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       await db.delete(pictureLesson).where(eq(pictureLesson.id, input.id));
+    }),
+
+  getByIdAndSlug: publicProcedure
+    .input(z.object({ id: z.number(), slug: z.string() }))
+    .query(async ({ input }) => {
+      const [row] = await db
+        .select()
+        .from(pictureLesson)
+        .where(
+          and(
+            eq(pictureLesson.id, input.id),
+            eq(pictureLesson.slug, input.slug)
+          )
+        );
+      return row;
     }),
 });

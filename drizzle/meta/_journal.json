@@ -15,6 +15,13 @@
       "when": 1776693475275,
       "tag": "0001_volatile_tinkerer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776828988696,
+      "tag": "0002_watery_rage",
+      "breakpoints": true
     }
   ]
 }

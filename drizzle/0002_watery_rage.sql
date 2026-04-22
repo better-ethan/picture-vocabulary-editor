@@ -1,0 +1,1 @@
+ALTER TABLE "picture_lesson" ADD COLUMN "slug" varchar(255) NOT NULL;
