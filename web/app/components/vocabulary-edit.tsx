@@ -36,8 +36,8 @@ interface VocabularyEditorProps {
   mode?: "edit" | "view";
   data?: {
     title: string;
-    slug: string;
-    status: "draft" | "published";
+    slug?: string;
+    status?: "draft" | "published";
     description: string;
     content: {
       images: ImageItem[];
