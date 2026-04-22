@@ -25,10 +25,8 @@ export default function Page() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <div className="pt-16 p-4 container mx-auto">
-      <h1 className="text-3xl font-bold text-primary text-center">
-        {data.title}
-      </h1>
+    <div className="p-4 container mx-auto">
+      <h1 className="text-3xl font-bold text-start">{data.title}</h1>
       <div className="mt-8 flex justify-center">
         <VocabularyEditor
           mode="view"

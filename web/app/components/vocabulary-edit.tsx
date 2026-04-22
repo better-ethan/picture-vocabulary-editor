@@ -47,29 +47,12 @@ interface VocabularyEditorProps {
   };
 }
 
-const ColorRect = () => {
-  const [color, setColor] = useState("green");
-
-  return (
-    <Rect
-      x={20}
-      y={20}
-      width={100}
-      height={100}
-      fill={color}
-      draggable
-      onClick={() => {
-        setColor(Konva.Util.getRandomColor());
-      }}
-    />
-  );
-};
-
 function URLImage({
   src,
   isSelected = false,
-  clickHandler,
   mode = "view",
+  clickHandler,
+  onTransformEnd,
   width,
   height,
   ...rest
@@ -78,6 +61,12 @@ function URLImage({
   isSelected?: boolean;
   mode?: "edit" | "view";
   clickHandler?: () => void;
+  onTransformEnd?: (newAttrs: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) => void;
 }) {
   const [image] = useImage(src, "anonymous");
   const imageRef = useRef<Konva.Image>(null);
@@ -111,6 +100,20 @@ function URLImage({
         onTap={clickHandler}
         width={finalWidth}
         height={finalHeight}
+        onTransformEnd={() => {
+          const node = imageRef.current;
+          if (!node) return;
+          const scaleX = node.scaleX();
+          const scaleY = node.scaleY();
+          node.scaleX(1);
+          node.scaleY(1);
+          onTransformEnd?.({
+            x: node.x(),
+            y: node.y(),
+            width: node.width() * scaleX,
+            height: node.height() * scaleY,
+          });
+        }}
         {...rest}
       />
       {isEditMode && isSelected && (
@@ -118,7 +121,6 @@ function URLImage({
           ref={trRef}
           rotateEnabled={true}
           boundBoxFunc={(oldBox, newBox) => {
-            // 防止縮放到太小
             if (newBox.width < 10 || newBox.height < 10) {
               return oldBox;
             }
@@ -460,6 +462,21 @@ export function VocabularyEditor({
                       setImages((prev) =>
                         prev.map((it) =>
                           it.id === img.id ? { ...it, x: pos.x, y: pos.y } : it
+                        )
+                      );
+                    }}
+                    onTransformEnd={(newAttrs) => {
+                      setImages((prev) =>
+                        prev.map((it) =>
+                          it.id === img.id
+                            ? {
+                                ...it,
+                                x: newAttrs.x,
+                                y: newAttrs.y,
+                                width: newAttrs.width,
+                                height: newAttrs.height,
+                              }
+                            : it
                         )
                       );
                     }}
