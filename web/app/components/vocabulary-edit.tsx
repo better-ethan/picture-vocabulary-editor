@@ -36,6 +36,8 @@ interface VocabularyEditorProps {
   mode?: "edit" | "view";
   data?: {
     title: string;
+    slug: string;
+    status: "draft" | "published";
     description: string;
     content: {
       images: ImageItem[];
@@ -300,11 +302,11 @@ export function VocabularyEditor({
     }
   };
 
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
+  const [title, setTitle] = useState(data?.title ?? "");
+  const [slug, setSlug] = useState(data?.slug ?? "");
   const [description, setDescription] = useState(data?.description ?? "");
   const [status, setStatus] = useState<"draft" | "published" | undefined>(
-    undefined
+    data?.status
   );
 
   const content = {
@@ -378,7 +380,7 @@ export function VocabularyEditor({
           </div>
         </div>
       )}
-      <div className="flex flex-1 overflow-hidden py-4 bg-gray-100">
+      <div className="flex flex-1 overflow-hidden px-2 py-4 bg-gray-100">
         {mode === "edit" && (
           <aside className="flex flex-col p-4 bg-white shrink-0 w-64 rounded-lg">
             <div className="py-3">
@@ -424,7 +426,7 @@ export function VocabularyEditor({
             </div>
           </aside>
         )}
-        <div className="flex flex-1 flex-col items-center justify-center overflow-auto px-4">
+        <div className="flex flex-1 flex-col items-center justify-between overflow-auto px-4">
           <div
             ref={containerRef}
             onDrop={handleDrop}
@@ -445,6 +447,7 @@ export function VocabularyEditor({
                 {images.map((img, index) => (
                   <URLImage
                     key={index}
+                    mode={mode}
                     width={img.width ?? 200}
                     draggable={mode === "edit"}
                     src={img.src}

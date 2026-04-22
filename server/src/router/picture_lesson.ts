@@ -71,6 +71,17 @@ export const pictureLessonRouter = router({
       await db.delete(pictureLesson).where(eq(pictureLesson.id, input.id));
     }),
 
+  getById: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const [row] = await db
+        .select()
+        .from(pictureLesson)
+        .where(eq(pictureLesson.id, input.id));
+
+      return row;
+    }),
+
   getByIdAndSlug: publicProcedure
     .input(z.object({ id: z.number(), slug: z.string() }))
     .query(async ({ input }) => {
