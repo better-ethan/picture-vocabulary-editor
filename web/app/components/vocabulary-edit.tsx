@@ -4,18 +4,22 @@ import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
 import {
   Stage,
   Layer,
-  Rect,
   Text,
   Circle,
   Image,
   Transformer,
-  type KonvaNodeComponent,
   Group,
 } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, TrashIcon, Volume2 } from "lucide-react";
+import {
+  CloudUploadIcon,
+  ImageIcon,
+  PlusIcon,
+  TrashIcon,
+  Volume2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
 import { Input } from "@/components/ui/input";
@@ -325,6 +329,19 @@ export function VocabularyEditor({
     setSlug(title.toLowerCase().split(" ").join("-"));
   };
 
+  type Tool = "images" | "upload";
+  const [activeTool, setActiveTool] = useState<Tool | null>("images");
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const toggleTool = (tool: Tool) => {
+    setActiveTool(tool);
+    setIsPanelOpen(true);
+  };
+
+  const togglePanel = () => {
+    setIsPanelOpen(false);
+    setActiveTool(null);
+  };
+
   return (
     <Form method="post" className="flex flex-col bg-gray-50 h-screen">
       {mode === "edit" && (
@@ -382,50 +399,59 @@ export function VocabularyEditor({
           </div>
         </div>
       )}
-      <div className="flex flex-1 overflow-hidden px-2 py-4 bg-gray-100">
+      <div className="flex flex-1 overflow-hidden px-2 py-4 bg-orange-100 h-screen">
         {mode === "edit" && (
-          <aside className="flex flex-col p-4 bg-white shrink-0 w-64 rounded-lg">
-            <div className="py-3">
-              <Input
-                type="search"
-                placeholder="Search images..."
-                value={imageSearch}
-                onChange={(e) => setImageSearch(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleImageSearch()}
-                disabled={isSearching}
+          <aside
+            className={cn(
+              "flex py-4 bg-white shrink-0 rounded-lg relative",
+              "transition-all duration-300"
+            )}
+          >
+            <div
+              className={cn(
+                "w-16 flex flex-col items-center py-2",
+                isPanelOpen && "border-r"
+              )}
+            >
+              <ToolButton
+                ButtonIcon={ImageIcon}
+                text="Images"
+                onClick={() => toggleTool("images")}
+                active={activeTool === "images"}
+              />
+              <ToolButton
+                ButtonIcon={CloudUploadIcon}
+                text="Upload"
+                onClick={() => toggleTool("upload")}
+                active={activeTool === "upload"}
               />
             </div>
-            <div className="max-h-[560px] overflow-y-auto mt-2">
-              {isSearching && (
-                <p className="col-span-2 text-gray-400 text-center py-4">
-                  Searching...
-                </p>
+            <div
+              className={cn(
+                "border-r overflow-hidden transition-all duration-300",
+                isPanelOpen ? "w-64 opacity-100" : "w-0 opacity-0"
               )}
-              {!isSearching && searchedImages.length === 0 && (
-                <p className="text-gray-400 text-center py-4">No Results</p>
+            >
+              {isPanelOpen && (
+                <div className={cn("h-full")}>
+                  {activeTool === "images" && <ImageSearchPanel />}
+                  {activeTool === "upload" && <UploadPanel />}
+                </div>
               )}
-              <div className="columns-2 gap-2">
-                {searchedImages.map((img) => (
-                  <div
-                    key={img.id}
-                    draggable
-                    onDragStart={(e) =>
-                      e.dataTransfer.setData("imageUrl", img.largeImageURL)
-                    }
-                    className={cn(
-                      "rounded overflow-hidden border border-gray-200 mb-2",
-                      "hover:ring-2 hover:ring-blue-400 cursor-pointer transition"
-                    )}
-                  >
-                    <img
-                      src={img.previewURL}
-                      alt={img.tags}
-                      className="w-full h-auto block"
-                    />
-                  </div>
-                ))}
-              </div>
             </div>
+            <Button
+              type="button"
+              onClick={togglePanel}
+              className={cn(
+                "absolute top-1/2 -translate-y-1/2 right-0 translate-x-1/2",
+                "w-6 h-10 rounded-md border bg-background shadow text-gray-700",
+                "flex items-center justify-center",
+                "transition-all duration-200 z-10 hover:bg-muted",
+                isPanelOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+              )}
+            >
+              ◀
+            </Button>
           </aside>
         )}
         <div className="flex flex-1 flex-col items-center justify-between overflow-auto px-4">
@@ -582,5 +608,110 @@ export function VocabularyEditor({
         </aside>
       </div>
     </Form>
+  );
+}
+
+function ToolButton({
+  ButtonIcon,
+  text,
+  active = false,
+  onClick,
+}: {
+  ButtonIcon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  text: string;
+  active?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      onClick={onClick}
+      className={cn(
+        "size-16 flex flex-col items-center justify-center rounded-md transition font-normal",
+        "rounded-none text-sm",
+        "hover:bg-muted hover:translate-y-0.5",
+        active && "bg-muted"
+      )}
+    >
+      <ButtonIcon className="size-6" />
+      <p className="">{text}</p>
+    </Button>
+  );
+}
+
+function ImageSearchPanel({}: {}) {
+  const [imageSearch, setImageSearch] = useState("");
+  const [searchedImages, setSearchedImages] = useState<PixabayHit[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleImageSearch = async (query: string) => {
+    if (!query.trim()) return;
+    setIsSearching(true);
+    try {
+      const hits = await fetchImagesFromPixabay(query);
+      setSearchedImages(hits ?? []);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  useEffect(() => {
+    handleImageSearch("learning");
+  }, []);
+
+  return (
+    <div className="p-2">
+      <div>
+        <Input
+          type="search"
+          placeholder="Search images..."
+          value={imageSearch}
+          onChange={(e) => setImageSearch(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleImageSearch(imageSearch)}
+          disabled={isSearching}
+        />
+      </div>
+      <div className="max-h-140 overflow-y-auto mt-4">
+        {isSearching && (
+          <p className="col-span-2 text-gray-400 text-center py-4">
+            Searching...
+          </p>
+        )}
+        {!isSearching && searchedImages.length === 0 && (
+          <p className="text-gray-400 text-center py-4">No Results</p>
+        )}
+        <div className="columns-2 gap-2">
+          {searchedImages.map((img) => (
+            <div
+              key={img.id}
+              draggable
+              onDragStart={(e) =>
+                e.dataTransfer.setData("imageUrl", img.largeImageURL)
+              }
+              className={cn(
+                "rounded overflow-hidden border border-gray-200 mb-2",
+                "hover:ring-2 hover:ring-blue-400 cursor-pointer transition"
+              )}
+            >
+              <img
+                src={img.previewURL}
+                alt={img.tags}
+                className="w-full h-auto block"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UploadPanel({}: {}) {
+  return (
+    <div className="p-4 text-center text-gray-500">
+      <CloudUploadIcon className="mx-auto mb-2" />
+      <p>Image upload coming soon!</p>
+    </div>
   );
 }
