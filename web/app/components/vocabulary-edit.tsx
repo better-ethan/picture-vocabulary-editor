@@ -31,8 +31,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { trpc } from "@/util";
+import { useTRPC } from "@/util";
 import { Form } from "react-router";
+import { Label } from "@/components/ui/label";
+import { useMutation } from "@tanstack/react-query";
+import { Field, FieldDescription } from "@/components/ui/field";
 
 interface VocabularyEditorProps {
   width: number;
@@ -708,10 +711,78 @@ function ImageSearchPanel({}: {}) {
 }
 
 function UploadPanel({}: {}) {
+  const trpc = useTRPC();
+  const uploadMutation = useMutation(
+    trpc.upload.getUploadUrl.mutationOptions()
+  );
+
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+
+  const handleUpload = async () => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { url, key } = await uploadMutation.mutateAsync({
+        fileName: file.name,
+        fileType: file.type,
+      });
+      await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      });
+
+      const publicUrl = `https://pub-01ac6b5d2bc145aaa3a212b219ae92cf.r2.dev/${key}`;
+      setUploadedUrl(publicUrl);
+    } catch (error) {
+      console.error("Upload failed", error);
+      alert("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
-    <div className="p-4 text-center text-gray-500">
-      <CloudUploadIcon className="mx-auto mb-2" />
-      <p>Image upload coming soon!</p>
+    <div className="p-2">
+      <div className="flex flex-col gap-3">
+        <Field>
+          <Input
+            type="file"
+            accept="image/*"
+            className=""
+            onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+          />
+          <FieldDescription>png, jpg, webp suggested</FieldDescription>
+          <Button
+            type="button"
+            className="p-2 rounded bg-blue-600 text-white text-sm"
+            disabled={!file || uploading}
+            onClick={handleUpload}
+          >
+            Upload
+          </Button>
+        </Field>
+      </div>
+      {uploadedUrl && (
+        <div
+          draggable
+          onDragStart={(e) => e.dataTransfer.setData("imageUrl", uploadedUrl)}
+          className="mt-3 rounded overflow-hidden border border-gray-200 hover:ring-2 hover:ring-blue-400 cursor-grab transition"
+        >
+          <img
+            src={uploadedUrl}
+            alt="uploaded"
+            className="w-full h-auto block"
+          />
+          <p className="text-xs text-center text-gray-400 py-1">
+            Drag this image to the canvas
+          </p>
+        </div>
+      )}
     </div>
   );
 }

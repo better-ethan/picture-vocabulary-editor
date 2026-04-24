@@ -3,11 +3,17 @@ import {
   fastifyTRPCPlugin,
   FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
+import cors from "@fastify/cors";
 
 import { AppRouter, appRouter } from "./main.js";
 
 const server = Fastify({
   logger: true,
+});
+
+server.register(cors, {
+  origin: ["http://127.0.0.1:3000", "http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 });
 
 server.get("/health", async () => {
