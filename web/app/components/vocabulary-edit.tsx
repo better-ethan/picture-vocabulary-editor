@@ -17,6 +17,7 @@ import {
   ArrowRightIcon,
   CloudUploadIcon,
   ImageIcon,
+  Loader2Icon,
   PlusIcon,
   TrashIcon,
   Volume2,
@@ -797,7 +798,7 @@ function UploadPanel({}: {}) {
             disabled={!file || uploading}
             onClick={handleUpload}
           >
-            Upload
+            {uploading ? <Loader2Icon className="animate-spin" /> : "Upload"}
           </Button>
         </Field>
       </div>
