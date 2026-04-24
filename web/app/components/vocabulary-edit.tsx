@@ -688,9 +688,9 @@ function ImageSearchPanel({}: {}) {
       </div>
       <div className="max-h-140 overflow-y-auto mt-4">
         {isSearching && (
-          <p className="col-span-2 text-gray-400 text-center py-4">
-            Searching...
-          </p>
+          <div className="flex items-center justify-center py-5">
+            <Loader2Icon className="animate-spin" />
+          </div>
         )}
         {!isSearching && searchedImages.length === 0 && (
           <p className="text-gray-400 text-center py-4">No Results</p>
