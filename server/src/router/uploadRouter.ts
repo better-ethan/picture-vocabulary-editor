@@ -3,6 +3,8 @@ import { publicProcedure, router } from "../trpc.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "~/lib/s3.js";
+import { db, uploadImage } from "@package/drizzle";
+import { desc } from "drizzle-orm";
 
 export const uploadRouter = router({
   getUploadUrl: publicProcedure
@@ -27,4 +29,23 @@ export const uploadRouter = router({
         key,
       };
     }),
+
+  create: publicProcedure
+    .input(z.object({ url: z.string().min(1).max(255) }))
+    .mutation(async ({ input }) => {
+      const [row] = await db
+        .insert(uploadImage)
+        .values({ url: input.url })
+        .returning();
+
+      return row;
+    }),
+
+  list: publicProcedure.query(async () => {
+    const rows = await db
+      .select()
+      .from(uploadImage)
+      .orderBy(desc(uploadImage.createdAt));
+    return rows;
+  }),
 });

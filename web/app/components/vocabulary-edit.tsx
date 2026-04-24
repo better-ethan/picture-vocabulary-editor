@@ -14,6 +14,7 @@ import Konva from "konva";
 import useImage from "use-image";
 import { Button } from "@/components/ui/button";
 import {
+  ArrowRightIcon,
   CloudUploadIcon,
   ImageIcon,
   PlusIcon,
@@ -34,8 +35,17 @@ import {
 import { useTRPC } from "@/util";
 import { Form } from "react-router";
 import { Label } from "@/components/ui/label";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Field, FieldDescription } from "@/components/ui/field";
+import { toast } from "sonner";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 interface VocabularyEditorProps {
   width: number;
@@ -710,15 +720,29 @@ function ImageSearchPanel({}: {}) {
   );
 }
 
+interface uploadedImage {
+  id: number;
+  url: string;
+}
+
 function UploadPanel({}: {}) {
   const trpc = useTRPC();
   const uploadMutation = useMutation(
     trpc.upload.getUploadUrl.mutationOptions()
   );
 
+  const uploadCreateMutation = useMutation(
+    trpc.upload.create.mutationOptions()
+  );
+
+  const uploadListQuery = useQuery(trpc.upload.list.queryOptions());
+  const uploadedImageList = uploadListQuery.data ?? [];
+
   const [file, setFile] = useState<File | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [uploading, setUploading] = useState(false);
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 
   const handleUpload = async () => {
     if (!file) return;
@@ -737,10 +761,19 @@ function UploadPanel({}: {}) {
       });
 
       const publicUrl = `https://pub-01ac6b5d2bc145aaa3a212b219ae92cf.r2.dev/${key}`;
-      setUploadedUrl(publicUrl);
+      await uploadCreateMutation.mutateAsync({ url: publicUrl });
+
+      await uploadListQuery.refetch();
+
+      toast.success("Upload successful!");
+
+      setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Upload failed", error);
-      alert("Upload failed. Please try again.");
+      toast.error("Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -748,18 +781,19 @@ function UploadPanel({}: {}) {
 
   return (
     <div className="p-2">
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         <Field>
           <Input
             type="file"
             accept="image/*"
             className=""
+            ref={fileInputRef}
             onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
           />
           <FieldDescription>png, jpg, webp suggested</FieldDescription>
           <Button
             type="button"
-            className="p-2 rounded bg-blue-600 text-white text-sm"
+            className="p-2 rounded bg-blue-600 text-white text-sm mt-3"
             disabled={!file || uploading}
             onClick={handleUpload}
           >
@@ -767,22 +801,50 @@ function UploadPanel({}: {}) {
           </Button>
         </Field>
       </div>
-      {uploadedUrl && (
-        <div
-          draggable
-          onDragStart={(e) => e.dataTransfer.setData("imageUrl", uploadedUrl)}
-          className="mt-3 rounded overflow-hidden border border-gray-200 hover:ring-2 hover:ring-blue-400 cursor-grab transition"
-        >
-          <img
-            src={uploadedUrl}
-            alt="uploaded"
-            className="w-full h-auto block"
-          />
-          <p className="text-xs text-center text-gray-400 py-1">
-            Drag this image to the canvas
-          </p>
-        </div>
-      )}
+
+      <div className="mt-4">
+        {uploadedImageList.length === 0 ? (
+          <Empty className="border border-dashed text-wrap">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <ImageIcon className="size-6 text-gray-400 bg-none" />
+              </EmptyMedia>
+              <EmptyTitle>You have no uploaded images</EmptyTitle>
+              <EmptyDescription>
+                Upload images to create picture lessons
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent></EmptyContent>
+          </Empty>
+        ) : (
+          <>
+            <p className="text-sm text-muted-foreground mt-1">
+              Drag images onto the canvas ☞
+            </p>
+            <p className="text-sm text-muted-foreground mt-1 text-right">
+              Total: {uploadedImageList.length}{" "}
+              {uploadedImageList.length === 1 ? "image" : "images"}
+            </p>
+            <div className="columns-2 gap-2 mt-2">
+              {uploadedImageList.map((img) => (
+                <div
+                  key={img.id}
+                  draggable
+                  onDragStart={(e) =>
+                    e.dataTransfer.setData("imageUrl", img.url)
+                  }
+                  className={cn(
+                    "rounded overflow-hidden border border-gray-100 mb-2",
+                    "hover:ring-2 hover:ring-blue-400 cursor-pointer transition p-1"
+                  )}
+                >
+                  <img src={img.url} className="w-full h-auto block" />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

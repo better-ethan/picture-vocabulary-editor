@@ -25,3 +25,10 @@ export const pictureLesson = pgTable("picture_lesson", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const uploadImage = pgTable("upload_image", {
+  id: serial("id").primaryKey(),
+  url: varchar("url", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
