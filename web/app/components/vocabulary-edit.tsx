@@ -47,6 +47,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Loader } from "@/components/retroui/Loader";
 
 interface VocabularyEditorProps {
   width: number;
@@ -690,7 +691,7 @@ function ImageSearchPanel({}: {}) {
       <div className="max-h-140 overflow-y-auto mt-4">
         {isSearching && (
           <div className="flex items-center justify-center py-5">
-            <Loader2Icon className="animate-spin" />
+            <Loader />
           </div>
         )}
         {!isSearching && searchedImages.length === 0 && (
@@ -720,11 +721,6 @@ function ImageSearchPanel({}: {}) {
       </div>
     </div>
   );
-}
-
-interface uploadedImage {
-  id: number;
-  url: string;
 }
 
 function UploadPanel({}: {}) {
@@ -795,11 +791,11 @@ function UploadPanel({}: {}) {
           <FieldDescription>png, jpg, webp suggested</FieldDescription>
           <Button
             type="button"
-            className="text-center"
+            className="h-10"
             disabled={!file || uploading}
             onClick={handleUpload}
           >
-            {uploading ? <Loader2Icon className="animate-spin" /> : "Upload"}
+            {uploading ? <Loader variant="outline" /> : "Upload"}
           </Button>
         </Field>
       </div>
