@@ -12,7 +12,7 @@ import {
 } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/retroui/Button";
 import {
   ArrowRightIcon,
   CloudUploadIcon,
@@ -24,18 +24,17 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/retroui/Input";
+import { Textarea } from "@/components/retroui/Textarea";
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
+  SelectItem,
   SelectValue,
-} from "@/components/ui/select";
+  SelectContent,
+} from "@/components/retroui/Select";
 import { useTRPC } from "@/util";
 import { Form } from "react-router";
-import { Label } from "@/components/ui/label";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Field, FieldDescription } from "@/components/ui/field";
 import { toast } from "sonner";
@@ -570,7 +569,7 @@ export function VocabularyEditor({
               </Button>
             )}
           </div>
-          <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
+          <div className="flex-1 overflow-y-auto px-3 py-2 gap-2">
             {numbers.map((item, index) => (
               <div key={item} className="flex items-center gap-2 mb-1">
                 <div
@@ -585,7 +584,7 @@ export function VocabularyEditor({
                 >
                   {item}
                 </div>
-                <input
+                <Input
                   type="text"
                   value={wordMap[item] ?? ""}
                   onChange={(e) =>
@@ -794,7 +793,7 @@ function UploadPanel({}: {}) {
           <FieldDescription>png, jpg, webp suggested</FieldDescription>
           <Button
             type="button"
-            className="p-2 rounded bg-blue-600 text-white text-sm mt-3"
+            className="text-center"
             disabled={!file || uploading}
             onClick={handleUpload}
           >
@@ -820,7 +819,7 @@ function UploadPanel({}: {}) {
         ) : (
           <>
             <p className="text-sm text-muted-foreground mt-1">
-              Drag images onto the canvas ☞
+              Drag images onto the canvas 👉
             </p>
             <p className="text-sm text-muted-foreground mt-1 text-right">
               Total: {uploadedImageList.length}{" "}
