@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
 import {
   Stage,
   Layer,
-  Text,
+  Text as CanvasText,
   Circle,
   Image,
   Transformer,
@@ -22,11 +22,13 @@ import {
   TrashIcon,
   Volume2,
   ChevronLeftIcon,
+  BookIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
 import { Input } from "@/components/retroui/Input";
 import { Textarea } from "@/components/retroui/Textarea";
+import { Text } from "@/components/retroui/Text";
 import {
   Select,
   SelectTrigger,
@@ -66,6 +68,8 @@ interface VocabularyEditorProps {
   };
 }
 
+type EditorMode = "edit" | "view";
+
 function URLImage({
   src,
   isSelected = false,
@@ -78,7 +82,7 @@ function URLImage({
 }: Omit<Konva.ImageConfig, "image"> & {
   src: string;
   isSelected?: boolean;
-  mode?: "edit" | "view";
+  mode?: EditorMode;
   clickHandler?: () => void;
   onTransformEnd?: (newAttrs: {
     x: number;
@@ -207,7 +211,7 @@ function NumberCircle({
           />
         )}
         <Circle radius={12} fill={"white"} stroke={"#9ca3af"} strokeWidth={1} />
-        <Text
+        <CanvasText
           text={String(label.number)}
           fill={"#374151"}
           fontSize={18}
@@ -240,19 +244,6 @@ export function VocabularyEditor({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [imageSearch, setImageSearch] = useState("");
-  const [searchedImages, setSearchedImages] = useState<PixabayHit[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-
-  const handleImageSearch = async () => {
-    if (!imageSearch.trim()) return;
-    setIsSearching(true);
-    try {
-      const hits = await fetchImagesFromPixabay(imageSearch);
-      setSearchedImages(hits ?? []);
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
   const initialNumbers = data?.content.words.map((w) => w.number) ?? [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -281,22 +272,6 @@ export function VocabularyEditor({
       delete m[Number(item)];
       return m;
     });
-  };
-
-  const speak = (word: string) => {
-    if (!word) return;
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "en-US";
-    const applyVoiceAndSpeak = () => {
-      const voices = window.speechSynthesis.getVoices();
-      const voice =
-        voices.find((v) => v.name === "Samantha") ??
-        voices.find((v) => v.lang.startsWith("en"));
-      if (voice) utterance.voice = voice;
-      window.speechSynthesis.speak(utterance);
-    };
-    if (window.speechSynthesis.getVoices().length > 0) applyVoiceAndSpeak();
-    else window.speechSynthesis.onvoiceschanged = applyVoiceAndSpeak;
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -357,7 +332,7 @@ export function VocabularyEditor({
     setSlug(title.toLowerCase().split(" ").join("-"));
   };
 
-  type Tool = "images" | "upload";
+  type Tool = "images" | "upload" | "words";
   const [activeTool, setActiveTool] = useState<Tool | null>("images");
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const toggleTool = (tool: Tool) => {
@@ -475,17 +450,35 @@ export function VocabularyEditor({
                 onClick={() => toggleTool("upload")}
                 active={activeTool === "upload"}
               />
+              <ToolButton
+                ButtonIcon={BookIcon}
+                text="Words"
+                onClick={() => toggleTool("words")}
+                active={activeTool === "words"}
+              />
             </div>
             <div
               className={cn(
                 "border-r overflow-hidden transition-all duration-300",
-                isPanelOpen ? "w-64 opacity-100" : "w-0 opacity-0"
+                isPanelOpen ? "w-80 opacity-100" : "w-0 opacity-0"
               )}
             >
               {isPanelOpen && (
                 <div className={cn("h-full")}>
                   {activeTool === "images" && <ImageSearchPanel />}
                   {activeTool === "upload" && <UploadPanel />}
+                  {activeTool === "words" && (
+                    <WordsPanel
+                      mode={mode}
+                      numbers={numbers}
+                      wordMap={wordMap}
+                      onWordChange={handleWordChange}
+                      onDelete={handleDelete}
+                      onAdd={() =>
+                        setNumbers((prev) => [...prev, prev.length + 1])
+                      }
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -594,71 +587,6 @@ export function VocabularyEditor({
             />
           </div>
         </div>
-        <aside className="flex flex-col w-72 bg-white rounded-lg h-fit shrink-0 shadow-md">
-          <div className="px-4 py-3 border-b flex items-center justify-between">
-            <p className="text-gray-500 tracking-wider">Word List</p>
-            {mode === "edit" && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0"
-                onClick={() => setNumbers((prev) => [...prev, prev.length + 1])}
-              >
-                <PlusIcon className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
-          <div className="flex-1 overflow-y-auto px-3 py-2 gap-2">
-            {numbers.map((item, index) => (
-              <div key={item} className="flex items-center gap-2 mb-1">
-                <div
-                  draggable={mode === "edit"}
-                  onDragStart={(e) =>
-                    e.dataTransfer.setData("labelNumber", String(item))
-                  }
-                  className={cn(
-                    "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
-                    "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
-                  )}
-                >
-                  {item}
-                </div>
-                <Input
-                  type="text"
-                  value={wordMap[item] ?? ""}
-                  onChange={(e) =>
-                    mode === "edit"
-                      ? handleWordChange(item, e.target.value)
-                      : undefined
-                  }
-                  readOnly={mode === "view"}
-                  className="w-32 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => speak(wordMap[item] ?? "")}
-                  disabled={!wordMap[item]}
-                >
-                  <Volume2 className="w-4 h-4" />
-                </Button>
-                {mode === "edit" && (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    disabled={index !== numbers.length - 1}
-                    onClick={() => handleDelete(String(item))}
-                  >
-                    <TrashIcon />
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </aside>
       </div>
     </Form>
   );
@@ -879,6 +807,104 @@ function UploadPanel({}: {}) {
             </div>
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+const speak = (word: string) => {
+  if (!word) return;
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-US";
+  const applyVoiceAndSpeak = () => {
+    const voices = window.speechSynthesis.getVoices();
+    const voice =
+      voices.find((v) => v.name === "Samantha") ??
+      voices.find((v) => v.lang.startsWith("en"));
+    if (voice) utterance.voice = voice;
+    window.speechSynthesis.speak(utterance);
+  };
+  if (window.speechSynthesis.getVoices().length > 0) applyVoiceAndSpeak();
+  else window.speechSynthesis.onvoiceschanged = applyVoiceAndSpeak;
+};
+
+function WordsPanel({
+  mode = "view",
+  numbers,
+  wordMap,
+  onWordChange,
+  onDelete,
+  onAdd,
+}: {
+  mode?: EditorMode;
+  numbers: number[];
+  wordMap: Record<number, string>;
+  onWordChange: (num: number, value: string) => void;
+  onDelete: (item: string) => void;
+  onAdd: () => void;
+}) {
+  return (
+    <div>
+      <div className="px-4 py-3 border-b flex items-center justify-between">
+        <Text>Word List</Text>
+        {mode === "edit" && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0"
+            onClick={onAdd}
+          >
+            <PlusIcon className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
+      <div className="flex-1 overflow-y-auto px-3 py-2 gap-2">
+        {numbers.map((item, index) => (
+          <div key={item} className="flex items-center gap-2 mb-1">
+            <div
+              draggable={mode === "edit"}
+              onDragStart={(e) =>
+                e.dataTransfer.setData("labelNumber", String(item))
+              }
+              className={cn(
+                "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
+                "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
+              )}
+            >
+              {item}
+            </div>
+            <Input
+              type="text"
+              value={wordMap[item] ?? ""}
+              onChange={(e) =>
+                mode === "edit" ? onWordChange(item, e.target.value) : undefined
+              }
+              readOnly={mode === "view"}
+              className="w-42 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => speak(wordMap[item] ?? "")}
+              disabled={!wordMap[item]}
+            >
+              <Volume2 className="w-4 h-4" />
+            </Button>
+            {mode === "edit" && (
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                disabled={index !== numbers.length - 1}
+                onClick={() => onDelete(String(item))}
+              >
+                <TrashIcon className="size-4" />
+              </Button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
