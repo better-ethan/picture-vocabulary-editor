@@ -9,7 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "@/main.css";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/retroui/Sonner";
 import { TRPCProvider, trpc } from "@/util";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
