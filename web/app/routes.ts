@@ -7,6 +7,6 @@ export default [
   route("/picture-lesson/create", "page/picture-lesson/create.tsx"),
   route("/picture-lesson/list", "page/picture-lesson/list.tsx"),
 
-  route("/picture-lesson/:id/edit", "page/picture-lesson/edit.tsx"),
   route("/picture-lesson/:id/:slug", "page/picture-lesson/index.tsx"),
+  route("/picture-lesson/:id/:slug/edit", "page/picture-lesson/edit.tsx"),
 ] satisfies RouteConfig;

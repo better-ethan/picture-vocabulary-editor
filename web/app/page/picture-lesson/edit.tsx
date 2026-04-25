@@ -7,11 +7,13 @@ import type { Route } from "./+types/edit";
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const id = params.id;
+  const slug = params.slug;
   if (!id) {
     throw new Response("Not Found", { status: 404 });
   }
-  const result = await trpc.pictureLesson.getById.query({
+  const result = await trpc.pictureLesson.getByIdAndSlug.query({
     id: parseInt(id),
+    slug,
   });
 
   if (!result) {
