@@ -12,6 +12,7 @@ import "@/main.css";
 import { Toaster } from "@/components/ui/sonner";
 import { TRPCProvider, trpc } from "@/util";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -35,7 +36,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body
+        className={cn(
+          "absolute inset-0 h-full w-full bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px]"
+        )}
+      >
         <Toaster position="top-center" />
         {children}
         <ScrollRestoration />
