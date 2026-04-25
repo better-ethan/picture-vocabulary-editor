@@ -176,11 +176,15 @@ interface LabelItem {
 function NumberCircle({
   label,
   draggable,
+  mode = "view",
+  isSelected = false,
   onSelect,
   onDragEnd,
 }: {
   label: LabelItem;
   draggable?: boolean;
+  mode?: "view" | "edit";
+  isSelected?: boolean;
   onSelect: () => void;
   onDragEnd?: (e: Konva.KonvaEventObject<DragEvent>) => void;
 }) {
@@ -193,6 +197,15 @@ function NumberCircle({
         draggable={draggable}
         onDragEnd={onDragEnd}
       >
+        {mode === "edit" && isSelected && (
+          <Circle
+            radius={16}
+            fill="transparent"
+            stroke="#3b82f6"
+            strokeWidth={2}
+            dash={[4, 2]}
+          />
+        )}
         <Circle radius={12} fill={"white"} stroke={"#9ca3af"} strokeWidth={1} />
         <Text
           text={String(label.number)}
@@ -356,6 +369,28 @@ export function VocabularyEditor({
     setIsPanelOpen(false);
     setActiveTool(null);
   };
+
+  useEffect(() => {
+    if (mode === "view") return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = document.activeElement?.tagName.toLowerCase();
+      if (tag === "input" || tag === "textarea") return;
+
+      if ((e.key === "Delete" || e.key === "Backspace") && selectedId) {
+        if (selectedId?.startsWith("image-")) {
+          setImages((prev) => prev.filter((img) => img.id !== selectedId));
+          setSelectedId(null);
+        } else if (selectedId?.startsWith("label-")) {
+          setLabels((prev) => prev.filter((label) => label.id !== selectedId));
+          setSelectedId(null);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedId, mode]);
 
   return (
     <Form method="post" className="flex flex-col bg-gray-50 h-screen">
@@ -529,7 +564,9 @@ export function VocabularyEditor({
                     key={label.id}
                     label={label}
                     draggable={mode === "edit"}
+                    mode={mode}
                     onSelect={() => setSelectedId(label.id)}
+                    isSelected={selectedId === label.id}
                     onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
                       const pos = e.target.position();
                       setLabels((prev) =>
