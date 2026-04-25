@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useActionData } from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/create";
+import { Text } from "@/components/retroui/Text";
 
 export const loader = async () => {};
 
@@ -37,9 +38,9 @@ export default function Page() {
 
   return (
     <div className="pt-16 p-4 container mx-auto">
-      <h1 className="text-3xl font-bold text-primary text-center">
+      <Text as="h1" className="text-center">
         Learning Language through Picture and Audio
-      </h1>
+      </Text>
       <div className="mt-8 flex justify-center">
         <VocabularyEditor width={700} height={600} mode="edit" />
       </div>

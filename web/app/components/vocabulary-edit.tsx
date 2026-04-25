@@ -21,6 +21,7 @@ import {
   PlusIcon,
   TrashIcon,
   Volume2,
+  ChevronLeftIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
@@ -416,14 +417,14 @@ export function VocabularyEditor({
         {mode === "edit" && (
           <aside
             className={cn(
-              "flex py-4 bg-white shrink-0 rounded-lg relative",
+              "flex py-4 bg-white shrink-0 rounded-lg relative shadow-md",
               "transition-all duration-300"
             )}
           >
             <div
               className={cn(
-                "w-16 flex flex-col items-center py-2",
-                isPanelOpen && "border-r"
+                "w-16 flex flex-col items-center py-2 px-1",
+                isPanelOpen && "border-r border-gray-300"
               )}
             >
               <ToolButton
@@ -456,14 +457,15 @@ export function VocabularyEditor({
               type="button"
               onClick={togglePanel}
               className={cn(
-                "absolute top-1/2 -translate-y-1/2 right-0 translate-x-1/2",
-                "w-6 h-10 rounded-md border bg-background shadow text-gray-700",
+                "absolute top-1/2 -right-3",
+                "h-12 w-6 p-0",
                 "flex items-center justify-center",
-                "transition-all duration-200 z-10 hover:bg-muted",
+                "bg-white border-none rounded-full shadow-md",
+                "transition-all duration-150 z-10",
                 isPanelOpen ? "opacity-100" : "opacity-0 pointer-events-none"
               )}
             >
-              ◀
+              <ChevronLeftIcon className="w-5 h-5" />
             </Button>
           </aside>
         )}
@@ -554,7 +556,7 @@ export function VocabularyEditor({
             />
           </div>
         </div>
-        <aside className="flex flex-col w-72 bg-white rounded-lg h-fit shrink-0">
+        <aside className="flex flex-col w-72 bg-white rounded-lg h-fit shrink-0 shadow-md">
           <div className="px-4 py-3 border-b flex items-center justify-between">
             <p className="text-gray-500 tracking-wider">Word List</p>
             {mode === "edit" && (
@@ -638,17 +640,17 @@ function ToolButton({
   return (
     <Button
       type="button"
-      variant="ghost"
       onClick={onClick}
       className={cn(
-        "size-16 flex flex-col items-center justify-center rounded-md transition font-normal",
-        "rounded-none text-sm",
-        "hover:bg-muted hover:translate-y-0.5",
-        active && "bg-muted"
+        "size-16 flex flex-col items-center justify-center transition",
+        "rounded-none text-xs shadow-none border-none bg-inherit",
+        "hover:bg-muted/50 hover:translate-y-0.5 hover:shadow-none",
+        active && "bg-primary"
       )}
     >
       <ButtonIcon className="size-6" />
-      <p className="">{text}</p>
+      <Text as="p"></Text>
+      {text}
     </Button>
   );
 }
