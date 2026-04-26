@@ -655,7 +655,7 @@ function ImageSearchPanel({}: {}) {
         {!isSearching && searchedImages.length === 0 && (
           <p className="text-gray-400 text-center py-4">No Results</p>
         )}
-        <div className="columns-2 gap-2">
+        <div className="columns-2 gap-2 px-1">
           {searchedImages.map((img) => (
             <div
               key={img.id}
@@ -896,11 +896,11 @@ function ImageGrid({
   images: {
     id: string | number;
     url: string;
-    tag?: string;
+    altText?: string;
   }[];
 }) {
   return (
-    <div className="columns-2 gap-2 mt-2">
+    <div className="columns-2 gap-2 mt-2 px-1">
       {images.map((img) => (
         <div
           key={img.id}
@@ -911,7 +911,11 @@ function ImageGrid({
             "hover:ring-2 hover:ring-blue-400 cursor-pointer transition p-1"
           )}
         >
-          <img src={img.url} alt={img.tag} className="w-full h-auto block" />
+          <img
+            src={img.url}
+            alt={img.altText}
+            className="w-full h-auto block"
+          />
         </div>
       ))}
     </div>
