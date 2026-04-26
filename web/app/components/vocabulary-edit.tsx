@@ -14,15 +14,13 @@ import Konva from "konva";
 import useImage from "use-image";
 import { Button } from "@/components/retroui/Button";
 import {
-  ArrowRightIcon,
   CloudUploadIcon,
   ImageIcon,
-  Loader2Icon,
   PlusIcon,
   TrashIcon,
   Volume2,
   ChevronLeftIcon,
-  BookIcon,
+  BookAIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
@@ -368,7 +366,7 @@ export function VocabularyEditor({
   }, [selectedId, mode]);
 
   return (
-    <Form method="post" className="flex flex-col bg-gray-50 h-screen">
+    <Form method="post" className="flex flex-col bg-inherit h-screen">
       {mode === "edit" && (
         <div className="flex items-center gap-4 px-6 py-3 bg-white border-b shadow-sm shrink-0">
           <h1
@@ -424,7 +422,7 @@ export function VocabularyEditor({
           </div>
         </div>
       )}
-      <div className="flex flex-1 overflow-hidden px-2 py-4 bg-orange-100 h-screen">
+      <div className="flex flex-1 overflow-hidden px-2 py-4 bg-inherit h-screen">
         {mode === "edit" && (
           <aside
             className={cn(
@@ -451,7 +449,7 @@ export function VocabularyEditor({
                 active={activeTool === "upload"}
               />
               <ToolButton
-                ButtonIcon={BookIcon}
+                ButtonIcon={BookAIcon}
                 text="Words"
                 onClick={() => toggleTool("words")}
                 active={activeTool === "words"}
