@@ -482,13 +482,15 @@ export function VocabularyEditor({
             </div>
             <Button
               type="button"
+              variant="secondary"
               onClick={togglePanel}
               className={cn(
                 "absolute top-1/2 -right-3",
-                "h-12 w-6 p-0",
+                "h-12 w-6 p-0 text-gray-300",
                 "flex items-center justify-center",
-                "bg-white border-none rounded-full shadow-md",
-                "transition-all duration-150 z-10",
+                "border-none rounded-full shadow-md",
+                "transition-all duration-300 z-10",
+                "hover:text-secondary-foreground hover:translate-none",
                 isPanelOpen ? "opacity-100" : "opacity-0 pointer-events-none"
               )}
             >
