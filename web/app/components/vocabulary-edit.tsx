@@ -48,6 +48,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Loader } from "@/components/retroui/Loader";
+import { Card, CardContent } from "@/components/retroui/Card";
 
 interface VocabularyEditorProps {
   width: number;
@@ -424,79 +425,76 @@ export function VocabularyEditor({
       )}
       <div className="flex flex-1 overflow-hidden px-2 py-4 bg-inherit h-screen">
         {mode === "edit" && (
-          <aside
-            className={cn(
-              "flex py-4 bg-white shrink-0 rounded-lg relative shadow-md",
-              "transition-all duration-300"
-            )}
-          >
-            <div
-              className={cn(
-                "w-16 flex flex-col items-center py-2 px-1",
-                isPanelOpen && "border-r border-gray-300"
-              )}
-            >
-              <ToolButton
-                ButtonIcon={ImageIcon}
-                text="Images"
-                onClick={() => toggleTool("images")}
-                active={activeTool === "images"}
-              />
-              <ToolButton
-                ButtonIcon={CloudUploadIcon}
-                text="Upload"
-                onClick={() => toggleTool("upload")}
-                active={activeTool === "upload"}
-              />
-              <ToolButton
-                ButtonIcon={BookAIcon}
-                text="Words"
-                onClick={() => toggleTool("words")}
-                active={activeTool === "words"}
-              />
-            </div>
-            <div
-              className={cn(
-                "border-r overflow-hidden transition-all duration-300",
-                isPanelOpen ? "w-80 opacity-100" : "w-0 opacity-0"
-              )}
-            >
-              {isPanelOpen && (
-                <div className={cn("h-full")}>
-                  {activeTool === "images" && <ImageSearchPanel />}
-                  {activeTool === "upload" && <UploadPanel />}
-                  {activeTool === "words" && (
-                    <WordsPanel
-                      mode={mode}
-                      numbers={numbers}
-                      wordMap={wordMap}
-                      onWordChange={handleWordChange}
-                      onDelete={handleDelete}
-                      onAdd={() =>
-                        setNumbers((prev) => [...prev, prev.length + 1])
-                      }
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={togglePanel}
-              className={cn(
-                "absolute top-1/2 -right-3",
-                "h-12 w-6 p-0 text-gray-300",
-                "flex items-center justify-center",
-                "border-none rounded-full shadow-md",
-                "transition-all duration-300 z-10",
-                "hover:text-secondary-foreground hover:translate-none",
-                isPanelOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-              )}
-            >
-              <ChevronLeftIcon className="w-5 h-5" />
-            </Button>
-          </aside>
+          <Card className="h-full">
+            <CardContent className="flex p-0 relative h-full">
+              <div
+                className={cn(
+                  "w-16 flex flex-col items-center py-2 px-1",
+                  isPanelOpen && "border-r border-gray-300"
+                )}
+              >
+                <ToolButton
+                  ButtonIcon={ImageIcon}
+                  text="Images"
+                  onClick={() => toggleTool("images")}
+                  active={activeTool === "images"}
+                />
+                <ToolButton
+                  ButtonIcon={CloudUploadIcon}
+                  text="Upload"
+                  onClick={() => toggleTool("upload")}
+                  active={activeTool === "upload"}
+                />
+                <ToolButton
+                  ButtonIcon={BookAIcon}
+                  text="Words"
+                  onClick={() => toggleTool("words")}
+                  active={activeTool === "words"}
+                />
+              </div>
+              <div
+                className={cn(
+                  "overflow-hidden transition-all duration-300 h-full",
+                  isPanelOpen ? "w-80 opacity-100" : "w-0 opacity-0"
+                )}
+              >
+                {isPanelOpen && (
+                  <div className={cn("w-80 h-full")}>
+                    {activeTool === "images" && <ImageSearchPanel />}
+                    {activeTool === "upload" && <UploadPanel />}
+                    {activeTool === "words" && (
+                      <WordsPanel
+                        mode={mode}
+                        numbers={numbers}
+                        wordMap={wordMap}
+                        onWordChange={handleWordChange}
+                        onDelete={handleDelete}
+                        onAdd={() =>
+                          setNumbers((prev) => [...prev, prev.length + 1])
+                        }
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={togglePanel}
+                className={cn(
+                  "absolute top-1/2 -translate-y-1/2 -right-3",
+                  "h-12 w-6 p-0 text-gray-300",
+                  "flex items-center justify-center",
+                  "border-none rounded-full shadow-md",
+                  "transition-all duration-300 z-10",
+                  "hover:text-secondary-foreground hover:translate-none",
+                  isPanelOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                )}
+              >
+                <ChevronLeftIcon className="w-5 h-5" />
+              </Button>
+            </CardContent>
+          </Card>
         )}
         <div className="flex flex-1 flex-col items-center justify-between overflow-auto px-4">
           <div
@@ -642,8 +640,8 @@ function ImageSearchPanel({}: {}) {
   }, []);
 
   return (
-    <div className="p-2">
-      <div>
+    <div className="flex flex-col h-full p-2">
+      <div className="shrink-0">
         <Input
           type="search"
           placeholder="Search images..."
@@ -653,7 +651,7 @@ function ImageSearchPanel({}: {}) {
           disabled={isSearching}
         />
       </div>
-      <div className="max-h-140 overflow-y-auto mt-4">
+      <div className="flex-1 min-h-0 overflow-y-auto mt-4">
         {isSearching && (
           <div className="flex items-center justify-center py-5">
             <Loader />
@@ -743,8 +741,8 @@ function UploadPanel({}: {}) {
   };
 
   return (
-    <div className="p-2">
-      <div className="flex flex-col">
+    <div className="flex flex-col p-2 h-full">
+      <div className="shrink-0">
         <Field>
           <Input
             type="file"
@@ -764,8 +762,18 @@ function UploadPanel({}: {}) {
           </Button>
         </Field>
       </div>
-
-      <div className="mt-4">
+      {uploadedImageList.length > 0 && (
+        <div className="shrink-0 mt-4">
+          <p className="text-sm text-muted-foreground">
+            Drag images onto the canvas 👉
+          </p>
+          <p className="text-sm text-muted-foreground mt-1 text-right">
+            Total: {uploadedImageList.length}{" "}
+            {uploadedImageList.length === 1 ? "image" : "images"}
+          </p>
+        </div>
+      )}
+      <div className="mt-4 overflow-y-auto flex-1 min-h-0">
         {uploadedImageList.length === 0 ? (
           <Empty className="border border-dashed text-wrap">
             <EmptyHeader>
@@ -781,13 +789,6 @@ function UploadPanel({}: {}) {
           </Empty>
         ) : (
           <>
-            <p className="text-sm text-muted-foreground mt-1">
-              Drag images onto the canvas 👉
-            </p>
-            <p className="text-sm text-muted-foreground mt-1 text-right">
-              Total: {uploadedImageList.length}{" "}
-              {uploadedImageList.length === 1 ? "image" : "images"}
-            </p>
             <div className="columns-2 gap-2 mt-2">
               {uploadedImageList.map((img) => (
                 <div
@@ -844,7 +845,7 @@ function WordsPanel({
   onAdd: () => void;
 }) {
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b flex items-center justify-between">
         <Text>Word List</Text>
         {mode === "edit" && (
@@ -859,7 +860,7 @@ function WordsPanel({
           </Button>
         )}
       </div>
-      <div className="flex-1 overflow-y-auto px-3 py-2 gap-2">
+      <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 gap-2">
         {numbers.map((item, index) => (
           <div key={item} className="flex items-center gap-2 mb-1">
             <div
