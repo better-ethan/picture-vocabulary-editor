@@ -458,23 +458,19 @@ export function VocabularyEditor({
                   isPanelOpen ? "w-80 opacity-100" : "w-0 opacity-0"
                 )}
               >
-                {isPanelOpen && (
-                  <div className={cn("w-80 h-full")}>
-                    {activeTool === "images" && <ImageSearchPanel />}
-                    {activeTool === "upload" && <UploadPanel />}
-                    {activeTool === "words" && (
-                      <WordsPanel
-                        mode={mode}
-                        numbers={numbers}
-                        wordMap={wordMap}
-                        onWordChange={handleWordChange}
-                        onDelete={handleDelete}
-                        onAdd={() =>
-                          setNumbers((prev) => [...prev, prev.length + 1])
-                        }
-                      />
-                    )}
-                  </div>
+                {isPanelOpen && activeTool === "images" && <ImageSearchPanel />}
+                {isPanelOpen && activeTool === "upload" && <UploadPanel />}
+                {isPanelOpen && activeTool === "words" && (
+                  <WordsPanel
+                    mode={mode}
+                    numbers={numbers}
+                    wordMap={wordMap}
+                    onWordChange={handleWordChange}
+                    onDelete={handleDelete}
+                    onAdd={() =>
+                      setNumbers((prev) => [...prev, prev.length + 1])
+                    }
+                  />
                 )}
               </div>
               <Button
@@ -485,9 +481,9 @@ export function VocabularyEditor({
                   "absolute top-1/2 -translate-y-1/2 -right-3",
                   "h-12 w-6 p-0 text-gray-300",
                   "flex items-center justify-center",
-                  "border-none rounded-full shadow-md",
+                  "border-none rounded-full",
                   "transition-all duration-300 z-10",
-                  "hover:text-secondary-foreground hover:translate-none",
+                  "hover:text-secondary-foreground hover:-translate-y-1/2",
                   isPanelOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                 )}
               >
@@ -613,8 +609,7 @@ function ToolButton({
       )}
     >
       <ButtonIcon className="size-6" />
-      <Text as="p"></Text>
-      {text}
+      <Text as="p">{text}</Text>
     </Button>
   );
 }
@@ -789,23 +784,7 @@ function UploadPanel({}: {}) {
           </Empty>
         ) : (
           <>
-            <div className="columns-2 gap-2 mt-2">
-              {uploadedImageList.map((img) => (
-                <div
-                  key={img.id}
-                  draggable
-                  onDragStart={(e) =>
-                    e.dataTransfer.setData("imageUrl", img.url)
-                  }
-                  className={cn(
-                    "rounded overflow-hidden border border-gray-100 mb-2",
-                    "hover:ring-2 hover:ring-blue-400 cursor-pointer transition p-1"
-                  )}
-                >
-                  <img src={img.url} className="w-full h-auto block" />
-                </div>
-              ))}
-            </div>
+            <ImageGrid images={uploadedImageList} />
           </>
         )}
       </div>
@@ -851,12 +830,12 @@ function WordsPanel({
         {mode === "edit" && (
           <Button
             type="button"
-            variant="ghost"
+            variant="secondary"
             size="sm"
-            className="h-6 w-6 p-0"
+            className="px-1"
             onClick={onAdd}
           >
-            <PlusIcon className="w-4 h-4" />
+            <PlusIcon className="size-5" />
           </Button>
         )}
       </div>
@@ -907,6 +886,34 @@ function WordsPanel({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function ImageGrid({
+  images,
+}: {
+  images: {
+    id: string | number;
+    url: string;
+    tag?: string;
+  }[];
+}) {
+  return (
+    <div className="columns-2 gap-2 mt-2">
+      {images.map((img) => (
+        <div
+          key={img.id}
+          draggable
+          onDragStart={(e) => e.dataTransfer.setData("imageUrl", img.url)}
+          className={cn(
+            "rounded overflow-hidden border border-gray-100 mb-2",
+            "hover:ring-2 hover:ring-blue-400 cursor-pointer transition p-1"
+          )}
+        >
+          <img src={img.url} alt={img.tag} className="w-full h-auto block" />
+        </div>
+      ))}
     </div>
   );
 }
