@@ -493,80 +493,83 @@ export function VocabularyEditor({
           </Card>
         )}
         <div className="flex flex-1 flex-col items-center justify-between overflow-auto px-4">
-          <div
+          <Card
             ref={containerRef}
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
-            className="shadow-lg rounded-lg overflow-hidden"
           >
-            <Stage
-              width={width}
-              height={height}
-              className="bg-white"
-              onMouseDown={(e) => {
-                if (e.target === e.target.getStage()) {
-                  setSelectedId(null);
-                }
-              }}
-            >
-              <Layer>
-                {images.map((img, index) => (
-                  <URLImage
-                    key={index}
-                    mode={mode}
-                    width={img.width ?? 200}
-                    draggable={mode === "edit"}
-                    src={img.src}
-                    x={img.x}
-                    y={img.y}
-                    isSelected={selectedId === img.id}
-                    onClick={() => setSelectedId(img.id)}
-                    onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
-                      const pos = e.target.position();
-                      setImages((prev) =>
-                        prev.map((it) =>
-                          it.id === img.id ? { ...it, x: pos.x, y: pos.y } : it
-                        )
-                      );
-                    }}
-                    onTransformEnd={(newAttrs) => {
-                      setImages((prev) =>
-                        prev.map((it) =>
-                          it.id === img.id
-                            ? {
-                                ...it,
-                                x: newAttrs.x,
-                                y: newAttrs.y,
-                                width: newAttrs.width,
-                                height: newAttrs.height,
-                              }
-                            : it
-                        )
-                      );
-                    }}
-                  />
-                ))}
-                {labels.map((label) => (
-                  <NumberCircle
-                    key={label.id}
-                    label={label}
-                    draggable={mode === "edit"}
-                    mode={mode}
-                    onSelect={() => setSelectedId(label.id)}
-                    isSelected={selectedId === label.id}
-                    onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
-                      const pos = e.target.position();
-                      setLabels((prev) =>
-                        prev.map((l) =>
-                          l.id === label.id ? { ...l, x: pos.x, y: pos.y } : l
-                        )
-                      );
-                    }}
-                  />
-                ))}
-              </Layer>
-            </Stage>
-          </div>
+            <CardContent>
+              <Stage
+                width={width}
+                height={height}
+                className="bg-white"
+                onMouseDown={(e) => {
+                  if (e.target === e.target.getStage()) {
+                    setSelectedId(null);
+                  }
+                }}
+              >
+                <Layer>
+                  {images.map((img, index) => (
+                    <URLImage
+                      key={index}
+                      mode={mode}
+                      width={img.width ?? 200}
+                      draggable={mode === "edit"}
+                      src={img.src}
+                      x={img.x}
+                      y={img.y}
+                      isSelected={selectedId === img.id}
+                      onClick={() => setSelectedId(img.id)}
+                      onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
+                        const pos = e.target.position();
+                        setImages((prev) =>
+                          prev.map((it) =>
+                            it.id === img.id
+                              ? { ...it, x: pos.x, y: pos.y }
+                              : it
+                          )
+                        );
+                      }}
+                      onTransformEnd={(newAttrs) => {
+                        setImages((prev) =>
+                          prev.map((it) =>
+                            it.id === img.id
+                              ? {
+                                  ...it,
+                                  x: newAttrs.x,
+                                  y: newAttrs.y,
+                                  width: newAttrs.width,
+                                  height: newAttrs.height,
+                                }
+                              : it
+                          )
+                        );
+                      }}
+                    />
+                  ))}
+                  {labels.map((label) => (
+                    <NumberCircle
+                      key={label.id}
+                      label={label}
+                      draggable={mode === "edit"}
+                      mode={mode}
+                      onSelect={() => setSelectedId(label.id)}
+                      isSelected={selectedId === label.id}
+                      onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
+                        const pos = e.target.position();
+                        setLabels((prev) =>
+                          prev.map((l) =>
+                            l.id === label.id ? { ...l, x: pos.x, y: pos.y } : l
+                          )
+                        );
+                      }}
+                    />
+                  ))}
+                </Layer>
+              </Stage>
+            </CardContent>
+          </Card>
           <div className="mt-4 w-full">
             <Textarea
               placeholder="Add a description..."
