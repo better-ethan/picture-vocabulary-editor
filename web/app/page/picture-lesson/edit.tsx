@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useActionData, useLoaderData } from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/edit";
+import { reuploadPixabayImages } from "@/util/image";
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const id = params.id;
@@ -32,13 +33,15 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
   let status = formData.get("status");
   if (!status) status = "draft";
 
+  const updatedContent = await reuploadPixabayImages(JSON.parse(content));
+
   const result = await trpc.pictureLesson.toggle.mutate({
     id: parseInt(params.id!),
     title,
     slug,
     description,
     status: status as "draft" | "published",
-    content,
+    content: JSON.stringify(updatedContent),
   });
   return result;
 };

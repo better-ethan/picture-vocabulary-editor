@@ -661,7 +661,7 @@ function UploadPanel({}: {}) {
         body: file,
       });
 
-      const publicUrl = `https://pub-01ac6b5d2bc145aaa3a212b219ae92cf.r2.dev/${key}`;
+      const publicUrl = `${process.env.CLOUDFLARE_PUBLIC_URL}/${key}`;
       await uploadCreateMutation.mutateAsync({ url: publicUrl });
 
       await uploadListQuery.refetch();

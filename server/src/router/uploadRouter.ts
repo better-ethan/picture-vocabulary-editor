@@ -12,10 +12,15 @@ export const uploadRouter = router({
       z.object({
         fileName: z.string().min(1).max(255),
         fileType: z.string().min(1).max(255),
+        source: z.string().min(1).max(20).optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const key = `uploads/images/${Date.now()}-${input.fileName}`;
+      let key = `uploads/images/${Date.now()}-${input.fileName}`;
+      if (input.source === "pixabay") {
+        key = `uploads/pixabay/${Date.now()}-${input.fileName}`;
+      }
+
       const command = new PutObjectCommand({
         Bucket: process.env.CLOUDFLARE_BUCKET_NAME!,
         Key: key,

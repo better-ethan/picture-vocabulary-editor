@@ -1,10 +1,14 @@
 import { trpc } from "@/util";
-import { VocabularyEditor } from "@/components/vocabulary-edit";
+import {
+  VocabularyEditor,
+  type CanvasContent,
+} from "@/components/vocabulary-edit";
 import { toast } from "sonner";
 import { useActionData } from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/create";
 import { Text } from "@/components/retroui/Text";
+import { reuploadPixabayImages } from "@/util/image";
 
 export const loader = async () => {};
 
@@ -17,13 +21,17 @@ export const action = async ({ request }: Route.ActionArgs) => {
   let status = formData.get("status");
   if (!status) status = "draft";
 
+  // download and re-upload images to our R2, then replace the src in content
+  const updatedContent = await reuploadPixabayImages(JSON.parse(content));
+
   const result = await trpc.pictureLesson.create.mutate({
     title,
     slug,
     description,
     status: status as "draft" | "published",
-    content,
+    content: JSON.stringify(updatedContent),
   });
+
   return result;
 };
 
