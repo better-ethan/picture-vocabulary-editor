@@ -48,7 +48,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Loader } from "@/components/retroui/Loader";
-import { Card, CardContent } from "@/components/retroui/Card";
+import { Card, CardContent, CardHeader } from "@/components/retroui/Card";
 
 export interface CanvasContent {
   images: ImageItem[];
@@ -546,31 +546,37 @@ export function VocabularyEditor({
           </Card>
         )}
         <div className="flex flex-1 flex-col items-center justify-between overflow-auto">
-          <VocabularyCanvas
-            width={width}
-            height={height}
-            mode={mode}
-            images={images}
-            labels={labels}
-            selectedId={selectedId}
-            onSelectId={setSelectedId}
-            onImagesChange={setImages}
-            onLabelsChange={setLabels}
-            containerRef={containerRef}
-            onDrop={handleDrop}
-          />
-          <div className="mt-4 w-full">
-            <Textarea
-              placeholder="Add a description..."
-              className="text-sm resize-none bg-white"
-              rows={2}
-              value={description}
-              readOnly={mode === "view"}
-              onChange={(e) =>
-                mode === "edit" ? setDescription(e.target.value) : undefined
-              }
-              name="description"
+          <div>
+            <Text className="text-left w-full mb-3">
+              Drag images onto the canvas 👇
+            </Text>
+            <VocabularyCanvas
+              width={width}
+              height={height}
+              mode={mode}
+              images={images}
+              labels={labels}
+              selectedId={selectedId}
+              onSelectId={setSelectedId}
+              onImagesChange={setImages}
+              onLabelsChange={setLabels}
+              containerRef={containerRef}
+              onDrop={handleDrop}
             />
+
+            <div className="mt-4 w-full">
+              <Textarea
+                placeholder="Add a description..."
+                className="text-sm resize-none bg-white"
+                rows={2}
+                value={description}
+                readOnly={mode === "view"}
+                onChange={(e) =>
+                  mode === "edit" ? setDescription(e.target.value) : undefined
+                }
+                name="description"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -832,6 +838,9 @@ function WordsPanel({
         )}
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 gap-2">
+        <Text className="mb-3">
+          Drag these number labels onto the canvas 👉
+        </Text>
         {numbers.map((item, index) => (
           <div key={item} className="flex items-center gap-2 mb-1">
             <div
@@ -951,7 +960,7 @@ export function VocabularyCanvas({
         <Stage
           width={width}
           height={height}
-          className="bg-white"
+          className="bg-white border border-gray-300 border-dashed"
           onMouseDown={(e) => {
             if (e.target === e.target.getStage()) {
               onSelectId?.(null);
