@@ -34,7 +34,7 @@ export async function reuploadPixabayImages(
         body: arrayBuffer,
       });
 
-      const r2PublicUrl = `${process.env.CLOUDFLARE_PUBLIC_URL}/${key}`;
+      const r2PublicUrl = `${process.env.VITE_CLOUDFLARE_PUBLIC_URL}/${key}`;
       return { id: image.id, src: r2PublicUrl };
     })
   );

@@ -171,7 +171,7 @@ interface ImageItem {
 interface PixabayHit {
   id: number;
   previewURL: string;
-  largeImageURL: string;
+  webformatURL: string;
   tags: string;
 }
 
@@ -279,7 +279,26 @@ export function VocabularyEditor({
     });
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const trpc = useTRPC();
+  const uploadMutation = useMutation(
+    trpc.upload.getUploadUrl.mutationOptions()
+  );
+
+  const uploadFileToR2 = async (file: File): Promise<string> => {
+    const { url, key } = await uploadMutation.mutateAsync({
+      fileName: file.name,
+      fileType: file.type,
+    });
+    await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": file.type },
+      body: file,
+    });
+    const publicUrl = `${import.meta.env.VITE_CLOUDFLARE_PUBLIC_URL}/${key}`;
+    return publicUrl;
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     if (!containerRef.current) return;
@@ -313,6 +332,34 @@ export function VocabularyEditor({
           width: 200,
         },
       ]);
+    }
+
+    const files = Array.from(e.dataTransfer.files).filter((f) =>
+      f.type.startsWith("image/")
+    );
+    if (files.length > 0) {
+      toast.info(`Uploading ${files.length} image(s)...`);
+      try {
+        await Promise.all(
+          files.map(async (file, i) => {
+            const publicUrl = await uploadFileToR2(file);
+            setImages((prev) => [
+              ...prev,
+              {
+                id: `image-${Date.now()}-${i}`,
+                src: publicUrl,
+                x: x + i * 20,
+                y: y + i * 20,
+                width: 200,
+              },
+            ]);
+          })
+        );
+        toast.success("Upload successful!");
+      } catch (error) {
+        console.error("Upload failed: ", error);
+        toast.error("Upload failed. Please try again.");
+      }
     }
   };
 
@@ -498,7 +545,7 @@ export function VocabularyEditor({
             </CardContent>
           </Card>
         )}
-        <div className="flex flex-1 flex-col items-center justify-between overflow-auto px-4">
+        <div className="flex flex-1 flex-col items-center justify-between overflow-auto">
           <VocabularyCanvas
             width={width}
             height={height}
@@ -606,7 +653,7 @@ function ImageSearchPanel({}: {}) {
               key={img.id}
               draggable
               onDragStart={(e) =>
-                e.dataTransfer.setData("imageUrl", img.largeImageURL)
+                e.dataTransfer.setData("imageUrl", img.webformatURL)
               }
               className={cn(
                 "rounded overflow-hidden border border-gray-200 mb-2",
@@ -661,7 +708,7 @@ function UploadPanel({}: {}) {
         body: file,
       });
 
-      const publicUrl = `${process.env.CLOUDFLARE_PUBLIC_URL}/${key}`;
+      const publicUrl = `${import.meta.env.VITE_CLOUDFLARE_PUBLIC_URL}/${key}`;
       await uploadCreateMutation.mutateAsync({ url: publicUrl });
 
       await uploadListQuery.refetch();
@@ -907,7 +954,7 @@ export function VocabularyCanvas({
           className="bg-white"
           onMouseDown={(e) => {
             if (e.target === e.target.getStage()) {
-              onSelectId(null);
+              onSelectId?.(null);
             }
           }}
         >
@@ -922,17 +969,17 @@ export function VocabularyCanvas({
                 x={img.x}
                 y={img.y}
                 isSelected={selectedId === img.id}
-                onClick={() => onSelectId(img.id)}
+                onClick={() => onSelectId?.(img.id)}
                 onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
                   const pos = e.target.position();
-                  onImagesChange(
+                  onImagesChange?.(
                     images.map((it) =>
                       it.id === img.id ? { ...it, x: pos.x, y: pos.y } : it
                     )
                   );
                 }}
                 onTransformEnd={(newAttrs) => {
-                  onImagesChange(
+                  onImagesChange?.(
                     images.map((it) =>
                       it.id === img.id
                         ? {
@@ -954,11 +1001,11 @@ export function VocabularyCanvas({
                 label={label}
                 draggable={mode === "edit"}
                 mode={mode}
-                onSelect={() => onSelectId(label.id)}
+                onSelect={() => onSelectId?.(label.id)}
                 isSelected={selectedId === label.id}
                 onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
                   const pos = e.target.position();
-                  onLabelsChange(
+                  onLabelsChange?.(
                     labels.map((l) =>
                       l.id === label.id ? { ...l, x: pos.x, y: pos.y } : l
                     )
