@@ -492,12 +492,12 @@ export function VocabularyEditor({
                   onClick={() => toggleTool("images")}
                   active={activeTool === "images"}
                 />
-                <ToolButton
+                {/* <ToolButton
                   ButtonIcon={CloudUploadIcon}
                   text="Upload"
                   onClick={() => toggleTool("upload")}
                   active={activeTool === "upload"}
-                />
+                /> */}
                 <ToolButton
                   ButtonIcon={BookAIcon}
                   text="Words"
