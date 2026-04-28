@@ -7,7 +7,8 @@ import {
 } from "@/components/retroui/Card";
 import { Input } from "@/components/retroui/Input";
 import { Label } from "@/components/retroui/Label";
-import { Form } from "react-router";
+import { Text } from "@/components/retroui/Text";
+import { Form, Link } from "react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -48,7 +49,7 @@ export default function Page() {
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
           <Form
             method="POST"
             className="flex flex-col gap-4"
@@ -77,6 +78,12 @@ export default function Page() {
             </div>
             <Button type="submit">Sign In</Button>
           </Form>
+          <Text>
+            Don't have an account?{" "}
+            <Link to="/signup" className="ml-2 text-blue-600 hover:underline">
+              Sign Up
+            </Link>
+          </Text>
         </CardContent>
       </Card>
     </div>
