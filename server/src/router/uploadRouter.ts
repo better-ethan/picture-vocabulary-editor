@@ -3,7 +3,7 @@ import { publicProcedure, router } from "../trpc.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "~/lib/s3.js";
-import { db, uploadImage } from "@package/drizzle";
+import { db, uploadImage, user } from "@package/drizzle";
 import { desc } from "drizzle-orm";
 
 export const uploadRouter = router({

@@ -9,4 +9,11 @@ export default [
 
   route("/picture-lesson/:id/:slug", "page/picture-lesson/index.tsx"),
   route("/picture-lesson/:id/:slug/edit", "page/picture-lesson/edit.tsx"),
+
+  // user
+  route("/signup", "page/user/signup.tsx"),
+  route("/signin", "page/user/signin.tsx"),
+
+  // api
+  route("/api/auth/*", "api/auth.tsx"),
 ] satisfies RouteConfig;

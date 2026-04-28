@@ -10,3 +10,4 @@ export const db = drizzle(pool, {
 });
 
 export * from "./src/db/schema.js";
+export * from "./src/db/auth-schema.js";
