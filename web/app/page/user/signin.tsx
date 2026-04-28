@@ -16,7 +16,7 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { data, error } = await authClient.signIn.email(
       {
@@ -49,7 +49,11 @@ export default function Page() {
           <CardTitle>Sign In</CardTitle>
         </CardHeader>
         <CardContent>
-          <Form method="POST" className="flex flex-col gap-4">
+          <Form
+            method="POST"
+            className="flex flex-col gap-4"
+            onSubmit={handleSubmit}
+          >
             <div>
               <Label htmlFor="email">Email:</Label>
               <Input
@@ -71,9 +75,7 @@ export default function Page() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" onClick={handleSubmit}>
-              Sign In
-            </Button>
+            <Button type="submit">Sign In</Button>
           </Form>
         </CardContent>
       </Card>
