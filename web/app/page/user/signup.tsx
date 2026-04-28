@@ -47,7 +47,13 @@ export default function Page() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="">
         <CardHeader>
-          <CardTitle>Sign Up</CardTitle>
+          <CardTitle>Create your Account</CardTitle>
+          <Text>
+            Already have an account?{" "}
+            <Link to="/signin" className="ml-2 text-blue-600 hover:underline">
+              Sign In
+            </Link>
+          </Text>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <Form
@@ -78,14 +84,6 @@ export default function Page() {
             </div>
             <Button type="submit">Sign Up</Button>
           </Form>
-          <div>
-            <Text>
-              Already have an account?{" "}
-              <Link to="/signin" className="ml-2 text-blue-600 hover:underline">
-                Sign In
-              </Link>
-            </Text>
-          </div>
         </CardContent>
       </Card>
     </div>

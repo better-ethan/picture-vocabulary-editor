@@ -48,6 +48,12 @@ export default function Page() {
       <Card className="">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
+          <Text>
+            Don't have an account?{" "}
+            <Link to="/signup" className="ml-2 text-blue-600 hover:underline">
+              Create one
+            </Link>
+          </Text>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <Form
@@ -78,12 +84,6 @@ export default function Page() {
             </div>
             <Button type="submit">Sign In</Button>
           </Form>
-          <Text>
-            Don't have an account?{" "}
-            <Link to="/signup" className="ml-2 text-blue-600 hover:underline">
-              Sign Up
-            </Link>
-          </Text>
         </CardContent>
       </Card>
     </div>
