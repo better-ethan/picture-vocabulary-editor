@@ -45,6 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body
         className={cn(
+          "flex flex-col h-screen overflow-hidden",
           "absolute inset-0 h-full w-full bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px]"
         )}
       >
@@ -116,7 +117,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
         <Toaster position="top-center" />
-        {children}
+        <main className="flex-1 overflow-y-auto">{children}</main>
         <ScrollRestoration />
         <Scripts />
       </body>
