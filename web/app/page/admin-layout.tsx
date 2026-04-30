@@ -1,8 +1,7 @@
-import { Button } from "@/components/retroui/Button";
-import { Text } from "@/components/retroui/Text";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -12,15 +11,26 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { PanelLeft } from "lucide-react";
-import { Link, Outlet } from "react-router";
+import { authClient } from "@/lib/auth-client";
+import { LogOutIcon, User2Icon } from "lucide-react";
+import { useEffect } from "react";
+import { data, Link, Outlet, useNavigate } from "react-router";
 
 export default function AdminLayout() {
+  const { data: session, isPending } = authClient.useSession();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isPending && !session) {
+      navigate("/signin");
+    }
+  }, [session, isPending]);
+
   return (
     <div>
       <SidebarProvider>
         <AdminSidebar />
-        <main>
+        <main className="flex-1 p-4">
           <SidebarTrigger className="size-8"></SidebarTrigger>
           <Outlet />
         </main>
@@ -30,8 +40,9 @@ export default function AdminLayout() {
 }
 
 function AdminSidebar() {
+  const { data: session, isPending } = authClient.useSession();
   return (
-    <Sidebar>
+    <Sidebar className="bg-white">
       <SidebarHeader>Picture Lesson</SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -39,12 +50,42 @@ function AdminSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/picture-lesson/create">Create</Link>
+                <Link to="/admin/picture-lesson/create">Create</Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link to="/admin/picture-lesson/list">My Picture Lessons</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link to="/admin/user/profile">My Profile</Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <div className="size-7 rounded-full flex justify-center items-center bg-blue-500 text-white">
+                <User2Icon fill="white" strokeWidth={0} />
+              </div>
+              <span>{session?.user?.name}</span>
+            </div>
+            <SidebarMenuButton
+              className="size-6"
+              onClick={() => {
+                authClient.signOut();
+              }}
+            >
+              <LogOutIcon />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

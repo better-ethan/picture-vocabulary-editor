@@ -26,6 +26,9 @@ export default [
       "/admin/picture-lesson/:id/:slug/edit",
       "page/picture-lesson/edit.tsx"
     ),
+
+    route("/admin/user/profile", "page/user/profile.tsx"),
+    route("/admin/*", "page/not-found.tsx"),
   ]),
 
   // api
