@@ -68,6 +68,11 @@ function AdminSidebar() {
               <Link to="/admin/user/profile">My Profile</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link to="/admin/user/change-password">Change Password</Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <div className="size-7 rounded-full flex justify-center items-center bg-blue-500 text-white">

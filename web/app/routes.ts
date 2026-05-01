@@ -28,7 +28,8 @@ export default [
     ),
 
     route("/admin/user/profile", "page/user/profile.tsx"),
-    route("/admin/*", "page/not-found.tsx"),
+    route("/admin/user/change-password", "page/user/change-password.tsx"),
+    route("/admin/*", "page/not-found.tsx", { id: "admin-not-found" }),
   ]),
 
   // api
