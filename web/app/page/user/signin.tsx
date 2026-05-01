@@ -12,6 +12,7 @@ import { Form, Link } from "react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -70,16 +71,18 @@ export default function Page() {
                 value={email}
                 required
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="enter your email"
               />
             </div>
             <div>
               <Label htmlFor="password">Password:</Label>
-              <Input
+              <PasswordInput
                 type="password"
                 id="password"
                 name="password"
                 required
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="enter your password"
               />
             </div>
             <Button type="submit">Sign In</Button>

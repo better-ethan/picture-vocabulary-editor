@@ -13,13 +13,21 @@ import type { Route } from "./+types/signup";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      toast.error("Password and confirm password do not match!");
+      return;
+    }
+
     const { data, error } = await authClient.signUp.email(
       {
         email,
@@ -70,16 +78,31 @@ export default function Page() {
                 value={email}
                 required
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="enter your email"
               />
             </div>
             <div>
               <Label htmlFor="password">Password:</Label>
-              <Input
+              <PasswordInput
                 type="password"
                 id="password"
                 name="password"
                 required
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="enter your password"
+              />
+            </div>
+            <div>
+              <Label htmlFor="confirmPassword">Confirm Password:</Label>
+              <PasswordInput
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="confirm your password"
               />
             </div>
             <Button type="submit">Sign Up</Button>
