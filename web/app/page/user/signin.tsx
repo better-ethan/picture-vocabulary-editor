@@ -23,7 +23,7 @@ export default function Page() {
       {
         email,
         password,
-        callbackURL: `${window.location.origin}/`,
+        callbackURL: "/admin/user/profile",
       },
       {
         onRequest: (ctx) => {
@@ -33,7 +33,7 @@ export default function Page() {
           toast.success("Sign in successful!");
         },
         onError: (err) => {
-          toast.error("Signin Error: ", err);
+          toast.error("Signin Error");
         },
       }
     );
