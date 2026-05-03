@@ -33,15 +33,15 @@ export default function Page() {
         onSuccess: () => {
           toast.success("Sign in successful!");
         },
-        onError: (err) => {
-          toast.error("Signin Error");
+        onError: (ctx) => {
+          if (ctx.error.code === "EMAIL_NOT_VERIFIED") {
+            toast.error(`Please verify your email address before signing in.`);
+          } else {
+            toast.error(`Sign in failed: ${ctx.error.message}`);
+          }
         },
       }
     );
-
-    if (error) {
-      console.error("Sign in error: ", error);
-    }
   };
 
   return (

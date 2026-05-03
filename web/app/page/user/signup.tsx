@@ -19,6 +19,8 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,73 +42,132 @@ export default function Page() {
           toast.info("Sign up in progress...");
         },
         onSuccess: () => {
+          setSignUpSuccess(true);
           toast.success(
             "Sign up successful! Please check your email to verify your account."
           );
         },
-        onError: (err) => {
-          toast.error("Sign up Error, try again");
+        onError: (ctx) => {
+          toast.error(`Sign up failed: ${ctx.error.message}`);
         },
       }
     );
+  };
+
+  const [cooldown, setCooldown] = useState(0);
+
+  const handleResendVerification = async () => {
+    if (cooldown > 0 || isResending) return;
+
+    setIsResending(true);
+
+    const { error } = await authClient.sendVerificationEmail({
+      email,
+      callbackURL: `${window.location.origin}/admin/user/profile`,
+    });
+
+    if (error) {
+      toast.error("Failed to resend verification email. Please try again.");
+    } else {
+      toast.success("Verification email resent! Please check your inbox.");
+      setCooldown(60); // Set cooldown to 60 seconds
+      const timer = setInterval(() => {
+        setCooldown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    setIsResending(false);
   };
 
   return (
     <div className="flex h-full items-center justify-center">
       <Card className="">
         <CardHeader>
-          <CardTitle>Create your Account</CardTitle>
-          <Text>
-            Already have an account?{" "}
-            <Link to="/signin" className="ml-2 text-blue-600 hover:underline">
-              Sign In
-            </Link>
-          </Text>
+          {signUpSuccess ? (
+            <CardTitle>Account Created!</CardTitle>
+          ) : (
+            <>
+              <CardTitle>Create your Account</CardTitle>
+              <Text>
+                Already have an account?{" "}
+                <Link
+                  to="/signin"
+                  className="ml-2 text-blue-600 hover:underline"
+                >
+                  Sign In
+                </Link>
+              </Text>
+            </>
+          )}
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <Form
-            method="POST"
-            className="flex flex-col gap-4"
-            onSubmit={handleSubmit}
-          >
-            <div>
-              <Label htmlFor="email">Email:</Label>
-              <Input
-                type="email"
-                id="email"
-                name="email"
-                value={email}
-                required
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="enter your email"
-              />
+          {signUpSuccess ? (
+            <div className="flex flex-col items-center gap-4">
+              <Text>Please check your email to verify your account.</Text>
+              <Text className="text-gray-500">Don't receive the email?</Text>
+              <Button
+                disabled={isResending || cooldown > 0}
+                variant="secondary"
+                onClick={handleResendVerification}
+              >
+                {isResending
+                  ? "Sending..."
+                  : cooldown > 0
+                  ? `Resend in ${cooldown}s`
+                  : "Resend Verification Email"}
+              </Button>
             </div>
-            <div>
-              <Label htmlFor="password">Password:</Label>
-              <PasswordInput
-                type="password"
-                id="password"
-                name="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="enter your password"
-              />
-            </div>
-            <div>
-              <Label htmlFor="confirmPassword">Confirm Password:</Label>
-              <PasswordInput
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="confirm your password"
-              />
-            </div>
-            <Button type="submit">Sign Up</Button>
-          </Form>
+          ) : (
+            <Form
+              method="POST"
+              className="flex flex-col gap-4"
+              onSubmit={handleSubmit}
+            >
+              <div>
+                <Label htmlFor="email">Email:</Label>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={email}
+                  required
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="enter your email"
+                />
+              </div>
+              <div>
+                <Label htmlFor="password">Password:</Label>
+                <PasswordInput
+                  type="password"
+                  id="password"
+                  name="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="enter your password"
+                />
+              </div>
+              <div>
+                <Label htmlFor="confirmPassword">Confirm Password:</Label>
+                <PasswordInput
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="confirm your password"
+                />
+              </div>
+              <Button type="submit">Sign Up</Button>
+            </Form>
+          )}
         </CardContent>
       </Card>
     </div>
