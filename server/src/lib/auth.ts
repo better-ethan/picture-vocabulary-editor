@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db, user, session, account, verification } from "@package/drizzle";
+import { sendMail } from "~/lib/email.js";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -11,6 +12,21 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
+    requireEmailVerification: true,
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendMail({
+        from: "thisisethanlee@gmail.com",
+        to: user.email,
+        subject: "Verify your email",
+        text: `Please verify your email by clicking the following link: ${url}`,
+        html: `<p>Please verify your email by clicking the link below:</p>
+              <a href="${url}">Verify Email</a>
+              `,
+      });
+    },
   },
   trustedOrigins: ["http://localhost:3000", "http://127.0.0.1:3000"],
   logger: {

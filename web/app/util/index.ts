@@ -1,6 +1,7 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "@app/server";
+import { redirect } from "react-router";
 
 export const trpc = createTRPCClient<AppRouter>({
   links: [
@@ -32,6 +33,7 @@ export const fetchUtil = async ({
 }) => {
   const result = await fetch(`${host}${basicPath}`, {
     method,
+    redirect: "manual",
     headers: {
       "Content-Type": "application/json",
 
@@ -47,4 +49,18 @@ export const fetchUtil = async ({
   });
 
   return result;
+};
+
+export const proxyResponse = (response: Response) => {
+  if (response.status >= 300 && response.status < 400) {
+    const location = response.headers.get("location");
+    if (location) {
+      const res = redirect(location);
+      response.headers.getSetCookie().forEach((cookie) => {
+        res.headers.append("Set-Cookie", cookie);
+      });
+      return res;
+    }
+  }
+  return response;
 };

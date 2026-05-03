@@ -22,7 +22,16 @@ const reactRouterHandler = createRequestHandler({
 
 const app = express();
 
-app.use(compression());
+app.use(
+  compression({
+    filter: (req, res) => {
+      if (req.path.startsWith("/api/")) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+  })
+);
 
 // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
 app.disable("x-powered-by");
