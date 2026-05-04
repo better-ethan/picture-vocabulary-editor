@@ -59,7 +59,7 @@ export default function Page() {
         <CardContent className="flex flex-col gap-4">
           <Form
             method="POST"
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-8"
             onSubmit={handleSubmit}
           >
             <div>
@@ -85,6 +85,12 @@ export default function Page() {
                 placeholder="enter your password"
               />
             </div>
+            <Link
+              to="/user/request-reset-password"
+              className="text-end text-blue-600 hover:underline"
+            >
+              <Text>Forget password?</Text>
+            </Link>
             <Button type="submit">Sign In</Button>
           </Form>
         </CardContent>

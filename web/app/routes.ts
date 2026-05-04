@@ -16,6 +16,11 @@ export default [
     // user
     route("/signup", "page/user/signup.tsx"),
     route("/signin", "page/user/signin.tsx"),
+    route(
+      "/user/request-reset-password",
+      "page/user/request-reset-password.tsx"
+    ),
+    route("/user/reset-password", "page/user/reset-password.tsx"),
 
     route("*", "page/not-found.tsx"),
   ]),
