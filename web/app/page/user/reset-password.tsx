@@ -8,9 +8,10 @@ import {
 import { Input } from "@/components/retroui/Input";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
-import { Form, useLoaderData } from "react-router";
+import { Form, useLoaderData, useNavigate } from "react-router";
 import type { Route } from "./+types/reset-password";
 import { toast } from "sonner";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
@@ -28,6 +29,10 @@ export default function Page() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -36,10 +41,23 @@ export default function Page() {
       return;
     }
 
+    setIsLoading(true);
+
     const { error } = await authClient.resetPassword({
       newPassword,
       token,
     });
+
+    if (error) {
+      toast.error(`Failed to reset password: ${error.message}`);
+    } else {
+      toast.success(
+        "Password reset successful! Please sign in with your new password."
+      );
+      toast.success("Password reset successfully! Redirecting to login...");
+      setTimeout(() => navigate("/signin"), 2000);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -54,20 +72,20 @@ export default function Page() {
             onSubmit={handleSubmit}
             className="flex flex-col gap-6"
           >
-            <Input
+            <PasswordInput
               value={newPassword}
               required
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter your new password"
             />
-            <Input
+            <PasswordInput
               value={confirmPassword}
               required
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Enter confirm password"
             />
-            <Button type="submit" className="w-full">
-              Save
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save"}
             </Button>
           </Form>
         </CardContent>
