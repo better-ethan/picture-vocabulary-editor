@@ -87,7 +87,7 @@ export default function Page() {
 
   return (
     <div className="flex h-full items-center justify-center">
-      <Card className="">
+      <Card className="w-full max-w-100">
         <CardHeader>
           {signUpSuccess ? (
             <CardTitle>Account Created!</CardTitle>
@@ -126,7 +126,7 @@ export default function Page() {
           ) : (
             <Form
               method="POST"
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-8"
               onSubmit={handleSubmit}
             >
               <div>

@@ -35,8 +35,8 @@ export default function Page() {
   };
 
   return (
-    <div className="max-w-lg min-w-xs mx-auto px-4">
-      <Card className="min-w-xs">
+    <div className="flex justify-center items-start h-full px-4">
+      <Card className="w-full max-w-100">
         <CardHeader>
           <CardTitle>My Profile</CardTitle>
         </CardHeader>

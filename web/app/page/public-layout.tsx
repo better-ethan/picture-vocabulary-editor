@@ -78,7 +78,7 @@ export default function PublicLayout() {
           </div>
         </div>
       </nav>
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto px-4">
         <Outlet />
       </main>
     </div>

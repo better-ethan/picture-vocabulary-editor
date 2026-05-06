@@ -43,13 +43,13 @@ export default function Page() {
   const handleCancel = () => {};
 
   return (
-    <div className="max-w-lg min-w-xs mx-auto px-4">
-      <Card className="min-w-xs">
+    <div className="flex justify-center items-start h-full px-4">
+      <Card className="w-full max-w-100">
         <CardHeader>
           <CardTitle>Change Password</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-8">
             <PasswordInput
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}

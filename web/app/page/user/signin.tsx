@@ -46,7 +46,7 @@ export default function Page() {
 
   return (
     <div className="flex h-full items-center justify-center">
-      <Card className="">
+      <Card className="w-full max-w-100">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
           <Text>

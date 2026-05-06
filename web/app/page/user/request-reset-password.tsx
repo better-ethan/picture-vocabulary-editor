@@ -38,7 +38,7 @@ export default function Page() {
   };
   return (
     <div className="flex h-full items-center justify-center">
-      <Card>
+      <Card className="w-full max-w-100">
         <CardHeader>
           <CardTitle>Reset Password</CardTitle>
         </CardHeader>
@@ -46,13 +46,13 @@ export default function Page() {
           {isSuccess ? (
             <div className={cn("flex flex-col items-center gap-4")}>
               <Text as="h4" className="text-green-600">
-                Email sent!
+                Email sent ✅
               </Text>
-              <Text className="text-muted-foreground">
+              <Text className="text-muted-foreground w-full text-start">
                 Check your inbox at{" "}
                 <span className="text-blue-600 font-medium">{email}</span>.
               </Text>
-              <Text className="text-muted-foreground">
+              <Text className="text-muted-foreground w-full text-start">
                 If you don't see it, please try again.
               </Text>
             </div>
