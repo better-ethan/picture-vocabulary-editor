@@ -6,7 +6,9 @@ import {
   CardTitle,
 } from "@/components/retroui/Card";
 import { Input } from "@/components/retroui/Input";
+import { Label } from "@/components/retroui/Label";
 import { Text } from "@/components/retroui/Text";
+import { Field } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -55,6 +57,15 @@ export default function Page() {
               <Text className="text-muted-foreground w-full text-start">
                 If you don't see it, please try again.
               </Text>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsProcessing(false);
+                  setIsSuccess(false);
+                }}
+              >
+                Try Again
+              </Button>
             </div>
           ) : (
             <Form
@@ -62,12 +73,16 @@ export default function Page() {
               onSubmit={handleSubmit}
               className="flex flex-col gap-6"
             >
-              <Input
-                value={email}
-                required
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-              />
+              <Field>
+                <Label htmlFor="email">Email address</Label>
+                <Input
+                  id="email"
+                  value={email}
+                  required
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                />
+              </Field>
               <Button type="submit" className="w-full" disabled={isProcessing}>
                 {isProcessing ? "Sending..." : "Send a Reset Email"}
               </Button>

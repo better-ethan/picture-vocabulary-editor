@@ -6,6 +6,8 @@ import {
   CardTitle,
 } from "@/components/retroui/Card";
 import { Input } from "@/components/retroui/Input";
+import { Field } from "@/components/ui/field";
+import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
@@ -50,21 +52,33 @@ export default function Page() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-8">
-            <PasswordInput
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Current Password"
-            />
-            <PasswordInput
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="New Password"
-            />
-            <PasswordInput
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm New Password"
-            />
+            <Field>
+              <Label htmlFor="current-password">Current Password</Label>
+              <PasswordInput
+                id="current-password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Current Password"
+              />
+            </Field>
+            <Field>
+              <Label htmlFor="new-password">New Password</Label>
+              <PasswordInput
+                id="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="New Password"
+              />
+            </Field>
+            <Field>
+              <Label htmlFor="confirm-new-password">Confirm New Password</Label>
+              <PasswordInput
+                id="confirm-new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm New Password"
+              />
+            </Field>
 
             <Button
               onClick={handleSave}

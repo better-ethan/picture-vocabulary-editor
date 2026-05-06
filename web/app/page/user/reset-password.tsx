@@ -12,6 +12,8 @@ import { Form, useLoaderData, useNavigate } from "react-router";
 import type { Route } from "./+types/reset-password";
 import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/password-input";
+import { Label } from "@/components/retroui/Label";
+import { Field } from "@/components/ui/field";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
@@ -72,18 +74,26 @@ export default function Page() {
             onSubmit={handleSubmit}
             className="flex flex-col gap-6"
           >
-            <PasswordInput
-              value={newPassword}
-              required
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Enter your new password"
-            />
-            <PasswordInput
-              value={confirmPassword}
-              required
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Enter confirm password"
-            />
+            <Field>
+              <Label htmlFor="new-password">New Password</Label>
+              <PasswordInput
+                id="new-password"
+                value={newPassword}
+                required
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter your new password"
+              />
+            </Field>
+            <Field>
+              <Label htmlFor="confirm-password">Confirm New Password</Label>
+              <PasswordInput
+                id="confirm-password"
+                value={confirmPassword}
+                required
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Enter confirm password"
+              />
+            </Field>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Saving..." : "Save"}
             </Button>

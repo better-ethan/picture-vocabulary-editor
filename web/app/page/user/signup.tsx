@@ -14,6 +14,7 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/password-input";
+import { Field } from "@/components/ui/field";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -129,8 +130,8 @@ export default function Page() {
               className="flex flex-col gap-8"
               onSubmit={handleSubmit}
             >
-              <div>
-                <Label htmlFor="email">Email:</Label>
+              <Field>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   type="email"
                   id="email"
@@ -140,9 +141,9 @@ export default function Page() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="enter your email"
                 />
-              </div>
-              <div>
-                <Label htmlFor="password">Password:</Label>
+              </Field>
+              <Field>
+                <Label htmlFor="password">Password</Label>
                 <PasswordInput
                   type="password"
                   id="password"
@@ -152,9 +153,9 @@ export default function Page() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="enter your password"
                 />
-              </div>
-              <div>
-                <Label htmlFor="confirmPassword">Confirm Password:</Label>
+              </Field>
+              <Field>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <PasswordInput
                   type="password"
                   id="confirmPassword"
@@ -164,7 +165,7 @@ export default function Page() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="confirm your password"
                 />
-              </div>
+              </Field>
               <Button type="submit">Sign Up</Button>
             </Form>
           )}
