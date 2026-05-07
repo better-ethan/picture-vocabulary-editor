@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/empty";
 import { Loader } from "@/components/retroui/Loader";
 import { Card, CardContent, CardHeader } from "@/components/retroui/Card";
+import { useKonvaSnapping } from "use-konva-snapping";
 
 export interface CanvasContent {
   images: ImageItem[];
@@ -80,6 +81,7 @@ function URLImage({
   isSelected = false,
   mode = "view",
   clickHandler,
+  onTransform,
   onTransformEnd,
   width,
   height,
@@ -89,12 +91,8 @@ function URLImage({
   isSelected?: boolean;
   mode?: EditorMode;
   clickHandler?: () => void;
-  onTransformEnd?: (newAttrs: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }) => void;
+  onTransform?: (e: Konva.KonvaEventObject<Event>) => void;
+  onTransformEnd?: (e: Konva.KonvaEventObject<Event>) => void;
 }) {
   const [image] = useImage(src, "anonymous");
   const imageRef = useRef<Konva.Image>(null);
@@ -128,20 +126,6 @@ function URLImage({
         onTap={clickHandler}
         width={finalWidth}
         height={finalHeight}
-        onTransformEnd={() => {
-          const node = imageRef.current;
-          if (!node) return;
-          const scaleX = node.scaleX();
-          const scaleY = node.scaleY();
-          node.scaleX(1);
-          node.scaleY(1);
-          onTransformEnd?.({
-            x: node.x(),
-            y: node.y(),
-            width: node.width() * scaleX,
-            height: node.height() * scaleY,
-          });
-        }}
         {...rest}
       />
       {isEditMode && isSelected && (
@@ -154,6 +138,8 @@ function URLImage({
             }
             return newBox;
           }}
+          onTransform={onTransform}
+          onTransformEnd={onTransformEnd}
         />
       )}
     </>
@@ -188,6 +174,7 @@ function NumberCircle({
   mode = "view",
   isSelected = false,
   onSelect,
+  onDragMove,
   onDragEnd,
 }: {
   label: LabelItem;
@@ -195,6 +182,7 @@ function NumberCircle({
   mode?: "view" | "edit";
   isSelected?: boolean;
   onSelect: () => void;
+  onDragMove?: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd?: (e: Konva.KonvaEventObject<DragEvent>) => void;
 }) {
   return (
@@ -204,6 +192,7 @@ function NumberCircle({
         y={label.y}
         onClick={onSelect}
         draggable={draggable}
+        onDragMove={onDragMove}
         onDragEnd={onDragEnd}
       >
         {mode === "edit" && isSelected && (
@@ -950,6 +939,18 @@ export function VocabularyCanvas({
   containerRef,
   onDrop,
 }: VocabularyCanvasProps) {
+  const { handleDragging, handleDragEnd, handleResizing, handleResizeEnd } =
+    useKonvaSnapping({
+      guidelineColor: "blue",
+      guidelineDash: true,
+      snapToStageCenter: true,
+      snapRange: 5,
+      guidelineThickness: 1,
+      showGuidelines: true,
+      snapToShapes: true,
+      snapToStageBorders: true,
+    });
+
   return (
     <Card
       ref={containerRef}
@@ -979,7 +980,9 @@ export function VocabularyCanvas({
                 y={img.y}
                 isSelected={selectedId === img.id}
                 onClick={() => onSelectId?.(img.id)}
+                onDragMove={handleDragging}
                 onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
+                  handleDragEnd(e);
                   const pos = e.target.position();
                   onImagesChange?.(
                     images.map((it) =>
@@ -987,16 +990,31 @@ export function VocabularyCanvas({
                     )
                   );
                 }}
-                onTransformEnd={(newAttrs) => {
+                onTransform={handleResizing}
+                onTransformEnd={(e) => {
+                  handleResizeEnd(e);
+
+                  const node = (
+                    e.currentTarget as Konva.Transformer
+                  ).nodes()[0] as Konva.Node;
+                  if (!node) return;
+
+                  const newWidth = node.width() * node.scaleX();
+                  const newHeight = node.height() * node.scaleY();
+
+                  node.scaleX(1);
+                  node.scaleY(1);
+
                   onImagesChange?.(
                     images.map((it) =>
                       it.id === img.id
                         ? {
                             ...it,
-                            x: newAttrs.x,
-                            y: newAttrs.y,
-                            width: newAttrs.width,
-                            height: newAttrs.height,
+                            x: node.x(),
+                            y: node.y(),
+                            width: newWidth,
+                            height: newHeight,
+                            rotation: node.rotation(),
                           }
                         : it
                     )
@@ -1012,7 +1030,9 @@ export function VocabularyCanvas({
                 mode={mode}
                 onSelect={() => onSelectId?.(label.id)}
                 isSelected={selectedId === label.id}
+                onDragMove={handleDragging}
                 onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
+                  handleDragEnd(e);
                   const pos = e.target.position();
                   onLabelsChange?.(
                     labels.map((l) =>
