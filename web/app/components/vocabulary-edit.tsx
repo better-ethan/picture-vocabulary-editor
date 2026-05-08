@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
+import React, {
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import {
   Stage,
   Layer,
@@ -9,6 +16,7 @@ import {
   Image,
   Transformer,
   Group,
+  Line,
 } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
@@ -21,6 +29,7 @@ import {
   Volume2,
   ChevronLeftIcon,
   BookAIcon,
+  ToolCaseIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
@@ -54,6 +63,7 @@ import { useKonvaSnapping } from "use-konva-snapping";
 export interface CanvasContent {
   images: ImageItem[];
   labels: LabelItem[];
+  lines: LineItem[];
   words: { number: number; word: string }[];
 }
 
@@ -69,6 +79,7 @@ interface VocabularyEditorProps {
     content: {
       images: ImageItem[];
       labels: LabelItem[];
+      lines: LineItem[];
       words: { number: number; word: string }[];
     };
   };
@@ -222,6 +233,184 @@ function NumberCircle({
   );
 }
 
+interface LineItem {
+  id: string;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  color?: string;
+  strokeWidth?: number;
+}
+
+function EditableHandDrawLine({
+  mode,
+  line,
+  isSelected,
+  onSelect,
+  onChange,
+}: {
+  mode: EditorMode;
+  line: LineItem;
+  isSelected: boolean;
+  onSelect: () => void;
+  onChange: (updated: LineItem) => void;
+}) {
+  const jitterOffsets = useRef<number[]>([]);
+  if (jitterOffsets.current.length === 0) {
+    for (let i = 0; i <= 12; i++) {
+      jitterOffsets.current.push(
+        (Math.random() - 0.5) * 3,
+        (Math.random() - 0.5) * 3
+      );
+    }
+  }
+
+  const points = useMemo(() => {
+    const result: number[] = [];
+    for (let i = 0; i <= 12; i++) {
+      const t = i / 12;
+      result.push(
+        line.startX +
+          (line.endX - line.startX) * t +
+          jitterOffsets.current[i * 2],
+        line.startY +
+          (line.endY - line.startY) * t +
+          jitterOffsets.current[i * 2 + 1]
+      );
+    }
+    return result;
+  }, [line.startX, line.startY, line.endX, line.endY]);
+
+  const HANDLE_RADIUS = 6;
+
+  return (
+    <>
+      <Group
+        onClick={onSelect}
+        onTap={onSelect}
+        draggable={mode === "edit"}
+        onDragEnd={(e) => {
+          const dx = e.target.x();
+          const dy = e.target.y();
+
+          onChange({
+            ...line,
+            startX: line.startX + dx,
+            startY: line.startY + dy,
+            endX: line.endX + dx,
+            endY: line.endY + dy,
+          });
+
+          e.target.position({ x: 0, y: 0 });
+        }}
+      >
+        <Line
+          points={points}
+          stroke={"transparent"}
+          strokeWidth={20}
+          tension={0.4}
+        />
+
+        <Line
+          points={points}
+          stroke={line.color ?? "black"}
+          strokeWidth={line.strokeWidth ?? 2}
+          tension={0.4}
+          listening={false}
+        />
+
+        {mode === "edit" && isSelected && (
+          <>
+            <Circle
+              x={line.startX}
+              y={line.startY}
+              radius={HANDLE_RADIUS}
+              fill={"white"}
+              stroke={"#3b82f6"}
+              strokeWidth={2}
+              draggable
+              onDragStart={(e) => {
+                e.cancelBubble = true;
+              }}
+              onDragEnd={(e) => {
+                e.cancelBubble = true;
+              }}
+              onDragMove={(e) => {
+                e.cancelBubble = true;
+                onChange({
+                  ...line,
+                  startX: e.target.x(),
+                  startY: e.target.y(),
+                });
+              }}
+            />
+            <Circle
+              x={line.endX}
+              y={line.endY}
+              radius={HANDLE_RADIUS}
+              fill="white"
+              stroke="#3b82f6"
+              strokeWidth={2}
+              draggable
+              onDragStart={(e) => {
+                e.cancelBubble = true;
+              }}
+              onDragEnd={(e) => {
+                e.cancelBubble = true;
+              }}
+              onDragMove={(e) => {
+                e.cancelBubble = true;
+                onChange({
+                  ...line,
+                  endX: e.target.x(),
+                  endY: e.target.y(),
+                });
+              }}
+            />
+          </>
+        )}
+      </Group>
+    </>
+  );
+}
+
+function DraggableLine({
+  color = "black",
+  label = "Line",
+}: {
+  color?: string;
+  label?: string;
+}) {
+  return (
+    <div
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData(
+          "lineItem",
+          JSON.stringify({ color, strokeWidth: 2 })
+        );
+      }}
+      className={cn(
+        "flex flex-col items-center gap-1 p-2 rounded cursor-grab",
+        "border border0dashed border-gray-300 hover:border-blue-400",
+        "hover:bg-blue-50 transition select-none"
+      )}
+    >
+      <svg width="80" height="24" viewBox="0 0 80 24">
+        <path
+          d="M4,12 C15,8 20,16 30,12 C40,8 45,16 55,12 C65,8 70,16 76,12"
+          stroke={color}
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+        />
+      </svg>
+      <span className="text-xs text-gray-500">{label}</span>
+    </div>
+  );
+}
+
 export function VocabularyEditor({
   width,
   height,
@@ -235,6 +424,10 @@ export function VocabularyEditor({
   const [images, setImages] = useState<ImageItem[]>(
     data?.content ? data?.content.images : []
   );
+  const [lines, setLines] = useState<LineItem[]>(
+    data?.content ? data?.content.lines : []
+  );
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [imageSearch, setImageSearch] = useState("");
@@ -323,6 +516,22 @@ export function VocabularyEditor({
       ]);
     }
 
+    const lineItemData = e.dataTransfer.getData("lineItem");
+    if (lineItemData) {
+      const { color, strokeWidth } = JSON.parse(lineItemData);
+      const newLine: LineItem = {
+        id: `line-${Date.now()}`,
+        startX: x - 60,
+        startY: y,
+        endX: x + 60,
+        endY: y,
+        color,
+        strokeWidth,
+      };
+      setLines((prev) => [...prev, newLine]);
+      setSelectedId(newLine.id);
+    }
+
     const files = Array.from(e.dataTransfer.files).filter((f) =>
       f.type.startsWith("image/")
     );
@@ -362,6 +571,7 @@ export function VocabularyEditor({
   const content = {
     images,
     labels,
+    lines,
     words: numbers.map((num) => ({ number: num, word: wordMap[num] ?? "" })),
   };
 
@@ -373,7 +583,7 @@ export function VocabularyEditor({
     setSlug(title.toLowerCase().split(" ").join("-"));
   };
 
-  type Tool = "images" | "upload" | "words";
+  type Tool = "images" | "upload" | "words" | "tools";
   const [activeTool, setActiveTool] = useState<Tool | null>("images");
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const toggleTool = (tool: Tool) => {
@@ -399,6 +609,9 @@ export function VocabularyEditor({
           setSelectedId(null);
         } else if (selectedId?.startsWith("label-")) {
           setLabels((prev) => prev.filter((label) => label.id !== selectedId));
+          setSelectedId(null);
+        } else if (selectedId?.startsWith("line-")) {
+          setLines((prev) => prev.filter((line) => line.id !== selectedId));
           setSelectedId(null);
         }
       }
@@ -493,6 +706,12 @@ export function VocabularyEditor({
                   onClick={() => toggleTool("words")}
                   active={activeTool === "words"}
                 />
+                <ToolButton
+                  ButtonIcon={ToolCaseIcon}
+                  text="Tools"
+                  onClick={() => toggleTool("tools")}
+                  active={activeTool === "tools"}
+                />
               </div>
               <div
                 className={cn(
@@ -514,6 +733,7 @@ export function VocabularyEditor({
                     }
                   />
                 )}
+                {isPanelOpen && activeTool === "tools" && <ToolsPanel />}
               </div>
               <Button
                 type="button"
@@ -545,10 +765,12 @@ export function VocabularyEditor({
               mode={mode}
               images={images}
               labels={labels}
+              lines={lines}
               selectedId={selectedId}
               onSelectId={setSelectedId}
               onImagesChange={setImages}
               onLabelsChange={setLabels}
+              onLinesChange={setLines}
               containerRef={containerRef}
               onDrop={handleDrop}
             />
@@ -880,6 +1102,17 @@ function WordsPanel({
   );
 }
 
+function ToolsPanel({}: {}) {
+  return (
+    <div className="flex flex-col h-full">
+      <Text>Drag line onto canvas</Text>
+      <div>
+        <DraggableLine color="black" label="Black Line" />
+      </div>
+    </div>
+  );
+}
+
 function ImageGrid({
   images,
 }: {
@@ -918,10 +1151,12 @@ interface VocabularyCanvasProps {
   mode: EditorMode;
   images: ImageItem[];
   labels: LabelItem[];
+  lines: LineItem[];
   selectedId?: string | null;
   onSelectId?: (id: string | null) => void;
   onImagesChange?: (images: ImageItem[]) => void;
   onLabelsChange?: (labels: LabelItem[]) => void;
+  onLinesChange?: (lines: LineItem[]) => void;
   containerRef?: React.RefObject<HTMLDivElement | null>;
   onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
 }
@@ -932,10 +1167,12 @@ export function VocabularyCanvas({
   mode = "view",
   images,
   labels,
+  lines,
   selectedId,
   onSelectId,
   onImagesChange,
   onLabelsChange,
+  onLinesChange,
   containerRef,
   onDrop,
 }: VocabularyCanvasProps) {
@@ -1040,6 +1277,20 @@ export function VocabularyCanvas({
                     )
                   );
                 }}
+              />
+            ))}
+            {lines.map((line) => (
+              <EditableHandDrawLine
+                key={line.id}
+                line={line}
+                isSelected={selectedId === line.id}
+                mode={mode}
+                onSelect={() => onSelectId?.(line.id)}
+                onChange={(updated) =>
+                  onLinesChange?.(
+                    lines.map((l) => (l.id === updated.id ? updated : l))
+                  )
+                }
               />
             ))}
           </Layer>
