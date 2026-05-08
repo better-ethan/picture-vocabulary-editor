@@ -256,31 +256,7 @@ function EditableHandDrawLine({
   onSelect: () => void;
   onChange: (updated: LineItem) => void;
 }) {
-  const jitterOffsets = useRef<number[]>([]);
-  if (jitterOffsets.current.length === 0) {
-    for (let i = 0; i <= 12; i++) {
-      jitterOffsets.current.push(
-        (Math.random() - 0.5) * 3,
-        (Math.random() - 0.5) * 3
-      );
-    }
-  }
-
-  const points = useMemo(() => {
-    const result: number[] = [];
-    for (let i = 0; i <= 12; i++) {
-      const t = i / 12;
-      result.push(
-        line.startX +
-          (line.endX - line.startX) * t +
-          jitterOffsets.current[i * 2],
-        line.startY +
-          (line.endY - line.startY) * t +
-          jitterOffsets.current[i * 2 + 1]
-      );
-    }
-    return result;
-  }, [line.startX, line.startY, line.endX, line.endY]);
+  const points = [line.startX, line.startY, line.endX, line.endY];
 
   const HANDLE_RADIUS = 6;
 
@@ -305,18 +281,12 @@ function EditableHandDrawLine({
           e.target.position({ x: 0, y: 0 });
         }}
       >
-        <Line
-          points={points}
-          stroke={"transparent"}
-          strokeWidth={20}
-          tension={0.4}
-        />
+        <Line points={points} stroke={"transparent"} strokeWidth={20} />
 
         <Line
           points={points}
           stroke={line.color ?? "black"}
-          strokeWidth={line.strokeWidth ?? 2}
-          tension={0.4}
+          strokeWidth={line.strokeWidth ?? 0.5}
           listening={false}
         />
 
@@ -328,7 +298,7 @@ function EditableHandDrawLine({
               radius={HANDLE_RADIUS}
               fill={"white"}
               stroke={"#3b82f6"}
-              strokeWidth={2}
+              strokeWidth={1}
               draggable
               onDragStart={(e) => {
                 e.cancelBubble = true;
@@ -351,7 +321,7 @@ function EditableHandDrawLine({
               radius={HANDLE_RADIUS}
               fill="white"
               stroke="#3b82f6"
-              strokeWidth={2}
+              strokeWidth={1}
               draggable
               onDragStart={(e) => {
                 e.cancelBubble = true;

@@ -40,7 +40,8 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 export default function Page() {
   const data = useLoaderData<typeof loader>();
 
-  const { images, labels, words } = data.content as unknown as CanvasContent;
+  const { images, labels, lines, words } =
+    data.content as unknown as CanvasContent;
 
   return (
     <div className="p-4 container mx-auto">
@@ -52,6 +53,7 @@ export default function Page() {
           mode="view"
           images={images}
           labels={labels}
+          lines={lines}
         />
 
         <Card className="w-full lg:w-64 shrink-0 ml-6">
