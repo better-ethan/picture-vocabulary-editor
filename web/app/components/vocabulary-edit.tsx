@@ -286,8 +286,9 @@ function EditableHandDrawLine({
         <Line
           points={points}
           stroke={line.color ?? "black"}
-          strokeWidth={line.strokeWidth ?? 0.5}
+          strokeWidth={line.strokeWidth ?? 2}
           listening={false}
+          perfectDrawEnabled={false}
         />
 
         {mode === "edit" && isSelected && (
@@ -368,11 +369,13 @@ function DraggableLine({
       )}
     >
       <svg width="80" height="24" viewBox="0 0 80 24">
-        <path
-          d="M4,12 C15,8 20,16 30,12 C40,8 45,16 55,12 C65,8 70,16 76,12"
+        <line
+          x1="4"
+          y1="12"
+          x2="76"
+          y2="12"
           stroke={color}
           strokeWidth="2"
-          fill="none"
           strokeLinecap="round"
         />
       </svg>
@@ -1074,10 +1077,10 @@ function WordsPanel({
 
 function ToolsPanel({}: {}) {
   return (
-    <div className="flex flex-col h-full">
-      <Text>Drag line onto canvas</Text>
+    <div className="flex flex-col h-full p-4 gap-4">
+      <Text>Drag these tools onto canvas</Text>
       <div>
-        <DraggableLine color="black" label="Black Line" />
+        <DraggableLine color="black" label="Helper Line" />
       </div>
     </div>
   );
