@@ -6,7 +6,7 @@ import type { Route } from "./+types/list";
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
 
-  const result = await trpc.pictureLesson.list.query({ status: "published" });
+  const result = await trpc.pictureLesson.authored.query({});
 
   return result;
 };
@@ -34,7 +34,7 @@ export default function Page() {
           {data.map((item, index) => (
             <Link
               key={index}
-              to={`/picture-lesson/${item.id}/${item.slug}`}
+              to={`/admin/picture-lesson/${item.id}/${item.slug}/preview`}
               className="group block rounded-2xl border border-border bg-card shadow-sm hover:shadow-md hover:border-primary transition-all duration-200 p-6"
             >
               <div className="flex items-center justify-between mb-3">

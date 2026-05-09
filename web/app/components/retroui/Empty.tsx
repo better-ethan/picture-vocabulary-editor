@@ -72,6 +72,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 export {
+  Empty,
   EmptyContent,
   EmptyIcon,
   EmptyTitle,

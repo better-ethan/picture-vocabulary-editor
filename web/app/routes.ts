@@ -11,6 +11,10 @@ export default [
 
     route("/picture-lesson/list", "page/picture-lesson/list.tsx"),
     route("/picture-lesson/:id/:slug", "page/picture-lesson/index.tsx"),
+    route(
+      "/picture-lesson/:id/:slug/preview",
+      "page/picture-lesson/preview.tsx"
+    ),
 
     // user
     route("/signup", "page/user/signup.tsx"),
@@ -30,6 +34,8 @@ export default [
       "/admin/picture-lesson/:id/:slug/edit",
       "page/picture-lesson/edit.tsx"
     ),
+
+    route("/admin/picture-lesson/authored", "page/picture-lesson/authored.tsx"),
 
     route("/admin/user/profile", "page/user/profile.tsx"),
     route("/admin/user/change-password", "page/user/change-password.tsx"),

@@ -1,14 +1,21 @@
 import { Button } from "@/components/retroui/Button";
 import { Drawer } from "@/components/retroui/Drawer";
 import { Text } from "@/components/retroui/Text";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/retroui/Popover";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, User2Icon } from "lucide-react";
 import { Link, Outlet } from "react-router";
 
 const baseDrawerLinkClasses =
   "font-bold text-black decoration-2 underline-offset-4 transition-colors hover:text-[#3B82F6] hover:underline";
 
 export default function PublicLayout() {
+  const { data: session } = authClient.useSession();
   return (
     <div className={cn("flex flex-col h-screen overflow-hidden")}>
       <nav className="relative sticky top-0 z-50 border-b-2 border-black bg-white px-4 py-4 md:px-8">
@@ -38,11 +45,37 @@ export default function PublicLayout() {
               Pricing
             </Link>
             <div className="ml-2 flex items-center gap-3">
-              <Button asChild variant="default" size="sm">
-                <Link to="/signin" className="uppercase">
-                  Log in
-                </Link>
-              </Button>
+              {session ? (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button size="icon">
+                      <User2Icon className="size-5" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80">
+                    <div className="flex flex-col gap-6">
+                      <Button asChild variant="outline" size="sm">
+                        <Link to="/admin/user/profile" className="uppercase">
+                          Profile
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => authClient.signOut()}
+                      >
+                        Log out
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <Button asChild variant="default" size="sm">
+                  <Link to="/signin" className="uppercase">
+                    Log in
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3 md:hidden">
@@ -69,9 +102,27 @@ export default function PublicLayout() {
                   <Link to="/pricing" className={cn(baseDrawerLinkClasses)}>
                     Pricing
                   </Link>
-                  <Link to="/signin" className={cn(baseDrawerLinkClasses)}>
-                    Log in
-                  </Link>
+                  {session ? (
+                    <>
+                      <Link
+                        to="/admin/user/profile"
+                        className={cn(baseDrawerLinkClasses)}
+                      >
+                        Profile
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => authClient.signOut()}
+                      >
+                        Log out
+                      </Button>
+                    </>
+                  ) : (
+                    <Link to="/signin" className={cn(baseDrawerLinkClasses)}>
+                      Log in
+                    </Link>
+                  )}
                 </div>
               </Drawer.Content>
             </Drawer>

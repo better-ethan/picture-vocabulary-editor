@@ -55,7 +55,7 @@ function AdminSidebar() {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/admin/picture-lesson/list">My Picture Lessons</Link>
+                <Link to="/admin/picture-lesson/authored">Authored</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

@@ -6,13 +6,30 @@ import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../lib/auth.js";
 
 export const pictureLessonRouter = router({
-  list: publicProcedure.query(async () => {
-    const rows = await db
-      .select()
-      .from(pictureLesson)
-      .orderBy(desc(pictureLesson.createdAt));
-    return rows;
-  }),
+  list: publicProcedure
+    .input(
+      z.object({
+        userId: z.number().optional(),
+        status: z.enum(["draft", "published"]).optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const rows = await db
+        .select()
+        .from(pictureLesson)
+        .where(
+          and(
+            input.status !== undefined
+              ? eq(pictureLesson.status, input.status)
+              : undefined,
+            input.userId !== undefined
+              ? eq(pictureLesson.userId, input.userId)
+              : undefined
+          )
+        )
+        .orderBy(desc(pictureLesson.createdAt));
+      return rows;
+    }),
 
   create: publicProcedure
     .input(
@@ -25,14 +42,10 @@ export const pictureLessonRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      console.log("### headers: ", ctx.req.headers);
-      console.log("### cookie: ", ctx.req.headers.cookie);
-
       const session = await auth.api.getSession({
         headers: fromNodeHeaders(ctx.req.headers),
       });
 
-      console.log("### session: ", session);
       const userId = session?.user?.id;
       if (!userId) {
         throw new Error("Unauthorized");
@@ -110,6 +123,58 @@ export const pictureLessonRouter = router({
             eq(pictureLesson.slug, input.slug)
           )
         );
+      return row;
+    }),
+
+  authored: publicProcedure
+    .input(z.object({ status: z.enum(["draft", "published"]).optional() }))
+    .query(async ({ input, ctx }) => {
+      const session = await auth.api.getSession({
+        headers: fromNodeHeaders(ctx.req.headers),
+      });
+
+      const userId = session?.user?.id;
+      if (!userId) {
+        throw new Error("Unauthorized");
+      }
+
+      const rows = await db
+        .select()
+        .from(pictureLesson)
+        .where(
+          and(
+            eq(pictureLesson.userId, userId),
+            input.status ? eq(pictureLesson.status, input.status) : undefined
+          )
+        )
+        .orderBy(desc(pictureLesson.createdAt));
+
+      return rows;
+    }),
+
+  preview: publicProcedure
+    .input(z.object({ id: z.number(), slug: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const session = await auth.api.getSession({
+        headers: fromNodeHeaders(ctx.req.headers),
+      });
+
+      const userId = session?.user?.id;
+      if (!userId) {
+        throw new Error("Unauthorized");
+      }
+
+      const [row] = await db
+        .select()
+        .from(pictureLesson)
+        .where(
+          and(
+            eq(pictureLesson.id, input.id),
+            eq(pictureLesson.slug, input.slug),
+            eq(pictureLesson.userId, userId)
+          )
+        );
+
       return row;
     }),
 });
