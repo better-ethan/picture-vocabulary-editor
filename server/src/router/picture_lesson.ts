@@ -2,6 +2,8 @@ import { desc, eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { db, pictureLesson } from "@package/drizzle";
 import { publicProcedure, router } from "../trpc.js";
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../lib/auth.js";
 
 export const pictureLessonRouter = router({
   list: publicProcedure.query(async () => {
@@ -22,10 +24,24 @@ export const pictureLessonRouter = router({
         content: z.json().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      console.log("### headers: ", ctx.req.headers);
+      console.log("### cookie: ", ctx.req.headers.cookie);
+
+      const session = await auth.api.getSession({
+        headers: fromNodeHeaders(ctx.req.headers),
+      });
+
+      console.log("### session: ", session);
+      const userId = session?.user?.id;
+      if (!userId) {
+        throw new Error("Unauthorized");
+      }
+
       const [row] = await db
         .insert(pictureLesson)
         .values({
+          userId,
           title: input.title,
           slug: input.slug,
           description: input.description,

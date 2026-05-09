@@ -1,0 +1,1 @@
+ALTER TABLE "picture_lesson" ADD COLUMN "user_id" text NOT NULL;

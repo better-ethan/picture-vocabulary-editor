@@ -3,13 +3,26 @@ import { createTRPCContext } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "@app/server";
 import { redirect } from "react-router";
 
-export const trpc = createTRPCClient<AppRouter>({
-  links: [
-    httpBatchLink({
-      url: import.meta.env.SERVER_URL || "http://127.0.0.1:4000/trpc",
-    }),
-  ],
-});
+const TRPC_URL = import.meta.env.SERVER_URL || "http://127.0.0.1:4000/trpc";
+export const createTrpcClient = (request?: Request) =>
+  createTRPCClient<AppRouter>({
+    links: [
+      httpBatchLink({
+        url: TRPC_URL,
+        headers: request
+          ? { cookie: request.headers.get("cookie") ?? "" }
+          : undefined,
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            credentials: "include",
+          });
+        },
+      }),
+    ],
+  });
+
+export const trpc = createTrpcClient();
 
 export const { TRPCProvider, useTRPC, useTRPCClient } =
   createTRPCContext<AppRouter>();

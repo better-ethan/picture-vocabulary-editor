@@ -17,6 +17,7 @@ export const todo = pgTable("todo", {
 
 export const pictureLesson = pgTable("picture_lesson", {
   id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   status: varchar("status", { length: 50 }).notNull().default("draft"),

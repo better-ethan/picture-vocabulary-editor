@@ -1,7 +1,12 @@
 import { initTRPC } from "@trpc/server";
 import { ZodError } from "zod";
+import { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
-const t = initTRPC.create({
+export const createContext = ({ req, res }: CreateFastifyContextOptions) => {
+  return { req, res };
+};
+
+const t = initTRPC.context<typeof createContext>().create({
   errorFormatter({ shape, error }) {
     return {
       code: -1,

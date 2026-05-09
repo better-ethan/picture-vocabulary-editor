@@ -4,18 +4,23 @@ import {
   FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
 import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
 
 import { AppRouter, appRouter } from "./main.js";
 import { auth } from "./lib/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
+import { createContext } from "./trpc.js";
 
 const server = Fastify({
   logger: true,
 });
 
+server.register(cookie);
+
 server.register(cors, {
   origin: ["http://127.0.0.1:3000", "http://localhost:3000"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
 });
 
 server.get("/health", async () => {
@@ -68,6 +73,7 @@ server.register(fastifyTRPCPlugin, {
   prefix: "/trpc",
   trpcOptions: {
     router: appRouter,
+    createContext,
   } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
 });
 

@@ -1,4 +1,4 @@
-import { trpc } from "@/util";
+import { trpc, createTrpcClient } from "@/util";
 import {
   VocabularyEditor,
   type CanvasContent,
@@ -20,6 +20,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const content = formData.get("content") as string;
   let status = formData.get("status");
   if (!status) status = "draft";
+
+  const trpc = createTrpcClient(request);
 
   // download and re-upload images to our R2, then replace the src in content
   const updatedContent = await reuploadPixabayImages(JSON.parse(content));
