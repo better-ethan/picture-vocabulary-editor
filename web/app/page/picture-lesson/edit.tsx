@@ -1,4 +1,4 @@
-import { trpc } from "@/util";
+import { createTrpcClient } from "@/util";
 import { VocabularyEditor } from "@/components/vocabulary-edit";
 import { toast } from "sonner";
 import { useActionData, useLoaderData } from "react-router";
@@ -34,6 +34,8 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
   if (!status) status = "draft";
 
   const updatedContent = await reuploadPixabayImages(JSON.parse(content));
+
+  const trpc = createTrpcClient(request);
 
   const result = await trpc.pictureLesson.toggle.mutate({
     id: parseInt(params.id!),

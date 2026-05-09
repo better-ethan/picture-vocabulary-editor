@@ -1,6 +1,6 @@
 import { useLoaderData } from "react-router";
 import type { Route } from "./+types/index";
-import { trpc } from "@/util";
+import { createTrpcClient } from "@/util";
 import {
   speak,
   VocabularyCanvas,
@@ -19,12 +19,15 @@ import { Text } from "@/components/retroui/Text";
 import { Badge } from "@/components/retroui/Badge";
 import { cn } from "@/lib/utils";
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const id = params.id;
   const slug = params.slug;
   if (!id || !slug) {
     throw new Response("Not Found", { status: 404 });
   }
+
+  const trpc = createTrpcClient(request);
+
   const result = await trpc.pictureLesson.getByIdAndSlug.query({
     id: parseInt(id),
     slug,

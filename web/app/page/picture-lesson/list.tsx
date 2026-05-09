@@ -1,8 +1,11 @@
 import { Link, useLoaderData } from "react-router";
-import { trpc } from "@/util";
+import { createTrpcClient } from "@/util";
 import { EmptyHeader, EmptyTitle, Empty } from "@/components/ui/empty";
+import type { Route } from "./+types/list";
 
-export const loader = async () => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const trpc = createTrpcClient(request);
+
   const result = await trpc.pictureLesson.list.query();
 
   return result;
