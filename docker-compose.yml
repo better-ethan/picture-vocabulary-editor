@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-todo}
+      POSTGRES_DB: ${DB_NAME:-picture_lesson}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/todo
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/picture_lesson
       SERVER_PORT: 4000
     ports:
       - "4000:4000"

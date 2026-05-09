@@ -8,13 +8,6 @@ import {
   json,
 } from "drizzle-orm/pg-core";
 
-export const todo = pgTable("todo", {
-  id: serial("id").primaryKey(),
-  title: varchar("title", { length: 255 }).notNull(),
-  completed: boolean("completed").notNull().default(false),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
 export const pictureLesson = pgTable("picture_lesson", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),

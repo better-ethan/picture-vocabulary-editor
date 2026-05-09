@@ -8,7 +8,6 @@ import {
 export default [
   layout("page/public-layout.tsx", [
     route("/", "page/home.tsx"),
-    route("/todo", "page/todo.tsx"),
 
     route("/picture-lesson/list", "page/picture-lesson/list.tsx"),
     route("/picture-lesson/:id/:slug", "page/picture-lesson/index.tsx"),

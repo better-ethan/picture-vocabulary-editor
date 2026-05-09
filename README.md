@@ -4,11 +4,6 @@ This is a very simple todo list web built with TRPC and React Router. It is not 
 
 ### Features
 
-- Add a todo
-- Delete a todo
-- Mark a todo as completed
-- List all todos
-
 ### Tech Stack
 
 - Pnpm monorepo
