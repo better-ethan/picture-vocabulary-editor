@@ -6,12 +6,15 @@ import { useEffect } from "react";
 import type { Route } from "./+types/edit";
 import { reuploadPixabayImages } from "@/util/image";
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const id = params.id;
   const slug = params.slug;
   if (!id) {
     throw new Response("Not Found", { status: 404 });
   }
+
+  const trpc = createTrpcClient(request);
+
   const result = await trpc.pictureLesson.getByIdAndSlug.query({
     id: parseInt(id),
     slug,
@@ -65,6 +68,7 @@ export default function Page() {
           width={700}
           height={600}
           mode="edit"
+          operation="edit"
           data={{
             title: data.title,
             slug: data.slug,

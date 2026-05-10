@@ -30,6 +30,7 @@ import {
   ChevronLeftIcon,
   BookAIcon,
   ToolCaseIcon,
+  FileTextIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
@@ -57,8 +58,14 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Loader } from "@/components/retroui/Loader";
-import { Card, CardContent, CardHeader } from "@/components/retroui/Card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/retroui/Card";
 import { useKonvaSnapping } from "use-konva-snapping";
+import { Label } from "@/components/retroui/Label";
 
 export interface CanvasContent {
   images: ImageItem[];
@@ -71,6 +78,7 @@ interface VocabularyEditorProps {
   width: number;
   height: number;
   mode?: "edit" | "view";
+  operation?: "create" | "edit";
   data?: {
     title: string;
     slug?: string;
@@ -388,6 +396,7 @@ export function VocabularyEditor({
   width,
   height,
   mode = "view",
+  operation = "create",
   data,
 }: VocabularyEditorProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -406,7 +415,7 @@ export function VocabularyEditor({
   const [imageSearch, setImageSearch] = useState("");
 
   const initialNumbers = data?.content.words.map((w) => w.number) ?? [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    1, 2, 3, 4, 5,
   ];
   const [numbers, setNumbers] = useState(initialNumbers);
 
@@ -595,63 +604,15 @@ export function VocabularyEditor({
   }, [selectedId, mode]);
 
   return (
-    <Form method="post" className="flex flex-col bg-inherit h-screen">
+    <Form method="post" className="flex flex-col bg-inherit h-screen px-2">
       {mode === "edit" && (
-        <div className="flex items-center gap-4 px-6 py-3 bg-white border-b shadow-sm shrink-0">
-          <h1
-            className={cn("text-lg font-semibold text-gray-800 tracking-tight")}
-          >
-            Vocabulary Editor
-          </h1>
-          <div className="w-px h-6 bg-gray-200" />
-          <Input
-            type="text"
-            value={title}
-            placeholder="Add a title"
-            onChange={(e) => setTitle(e.target.value)}
-            onBlur={handleTitleBlur}
-            className="w-100 h-8"
-            required
-            name="title"
-          />
-          <Input
-            type="text"
-            value={slug}
-            onChange={handleSlugChange}
-            placeholder="Add a slug"
-            className="w-100 h-8"
-            required
-            name="slug"
-          />
-          <div className="ml-auto flex items-center gap-2">
-            <Select
-              value={status}
-              onValueChange={(value) =>
-                setStatus(value as "draft" | "published")
-              }
-              name="status"
-              required
-            >
-              <SelectTrigger className="w-36 h-8 text-sm">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="published">Published</SelectItem>
-              </SelectContent>
-            </Select>
-            <input
-              type="hidden"
-              name="content"
-              value={JSON.stringify(content)}
-            />
-            <Button size="sm" type="submit" className="h-8 px-5">
-              Save
-            </Button>
-          </div>
+        <div className="flex items-center  shrink-0">
+          <Text as={"h2"}>
+            {operation === "create" ? "Create a Picture Lesson" : "Edit"}
+          </Text>
         </div>
       )}
-      <div className="flex flex-1 overflow-hidden px-2 py-4 bg-inherit h-screen">
+      <div className="flex flex-1 overflow-hidden py-4 bg-inherit h-screen gap-6">
         {mode === "edit" && (
           <Card className="h-full">
             <CardContent className="flex p-0 relative h-full">
@@ -727,41 +688,104 @@ export function VocabularyEditor({
             </CardContent>
           </Card>
         )}
-        <div className="flex flex-1 flex-col items-center justify-between overflow-auto">
-          <div>
-            <Text className="text-left w-full mb-3">
-              Drag images onto the canvas 👇
-            </Text>
-            <VocabularyCanvas
-              width={width}
-              height={height}
-              mode={mode}
-              images={images}
-              labels={labels}
-              lines={lines}
-              selectedId={selectedId}
-              onSelectId={setSelectedId}
-              onImagesChange={setImages}
-              onLabelsChange={setLabels}
-              onLinesChange={setLines}
-              containerRef={containerRef}
-              onDrop={handleDrop}
-            />
+        <div className="flex flex-1 flex-col items-center justify-between overflow-auto gap-4 p-4">
+          <Text className="text-left w-full text-gray-400">
+            Drag images onto the canvas 👇
+          </Text>
+          <VocabularyCanvas
+            width={width}
+            height={height}
+            mode={mode}
+            images={images}
+            labels={labels}
+            lines={lines}
+            selectedId={selectedId}
+            onSelectId={setSelectedId}
+            onImagesChange={setImages}
+            onLabelsChange={setLabels}
+            onLinesChange={setLines}
+            containerRef={containerRef}
+            onDrop={handleDrop}
+          />
 
-            <div className="mt-4 w-full">
-              <Textarea
-                placeholder="Add a description..."
-                className="text-sm resize-none bg-white"
-                rows={2}
-                value={description}
-                readOnly={mode === "view"}
-                onChange={(e) =>
-                  mode === "edit" ? setDescription(e.target.value) : undefined
-                }
-                name="description"
+          <Card className="w-full max-w-3xl shrink-0">
+            <CardHeader className="">
+              <CardTitle className="text-base font-medium">
+                Lesson settings
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="w-full flex flex-col gap-6">
+              <Field>
+                <Label htmlFor="title">Title *</Label>
+                <Input
+                  type="text"
+                  value={title}
+                  placeholder="Weather"
+                  onChange={(e) => setTitle(e.target.value)}
+                  onBlur={handleTitleBlur}
+                  className="flex-1 h-8"
+                  required
+                  name="title"
+                  id="title"
+                />
+              </Field>
+              <Field>
+                <Label htmlFor="slug">Slug *</Label>
+                <Input
+                  type="text"
+                  value={slug}
+                  onChange={handleSlugChange}
+                  placeholder="weather"
+                  className="flex-1 h-8"
+                  required
+                  name="slug"
+                  id="slug"
+                />
+              </Field>
+              <Field>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  placeholder="About weather vocabulary, you can learn words like sunny, rainy, cloudy..."
+                  className="flex-1 resize-none"
+                  rows={2}
+                  value={description}
+                  readOnly={mode === "view"}
+                  onChange={(e) =>
+                    mode === "edit" ? setDescription(e.target.value) : undefined
+                  }
+                  name="description"
+                  id="description"
+                />
+              </Field>
+              <Field>
+                <Label htmlFor="status">Status *</Label>
+                <Select
+                  value={status}
+                  onValueChange={(value) =>
+                    setStatus(value as "draft" | "published")
+                  }
+                  name="status"
+                  required
+                >
+                  <SelectTrigger id="status" className="flex-1 h-8 text-sm">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <input
+                type="hidden"
+                name="content"
+                value={JSON.stringify(content)}
               />
-            </div>
-          </div>
+              <Button size="sm" type="submit" className="h-8 px-5">
+                Save
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </Form>
