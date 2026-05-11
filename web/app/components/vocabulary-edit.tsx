@@ -66,6 +66,8 @@ import {
 } from "@/components/retroui/Card";
 import { useKonvaSnapping } from "use-konva-snapping";
 import { Label } from "@/components/retroui/Label";
+import Cropper, { type Area } from "react-easy-crop";
+import { Dialog } from "@/components/retroui/Dialog";
 
 export interface CanvasContent {
   images: ImageItem[];
@@ -84,6 +86,7 @@ interface VocabularyEditorProps {
     slug?: string;
     status?: "draft" | "published";
     description: string;
+    thumbnail: string;
     content: {
       images: ImageItem[];
       labels: LabelItem[];
@@ -388,6 +391,147 @@ function DraggableLine({
         />
       </svg>
       <span className="text-xs text-gray-500">{label}</span>
+    </div>
+  );
+}
+
+function getCroppedImage(
+  imageSrc: string,
+  croppedAreaPixels: Area
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const image = new window.Image();
+    image.src = imageSrc;
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = croppedAreaPixels.width;
+      canvas.height = croppedAreaPixels.height;
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) return reject("No canvas context");
+
+      ctx.drawImage(
+        image,
+        croppedAreaPixels.x,
+        croppedAreaPixels.y,
+        croppedAreaPixels.width,
+        croppedAreaPixels.height,
+        0,
+        0,
+        croppedAreaPixels.width,
+        croppedAreaPixels.height
+      );
+
+      canvas.toBlob((blob) => resolve(blob), "image/webp");
+    };
+
+    image.onerror = reject;
+  });
+}
+
+function ThumbnailUploader({ thumbnail }: { thumbnail?: string }) {
+  const [imageSrc, setImageSrc] = useState<string | null>(thumbnail ?? null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [croppedImage, setCroppedImage] = useState<string | null>(null);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    setImageSrc(url);
+
+    setDialogOpen(true);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+
+    e.target.value = "";
+  };
+
+  const onCropComplete = (_: Area, croppedPixels: Area) => {
+    setCroppedAreaPixels(croppedPixels);
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    if (!open) {
+      if (imageSrc) URL.revokeObjectURL(imageSrc);
+      setImageSrc(null);
+    }
+
+    setDialogOpen(open);
+  };
+
+  const handleCropConfirm = async () => {
+    if (!imageSrc || !croppedAreaPixels) return;
+    const croppedBlob = await getCroppedImage(imageSrc, croppedAreaPixels);
+    const croppedUrl = URL.createObjectURL(croppedBlob);
+    setCroppedImage(croppedUrl);
+
+    setDialogOpen(false);
+    URL.revokeObjectURL(imageSrc);
+  };
+  return (
+    <div>
+      <Input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className={croppedImage ? "hidden" : ""}
+      />
+
+      {croppedImage && (
+        <div className="flex gap-4 justify-between">
+          <img src={croppedImage} width={100} alt="Cropped" />
+          <Button
+            type="button"
+            size={"sm"}
+            onClick={() => {
+              fileInputRef.current?.click();
+            }}
+          >
+            Change
+          </Button>
+        </div>
+      )}
+
+      <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
+        <Dialog.Content className="flex flex-col items-center justify-center overflow-hidden">
+          <Dialog.Header>Crop Thumbnail</Dialog.Header>
+          <div className="relative w-100 h-100">
+            <Cropper
+              image={imageSrc ?? undefined}
+              crop={crop}
+              zoom={zoom}
+              aspect={4 / 3}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+            />
+          </div>
+
+          <Dialog.Footer>
+            <Button
+              type="button"
+              variant={"secondary"}
+              size={"sm"}
+              onClick={() => handleDialogClose(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleCropConfirm}>
+              Confirm
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog>
     </div>
   );
 }
@@ -775,6 +919,10 @@ export function VocabularyEditor({
                     <SelectItem value="published">Published</SelectItem>
                   </SelectContent>
                 </Select>
+              </Field>
+              <Field>
+                <Label htmlFor="thumbnail">Thumbnail *</Label>
+                <ThumbnailUploader />
               </Field>
               <input
                 type="hidden"
