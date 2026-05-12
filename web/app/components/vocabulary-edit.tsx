@@ -45,7 +45,7 @@ import {
   SelectContent,
 } from "@/components/retroui/Select";
 import { useTRPC } from "@/util";
-import { Form } from "react-router";
+import { Form, useSubmit } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Field, FieldDescription } from "@/components/ui/field";
 import { toast } from "sonner";
@@ -403,9 +403,14 @@ function getCroppedImage(
     const image = new window.Image();
     image.src = imageSrc;
     image.onload = () => {
+      const WIDTH = 200;
+      const aspectRatio = croppedAreaPixels.width / croppedAreaPixels.height;
+      const outputWidth = WIDTH;
+      const outputHeight = WIDTH / aspectRatio;
+
       const canvas = document.createElement("canvas");
-      canvas.width = croppedAreaPixels.width;
-      canvas.height = croppedAreaPixels.height;
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
       const ctx = canvas.getContext("2d");
 
       if (!ctx) return reject("No canvas context");
@@ -418,18 +423,31 @@ function getCroppedImage(
         croppedAreaPixels.height,
         0,
         0,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height
+        outputWidth,
+        outputHeight
       );
 
-      canvas.toBlob((blob) => resolve(blob), "image/webp");
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return reject("Failed to create blob");
+          resolve(blob);
+        },
+        "image/webp",
+        0.85
+      );
     };
 
     image.onerror = reject;
   });
 }
 
-function ThumbnailUploader({ thumbnail }: { thumbnail?: string }) {
+function ThumbnailUploader({
+  thumbnail,
+  onCropped,
+}: {
+  thumbnail?: string;
+  onCropped?: (croppedImageBlob: Blob) => void;
+}) {
   const [imageSrc, setImageSrc] = useState<string | null>(thumbnail ?? null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -444,7 +462,6 @@ function ThumbnailUploader({ thumbnail }: { thumbnail?: string }) {
     const file = e.target.files[0];
 
     if (!file) return;
-
     const url = URL.createObjectURL(file);
     setImageSrc(url);
 
@@ -473,10 +490,13 @@ function ThumbnailUploader({ thumbnail }: { thumbnail?: string }) {
     const croppedBlob = await getCroppedImage(imageSrc, croppedAreaPixels);
     const croppedUrl = URL.createObjectURL(croppedBlob);
     setCroppedImage(croppedUrl);
+    onCropped?.(croppedBlob);
 
     setDialogOpen(false);
     URL.revokeObjectURL(imageSrc);
   };
+
+  const isThumbnailExist = thumbnail || croppedImage;
   return (
     <div>
       <Input
@@ -484,15 +504,16 @@ function ThumbnailUploader({ thumbnail }: { thumbnail?: string }) {
         accept="image/*"
         ref={fileInputRef}
         onChange={handleFileChange}
-        className={croppedImage ? "hidden" : ""}
+        className={isThumbnailExist ? "hidden" : ""}
       />
 
-      {croppedImage && (
-        <div className="flex gap-4 justify-between">
-          <img src={croppedImage} width={100} alt="Cropped" />
+      {isThumbnailExist && (
+        <div className="flex gap-6 justify-start items-center">
+          <img src={croppedImage ?? thumbnail} width={100} alt="Cropped" />
           <Button
             type="button"
             size={"sm"}
+            variant="outline"
             onClick={() => {
               fileInputRef.current?.click();
             }}
@@ -592,10 +613,21 @@ export function VocabularyEditor({
     trpc.upload.getUploadUrl.mutationOptions()
   );
 
-  const uploadFileToR2 = async (file: File): Promise<string> => {
+  const uploadFileToR2 = async ({
+    file,
+    source,
+  }: {
+    file: File | Blob;
+    source?: string;
+  }): Promise<string> => {
+    const filename =
+      file instanceof File
+        ? file.name
+        : `${Math.random().toString().slice(2, 7)}.webp`;
     const { url, key } = await uploadMutation.mutateAsync({
-      fileName: file.name,
+      fileName: filename,
       fileType: file.type,
+      source,
     });
     await fetch(url, {
       method: "PUT",
@@ -666,7 +698,7 @@ export function VocabularyEditor({
       try {
         await Promise.all(
           files.map(async (file, i) => {
-            const publicUrl = await uploadFileToR2(file);
+            const publicUrl = await uploadFileToR2({ file });
             setImages((prev) => [
               ...prev,
               {
@@ -747,8 +779,30 @@ export function VocabularyEditor({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedId, mode]);
 
+  const [thumbnail, setThumbnail] = useState(data?.thumbnail);
+  const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
+
+  const submit = useSubmit();
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    if (croppedImage) {
+      const result = await uploadFileToR2({
+        file: croppedImage,
+        source: "thumbnail",
+      });
+      formData.set("thumbnail", result);
+    }
+    submit(formData, { method: "post" });
+  };
+
   return (
-    <Form method="post" className="flex flex-col bg-inherit h-screen px-2">
+    <Form
+      method="post"
+      className="flex flex-col bg-inherit h-screen px-2"
+      onSubmit={handleSubmit}
+    >
       {mode === "edit" && (
         <div className="flex items-center  shrink-0">
           <Text as={"h2"}>
@@ -922,7 +976,10 @@ export function VocabularyEditor({
               </Field>
               <Field>
                 <Label htmlFor="thumbnail">Thumbnail *</Label>
-                <ThumbnailUploader />
+                <ThumbnailUploader
+                  thumbnail={thumbnail}
+                  onCropped={setCroppedImage}
+                />
               </Field>
               <input
                 type="hidden"

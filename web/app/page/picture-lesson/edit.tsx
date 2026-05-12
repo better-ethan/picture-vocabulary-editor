@@ -32,6 +32,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
   const title = formData.get("title") as string;
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string;
+  const thumbnail = formData.get("thumbnail") as string;
   const content = formData.get("content") as string;
   let status = formData.get("status");
   if (!status) status = "draft";
@@ -45,6 +46,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
     title,
     slug,
     description,
+    thumbnail,
     status: status as "draft" | "published",
     content: JSON.stringify(updatedContent),
   });
@@ -74,6 +76,7 @@ export default function Page() {
             slug: data.slug,
             status: data.status as "draft" | "published",
             description: data.description as string,
+            thumbnail: data.thumbnail,
             content: data.content!,
           }}
         />

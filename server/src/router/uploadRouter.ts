@@ -19,6 +19,8 @@ export const uploadRouter = router({
       let key = `uploads/images/${Date.now()}-${input.fileName}`;
       if (input.source === "pixabay") {
         key = `uploads/pixabay/${Date.now()}-${input.fileName}`;
+      } else if (input.source === "thumbnail") {
+        key = `uploads/thumbnail/${Date.now()}-${input.fileName}`;
       }
 
       const command = new PutObjectCommand({
