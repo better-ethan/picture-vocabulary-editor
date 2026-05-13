@@ -786,14 +786,19 @@ export function VocabularyEditor({
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    let newThumbnail = thumbnail;
     const formData = new FormData(e.currentTarget);
     if (croppedImage) {
       const result = await uploadFileToR2({
         file: croppedImage,
         source: "thumbnail",
       });
-      formData.set("thumbnail", result);
+
+      newThumbnail = result;
     }
+
+    formData.set("thumbnail", newThumbnail!);
+
     submit(formData, { method: "post" });
   };
 

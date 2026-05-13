@@ -1,6 +1,6 @@
-import { desc, eq, and } from "drizzle-orm";
+import { desc, eq, and, inArray } from "drizzle-orm";
 import { z } from "zod";
-import { db, pictureLesson } from "@package/drizzle";
+import { db, pictureLesson, user } from "@package/drizzle";
 import { publicProcedure, router } from "../trpc.js";
 import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../lib/auth.js";
@@ -28,7 +28,22 @@ export const pictureLessonRouter = router({
           )
         )
         .orderBy(desc(pictureLesson.createdAt));
-      return rows;
+
+      const userIds = [
+        ...new Set(rows.map((row) => row.userId).filter(Boolean)),
+      ];
+      const userRows = await db
+        .select()
+        .from(user)
+        .where(inArray(user.id, userIds));
+
+      const userMap = Object.fromEntries(
+        userRows.map((user) => [user.id, user.name])
+      );
+      return rows.map((row) => ({
+        ...row,
+        username: userMap[row.userId] || "Anonymous",
+      }));
     }),
 
   create: publicProcedure

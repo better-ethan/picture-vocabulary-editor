@@ -47,7 +47,7 @@ export default function Page() {
     data.content as unknown as CanvasContent;
 
   return (
-    <div className="p-4 container mx-auto">
+    <div className="p-4 flex flex-col justify-center">
       <h1 className="text-3xl font-bold text-start">{data.title}</h1>
       <div className="mt-8 flex justify-center">
         <VocabularyCanvas
@@ -93,10 +93,10 @@ export default function Page() {
         </Card>
       </div>
       <Card className="mt-6 max-w-3xl">
-        <CardHeader>
+        <CardHeader className="pb-0">
           <CardTitle className="text-sm">Description</CardTitle>
         </CardHeader>
-        <CardContent className="pt-4">
+        <CardContent className="">
           <Text as="p" className="text-sm leading-relaxed">
             {data.description}
           </Text>

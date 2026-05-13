@@ -2,6 +2,14 @@ import { Link, useLoaderData } from "react-router";
 import { createTrpcClient } from "@/util";
 import { EmptyContent, EmptyTitle, Empty } from "@/components/retroui/Empty";
 import type { Route } from "./+types/list";
+import { Text } from "@/components/retroui/Text";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/retroui/Card";
+import { Button } from "@/components/retroui/Button";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -16,10 +24,9 @@ export default function Page() {
 
   return (
     <div className="p-4 container mx-auto max-w-4xl">
-      <h1 className="text-4xl font-bold text-primary mb-2">Picture Lessons</h1>
-      <p className="text-muted-foreground mb-10">
-        Choose a lesson to start learning
-      </p>
+      <Text as={"h2"} className="mb-4">
+        My Authored
+      </Text>
 
       {data.length === 0 ? (
         <div className="flex justify-center mt-16">
@@ -32,20 +39,28 @@ export default function Page() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((item, index) => (
-            <Link
-              key={index}
-              to={`/admin/picture-lesson/${item.id}/${item.slug}/preview`}
-              className="group block rounded-2xl border border-border bg-card shadow-sm hover:shadow-md hover:border-primary transition-all duration-200 p-6"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-lg">
-                  →
-                </span>
-              </div>
-              <h2 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-2">
-                {item.title}
-              </h2>
-            </Link>
+            <Card className="max-w-60" key={index}>
+              <CardContent className="flex items-center justify-center pb-0">
+                <img className="w-50 h-auto" src={item.thumbnail} />
+              </CardContent>
+              <CardHeader className="pb-0">
+                <CardTitle className="text-base">{item.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center gap-2 justify-end">
+                <Button size={"sm"} variant={"secondary"} asChild>
+                  <Link to={`/picture-lesson/${item.id}/${item.slug}`}>
+                    View
+                  </Link>
+                </Button>
+                <Button size={"sm"} asChild>
+                  <Link
+                    to={`/admin/picture-lesson/${item.id}/${item.slug}/edit`}
+                  >
+                    Edit
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}

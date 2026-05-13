@@ -11,10 +11,6 @@ export default [
 
     route("/picture-lesson/list", "page/picture-lesson/list.tsx"),
     route("/picture-lesson/:id/:slug", "page/picture-lesson/index.tsx"),
-    route(
-      "/picture-lesson/:id/:slug/preview",
-      "page/picture-lesson/preview.tsx"
-    ),
 
     // user
     route("/signup", "page/user/signup.tsx"),
