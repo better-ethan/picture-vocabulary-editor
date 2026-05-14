@@ -1,6 +1,6 @@
 import { desc, eq, and, inArray } from "drizzle-orm";
 import { z } from "zod";
-import { db, pictureLesson, user } from "@package/drizzle";
+import { db, pictureLesson, user, user } from "@package/drizzle";
 import { publicProcedure, router } from "../trpc.js";
 import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../lib/auth.js";
@@ -142,7 +142,16 @@ export const pictureLessonRouter = router({
             eq(pictureLesson.slug, input.slug)
           )
         );
-      return row;
+
+      const [userRow] = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, row.userId));
+
+      return {
+        ...row,
+        username: userRow ? userRow.name : "Anonymous",
+      };
     }),
 
   authored: publicProcedure
