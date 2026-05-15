@@ -200,7 +200,11 @@ function MenuContent({
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant={"link"} size={"icon"}>
+              <Button
+                variant={"link"}
+                size={"icon"}
+                onClick={() => authClient.signOut()}
+              >
                 <LogOutIcon />
               </Button>
             </TooltipTrigger>
