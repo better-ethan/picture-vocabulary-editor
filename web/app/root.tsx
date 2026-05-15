@@ -18,6 +18,7 @@ import { Text } from "@/components/retroui/Text";
 import { Button } from "@/components/retroui/Button";
 import { Drawer } from "@/components/retroui/Drawer";
 import { HamburgerIcon, MenuIcon } from "lucide-react";
+import { TooltipProvider } from "@/components/retroui/Tooltip";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -47,7 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         )}
       >
         <Toaster position="top-center" />
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
