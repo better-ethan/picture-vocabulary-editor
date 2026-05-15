@@ -38,6 +38,12 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
+  const currentUser = await trpc.user.getCurrentUser.query();
+
+  if (result.status === "draft" && currentUser?.id !== result.userId) {
+    throw new Response("Not Found", { status: 404 });
+  }
+
   return result;
 };
 
@@ -50,6 +56,11 @@ export default function Page() {
   return (
     <div className="p-4 flex flex-col items-center">
       <div className="w-full max-w-250 flex flex-col gap-4">
+        {data.status === "draft" && (
+          <div className="p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center">
+            Draft lesson is only visible to author
+          </div>
+        )}
         <div className="mt-8 flex justify-start">
           <VocabularyCanvas
             width={700}

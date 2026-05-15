@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/retroui/Card";
 import { Button } from "@/components/retroui/Button";
+import { ArrowUpRightIcon, MoveUpRightIcon } from "lucide-react";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -44,19 +45,25 @@ export default function Page() {
                 <img className="w-50 h-auto" src={item.thumbnail} />
               </CardContent>
               <CardHeader className="pb-0">
-                <CardTitle className="text-base">{item.title}</CardTitle>
+                <CardTitle className="text-base font-normal">
+                  {item.title}
+                </CardTitle>
               </CardHeader>
               <CardContent className="flex items-center gap-2 justify-end">
-                <Button size={"sm"} variant={"secondary"} asChild>
-                  <Link to={`/picture-lesson/${item.id}/${item.slug}`}>
-                    View
-                  </Link>
-                </Button>
                 <Button size={"sm"} asChild>
                   <Link
                     to={`/admin/picture-lesson/${item.id}/${item.slug}/edit`}
                   >
                     Edit
+                  </Link>
+                </Button>
+                <Button size={"sm"} variant={"secondary"} asChild>
+                  <Link
+                    to={`/picture-lesson/${item.id}/${item.slug}`}
+                    target="_blank"
+                  >
+                    View
+                    <ArrowUpRightIcon className="size-5" />
                   </Link>
                 </Button>
               </CardContent>
