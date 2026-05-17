@@ -64,23 +64,21 @@ export default function Page() {
   }, [actionData]);
 
   return (
-    <div className="pt-16 p-4 container mx-auto">
-      <div className="mt-8 flex justify-center">
-        <VocabularyEditor
-          width={700}
-          height={600}
-          mode="edit"
-          operation="edit"
-          data={{
-            title: data.title,
-            slug: data.slug,
-            status: data.status as "draft" | "published",
-            description: data.description as string,
-            thumbnail: data.thumbnail,
-            content: data.content!,
-          }}
-        />
-      </div>
+    <div className="w-full h-full overflow-y-auto">
+      <VocabularyEditor
+        width={700}
+        height={600}
+        mode="edit"
+        operation="edit"
+        data={{
+          title: data.title,
+          slug: data.slug,
+          status: data.status as "draft" | "published",
+          description: data.description as string,
+          thumbnail: data.thumbnail,
+          content: data.content!,
+        }}
+      />
     </div>
   );
 }

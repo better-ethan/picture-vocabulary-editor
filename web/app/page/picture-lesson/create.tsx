@@ -48,10 +48,8 @@ export default function Page() {
   }, [actionData]);
 
   return (
-    <div className="p-4 container mx-auto">
-      <div className="mt-8 flex justify-center">
-        <VocabularyEditor width={700} height={600} mode="edit" />
-      </div>
+    <div className="w-full h-full overflow-y-auto">
+      <VocabularyEditor width={700} height={600} mode="edit" />
     </div>
   );
 }

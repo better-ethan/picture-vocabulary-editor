@@ -44,7 +44,7 @@ export default function AdminLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen w-full flex-col md:flex-row bg-white">
+    <div className="flex w-full h-screen flex-col md:flex-row bg-white overflow-hidden">
       <Drawer open={open} onOpenChange={setOpen} direction="left">
         <Drawer.Trigger asChild className="md:hidden self-start">
           <Button type="button" variant={"link"} size={"icon"}>
@@ -71,7 +71,7 @@ export default function AdminLayout() {
       </Drawer>
       <aside
         className={cn(
-          "hidden md:block bg-gray-100 h-dvh transition-all duration-300 ease-in-out overflow-hidden",
+          "hidden md:block bg-gray-100 transition-all duration-300 ease-in-out overflow-hidden",
           sidebarCollapsed ? "w-10" : "w-64"
         )}
       >
@@ -86,7 +86,7 @@ export default function AdminLayout() {
             </Button>
           </div>
         ) : (
-          <div className="flex flex-col h-dvh">
+          <div className="flex flex-col h-full">
             <div className="flex justify-end">
               <Button
                 variant={"link"}
@@ -107,7 +107,7 @@ export default function AdminLayout() {
           </div>
         )}
       </aside>
-      <main className="flex-1 p-4">
+      <main className="flex mx-auto p-3 overflow-hidden h-full">
         <Outlet />
       </main>
     </div>

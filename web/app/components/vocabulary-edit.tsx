@@ -805,17 +805,17 @@ export function VocabularyEditor({
   return (
     <Form
       method="post"
-      className="flex flex-col bg-inherit h-screen px-2"
+      className="flex flex-col bg-inherit h-full px-2"
       onSubmit={handleSubmit}
     >
       {mode === "edit" && (
         <div className="flex items-center  shrink-0">
-          <Text as={"h2"}>
+          <Text as={"h3"}>
             {operation === "create" ? "Create a Picture Lesson" : "Edit"}
           </Text>
         </div>
       )}
-      <div className="flex flex-1 overflow-hidden py-4 bg-inherit h-screen gap-6">
+      <div className="flex overflow-hidden py-4 bg-inherit gap-6 flex-1 min-h-0">
         {mode === "edit" && (
           <Card className="h-full">
             <CardContent className="flex p-0 relative h-full">
@@ -891,7 +891,7 @@ export function VocabularyEditor({
             </CardContent>
           </Card>
         )}
-        <div className="flex flex-1 flex-col items-center justify-between overflow-auto gap-4 p-4">
+        <div className="flex flex-col items-center overflow-y-auto flex-1 gap-4 p-4 min-h-0">
           <Text className="text-left w-full text-gray-400">
             Drag images onto the canvas 👇
           </Text>
@@ -911,7 +911,7 @@ export function VocabularyEditor({
             onDrop={handleDrop}
           />
 
-          <Card className="w-full max-w-3xl shrink-0">
+          <Card className="w-full">
             <CardHeader className="">
               <CardTitle className="text-base font-medium">
                 Lesson settings
