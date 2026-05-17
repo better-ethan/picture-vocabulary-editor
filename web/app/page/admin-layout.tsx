@@ -71,8 +71,8 @@ export default function AdminLayout() {
       </Drawer>
       <aside
         className={cn(
-          "hidden md:block bg-gray-100 h-dvh",
-          sidebarCollapsed ? "" : "w-64"
+          "hidden md:block bg-gray-100 h-dvh transition-all duration-300 ease-in-out overflow-hidden",
+          sidebarCollapsed ? "w-10" : "w-64"
         )}
       >
         {sidebarCollapsed ? (
