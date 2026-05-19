@@ -98,6 +98,18 @@ interface VocabularyEditorProps {
 
 type EditorMode = "edit" | "view";
 
+async function isGifByUrl(url: string): Promise<boolean> {
+  try {
+    const res = await fetch(url, { headers: { Range: "bytes=0-5" } });
+    const buffer = await res.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    const header = String.fromCharCode(...bytes);
+    return header === "GIF87a" || header === "GIF89a";
+  } catch {
+    return false;
+  }
+}
+
 function URLImage({
   src,
   isSelected = false,
@@ -139,11 +151,51 @@ function URLImage({
 
   const isEditMode = mode === "edit";
 
+  const canvasRef = useRef(document.createElement("canvas"));
+
+  const [isGif, setIsGif] = useState(false);
+
+  useEffect(() => {
+    isGifByUrl(src).then(setIsGif);
+  }, [src]);
+
+  useEffect(() => {
+    if (!isGif) return;
+
+    let animator: any = null;
+
+    function setupGifler() {
+      function onDrawFrame(ctx: CanvasRenderingContext2D, frame: any) {
+        canvasRef.current.width = frame.width;
+        canvasRef.current.height = frame.height;
+        ctx.drawImage(frame.buffer, 0, 0);
+        imageRef.current?.getLayer()?.batchDraw();
+      }
+      animator = (window as any).gifler(src);
+      animator.frames(canvasRef.current, onDrawFrame);
+    }
+
+    if (typeof (window as any).gifler !== "undefined") {
+      setupGifler();
+      return () => animator?.stop?.();
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/gifler@0.1.0/gifler.min.js";
+    script.onload = () => setupGifler();
+    document.head.appendChild(script);
+
+    return () => {
+      animator?.stop?.();
+    };
+  }, [isGif, src]);
+
+  const imageSource = isGif ? canvasRef.current : image;
   return (
     <>
       <Image
         ref={imageRef}
-        image={image}
+        image={imageSource}
         onClick={clickHandler}
         onTap={clickHandler}
         width={finalWidth}
