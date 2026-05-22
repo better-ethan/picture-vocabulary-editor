@@ -1325,51 +1325,55 @@ function WordsPanel({
         <Text className="mb-3">
           Drag these number labels onto the canvas 👉
         </Text>
-        {numbers.map((item, index) => (
-          <div key={item} className="flex items-center gap-2 mb-1">
-            <div
-              draggable={mode === "edit"}
-              onDragStart={(e) =>
-                e.dataTransfer.setData("labelNumber", String(item))
-              }
-              className={cn(
-                "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
-                "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
-              )}
-            >
-              {item}
-            </div>
-            <Input
-              type="text"
-              value={wordMap[item] ?? ""}
-              onChange={(e) =>
-                mode === "edit" ? onWordChange(item, e.target.value) : undefined
-              }
-              readOnly={mode === "view"}
-              className="w-42 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => speak(wordMap[item] ?? "")}
-              disabled={!wordMap[item]}
-            >
-              <Volume2 className="w-4 h-4" />
-            </Button>
-            {mode === "edit" && (
+        <div className="flex flex-col gap-2">
+          {numbers.map((item, index) => (
+            <div key={item} className="flex items-center gap-2 mb-1">
+              <div
+                draggable={mode === "edit"}
+                onDragStart={(e) =>
+                  e.dataTransfer.setData("labelNumber", String(item))
+                }
+                className={cn(
+                  "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
+                  "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
+                )}
+              >
+                {item}
+              </div>
+              <Input
+                type="text"
+                value={wordMap[item] ?? ""}
+                onChange={(e) =>
+                  mode === "edit"
+                    ? onWordChange(item, e.target.value)
+                    : undefined
+                }
+                readOnly={mode === "view"}
+                className="w-42 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+              />
               <Button
                 type="button"
-                variant="destructive"
+                variant="ghost"
                 size="sm"
-                disabled={index !== numbers.length - 1}
-                onClick={() => onDelete(String(item))}
+                onClick={() => speak(wordMap[item] ?? "")}
+                disabled={!wordMap[item]}
               >
-                <TrashIcon className="size-4" />
+                <Volume2 className="w-4 h-4" />
               </Button>
-            )}
-          </div>
-        ))}
+              {mode === "edit" && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  disabled={index !== numbers.length - 1}
+                  onClick={() => onDelete(String(item))}
+                >
+                  <TrashIcon className="size-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
