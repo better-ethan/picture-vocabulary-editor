@@ -165,10 +165,24 @@ function URLImage({
     let animator: any = null;
 
     function setupGifler() {
+      let initialized = false;
       function onDrawFrame(ctx: CanvasRenderingContext2D, frame: any) {
-        canvasRef.current.width = frame.width;
-        canvasRef.current.height = frame.height;
-        ctx.drawImage(frame.buffer, 0, 0);
+        if (!initialized) {
+          canvasRef.current.width = frame.width;
+          canvasRef.current.height = frame.height;
+          initialized = true;
+        }
+
+        if (frame.disposal === 2) {
+          ctx.clearRect(
+            0,
+            0,
+            canvasRef.current.width,
+            canvasRef.current.height
+          );
+        }
+
+        ctx.drawImage(frame.buffer, frame.x ?? 0, frame.y ?? 0);
         imageRef.current?.getLayer()?.batchDraw();
       }
       animator = (window as any).gifler(src);
