@@ -1274,10 +1274,11 @@ function UploadPanel({}: {}) {
   );
 }
 
-export const speak = (word: string) => {
+export const speak = (word: string, rate = 1) => {
   if (!word) return;
   const utterance = new SpeechSynthesisUtterance(word);
   utterance.lang = "en-US";
+  utterance.rate = rate;
   const applyVoiceAndSpeak = () => {
     const voices = window.speechSynthesis.getVoices();
     const voice =

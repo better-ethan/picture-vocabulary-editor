@@ -19,6 +19,15 @@ import { Text } from "@/components/retroui/Text";
 import { Badge } from "@/components/retroui/Badge";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
+import { Label } from "@/components/retroui/Label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/retroui/Select";
+import { Field } from "@/components/ui/field";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const id = params.id;
@@ -53,6 +62,8 @@ export default function Page() {
   const { images, labels, lines, words } =
     data.content as unknown as CanvasContent;
 
+  const [rate, setRate] = useState(1);
+
   return (
     <div className="p-4 flex flex-col items-center">
       <div className="w-full max-w-250 flex flex-col gap-4">
@@ -72,10 +83,31 @@ export default function Page() {
           />
 
           <Card className="w-full lg:w-64 shrink-0 ml-6">
-            <CardHeader>
-              <CardTitle>Word List</CardTitle>
-            </CardHeader>
             <CardContent>
+              <CardTitle>Word List</CardTitle>
+              <Field className="flex flex-row justify-between items-center mb-4">
+                <Label htmlFor="rate">Rate</Label>
+                <Select
+                  value={rate.toString()}
+                  onValueChange={(value) => setRate(parseFloat(value))}
+                >
+                  <SelectTrigger
+                    id="rate"
+                    className="min-w-12 h-8 p-2 py-1 shadow-none"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="w-12">
+                    <SelectItem value="0.5">🐢 0.5x</SelectItem>
+                    <SelectItem value="0.75">🚶 0.75x</SelectItem>
+                    <SelectItem value="1">🚴 1x</SelectItem>
+                    <SelectItem value="1.25">🏃 1.25x</SelectItem>
+                    <SelectItem value="1.5">🚗 1.5x</SelectItem>
+                    <SelectItem value="1.75">✈️ 1.75x</SelectItem>
+                    <SelectItem value="2">🚀 2x</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
               <ul className="space-y-2">
                 {words.map(({ number, word }) => (
                   <li key={number} className="flex items-center gap-2">
@@ -94,7 +126,7 @@ export default function Page() {
                       variant="outline"
                       size="sm"
                       disabled={!word}
-                      onClick={() => speak(word)}
+                      onClick={() => speak(word, rate)}
                     >
                       <Volume2 className="w-4 h-4" />
                     </Button>
