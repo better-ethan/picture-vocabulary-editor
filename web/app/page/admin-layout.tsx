@@ -107,7 +107,7 @@ export default function AdminLayout() {
           </div>
         )}
       </aside>
-      <main className="flex mx-auto p-3 overflow-hidden h-full">
+      <main className="flex w-full mx-auto p-3 overflow-hidden h-full">
         <Outlet />
       </main>
     </div>

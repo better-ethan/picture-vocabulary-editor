@@ -43,6 +43,10 @@ export default function Page() {
         },
       }
     );
+
+    if (error) {
+      toast.error(`Sign in failed: ${error.message}`);
+    }
   };
 
   return (

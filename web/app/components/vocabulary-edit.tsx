@@ -3,6 +3,7 @@
 import React, {
   useEffect,
   useEffectEvent,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -45,7 +46,7 @@ import {
   SelectContent,
 } from "@/components/retroui/Select";
 import { useTRPC } from "@/util";
-import { Form, useSubmit } from "react-router";
+import { Form, useNavigate, useSubmit } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Field, FieldDescription } from "@/components/ui/field";
 import { toast } from "sonner";
@@ -809,10 +810,17 @@ export function VocabularyEditor({
 
   type Tool = "images" | "upload" | "words" | "tools";
   const [activeTool, setActiveTool] = useState<Tool | null>("images");
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [isPanelOpen, setIsPanelOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.innerWidth >= 1024;
+  });
   const toggleTool = (tool: Tool) => {
-    setActiveTool(tool);
-    setIsPanelOpen(true);
+    if (activeTool === tool) {
+      setIsPanelOpen((prev) => !prev);
+    } else {
+      setActiveTool(tool);
+      setIsPanelOpen(true);
+    }
   };
 
   const togglePanel = () => {
@@ -868,10 +876,12 @@ export function VocabularyEditor({
     submit(formData, { method: "post" });
   };
 
+  const navigate = useNavigate();
+
   return (
     <Form
       method="post"
-      className="flex flex-col bg-inherit h-full px-2"
+      className="flex flex-col w-full bg-inherit h-full"
       onSubmit={handleSubmit}
     >
       {mode === "edit" && (
@@ -881,13 +891,13 @@ export function VocabularyEditor({
           </Text>
         </div>
       )}
-      <div className="flex overflow-hidden py-4 bg-inherit gap-6 flex-1 min-h-0">
+      <div className="flex flex-col lg:flex-row w-full overflow-hidden py-1 bg-inherit gap-6 flex-1 min-h-0 px-1">
         {mode === "edit" && (
-          <Card className="h-full">
-            <CardContent className="flex p-0 relative h-full">
+          <Card className="w-full lg:w-auto h-auto lg:h-full order-last lg:order-first">
+            <CardContent className="flex flex-col-reverse lg:flex-row p-0 relative h-full">
               <div
                 className={cn(
-                  "w-16 flex flex-col items-center py-2 px-1",
+                  "w-full lg:w-16 flex flex-row justify-around lg:flex-col lg:justify-start items-center",
                   isPanelOpen && "border-r border-gray-300"
                 )}
               >
@@ -897,12 +907,6 @@ export function VocabularyEditor({
                   onClick={() => toggleTool("images")}
                   active={activeTool === "images"}
                 />
-                {/* <ToolButton
-                  ButtonIcon={CloudUploadIcon}
-                  text="Upload"
-                  onClick={() => toggleTool("upload")}
-                  active={activeTool === "upload"}
-                /> */}
                 <ToolButton
                   ButtonIcon={BookAIcon}
                   text="Words"
@@ -918,8 +922,10 @@ export function VocabularyEditor({
               </div>
               <div
                 className={cn(
-                  "overflow-hidden transition-all duration-300 h-full",
-                  isPanelOpen ? "w-80 opacity-100" : "w-0 opacity-0"
+                  "overflow-hidden transition-all duration-300 w-full lg:h-full",
+                  isPanelOpen
+                    ? "h-64 lg:w-80 opacity-100"
+                    : "h-0 lg:w-0 opacity-0"
                 )}
               >
                 {isPanelOpen && activeTool === "images" && <ImageSearchPanel />}
@@ -945,7 +951,7 @@ export function VocabularyEditor({
                 className={cn(
                   "absolute top-1/2 -translate-y-1/2 -right-3",
                   "h-12 w-6 p-0 text-gray-300",
-                  "flex items-center justify-center",
+                  "hidden lg:flex items-center justify-center",
                   "border-none rounded-full",
                   "transition-all duration-300 z-10",
                   "hover:text-secondary-foreground hover:-translate-y-1/2",
@@ -957,7 +963,7 @@ export function VocabularyEditor({
             </CardContent>
           </Card>
         )}
-        <div className="flex flex-col items-center overflow-y-auto flex-1 gap-4 p-4 min-h-0">
+        <div className="flex flex-col items-center overflow-y-auto flex-1 gap-4 min-h-0 py-2 order-first lg:order-last">
           <Text className="text-left w-full text-gray-400">
             Drag images onto the canvas 👇
           </Text>
@@ -1060,6 +1066,15 @@ export function VocabularyEditor({
               <Button size="sm" type="submit" className="h-8 px-5">
                 Save
               </Button>
+              <Button
+                size="sm"
+                type="button"
+                variant={"outline"}
+                className="h-8 px-5"
+                onClick={() => navigate(-1)}
+              >
+                Cancel
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -1118,7 +1133,7 @@ function ImageSearchPanel({}: {}) {
 
   return (
     <div className="flex flex-col h-full p-2">
-      <div className="shrink-0">
+      <div className="">
         <Input
           type="search"
           placeholder="Search images..."
@@ -1401,7 +1416,7 @@ function ImageGrid({
   }[];
 }) {
   return (
-    <div className="columns-2 gap-2 mt-2 px-1">
+    <div className="flex flex-col lg:columns-2 gap-2 mt-2 px-1">
       {images.map((img) => (
         <div
           key={img.id}
@@ -1466,113 +1481,135 @@ export function VocabularyCanvas({
       snapToStageBorders: true,
     });
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [stageWidth, setStageWidth] = useState(width);
+  const scale = stageWidth / width;
+  const stageHeight = height * scale;
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const w = entries[0].contentRect.width;
+      setStageWidth(Math.min(w, width));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [width]);
+
   return (
     <Card
       ref={containerRef}
       onDrop={onDrop}
       onDragOver={(e) => e.preventDefault()}
+      className="w-full"
     >
-      <CardContent>
-        <Stage
-          width={width}
-          height={height}
-          className="bg-white border border-gray-300 border-dashed"
-          onMouseDown={(e) => {
-            if (e.target === e.target.getStage()) {
-              onSelectId?.(null);
-            }
-          }}
-        >
-          <Layer>
-            {images.map((img, index) => (
-              <URLImage
-                key={index}
-                mode={mode}
-                width={img.width ?? 200}
-                draggable={mode === "edit"}
-                src={img.src}
-                x={img.x}
-                y={img.y}
-                isSelected={selectedId === img.id}
-                onClick={() => onSelectId?.(img.id)}
-                onDragMove={handleDragging}
-                onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
-                  handleDragEnd(e);
-                  const pos = e.target.position();
-                  onImagesChange?.(
-                    images.map((it) =>
-                      it.id === img.id ? { ...it, x: pos.x, y: pos.y } : it
+      <CardContent className="w-full">
+        <div ref={wrapperRef} className="w-full overflow-hidden">
+          <Stage
+            width={stageWidth}
+            height={stageHeight}
+            scaleX={scale}
+            scaleY={scale}
+            className="bg-white border border-gray-300 border-dashed"
+            onMouseDown={(e) => {
+              if (e.target === e.target.getStage()) {
+                onSelectId?.(null);
+              }
+            }}
+          >
+            <Layer>
+              {images.map((img, index) => (
+                <URLImage
+                  key={index}
+                  mode={mode}
+                  width={img.width ?? 200}
+                  draggable={mode === "edit"}
+                  src={img.src}
+                  x={img.x}
+                  y={img.y}
+                  isSelected={selectedId === img.id}
+                  onClick={() => onSelectId?.(img.id)}
+                  onDragMove={handleDragging}
+                  onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
+                    handleDragEnd(e);
+                    const pos = e.target.position();
+                    onImagesChange?.(
+                      images.map((it) =>
+                        it.id === img.id ? { ...it, x: pos.x, y: pos.y } : it
+                      )
+                    );
+                  }}
+                  onTransform={handleResizing}
+                  onTransformEnd={(e) => {
+                    handleResizeEnd(e);
+
+                    const node = (
+                      e.currentTarget as Konva.Transformer
+                    ).nodes()[0] as Konva.Node;
+                    if (!node) return;
+
+                    const newWidth = node.width() * node.scaleX();
+                    const newHeight = node.height() * node.scaleY();
+
+                    node.scaleX(1);
+                    node.scaleY(1);
+
+                    onImagesChange?.(
+                      images.map((it) =>
+                        it.id === img.id
+                          ? {
+                              ...it,
+                              x: node.x(),
+                              y: node.y(),
+                              width: newWidth,
+                              height: newHeight,
+                              rotation: node.rotation(),
+                            }
+                          : it
+                      )
+                    );
+                  }}
+                />
+              ))}
+              {labels.map((label) => (
+                <NumberCircle
+                  key={label.id}
+                  label={label}
+                  draggable={mode === "edit"}
+                  mode={mode}
+                  onSelect={() => onSelectId?.(label.id)}
+                  isSelected={selectedId === label.id}
+                  onDragMove={handleDragging}
+                  onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
+                    handleDragEnd(e);
+                    const pos = e.target.position();
+                    onLabelsChange?.(
+                      labels.map((l) =>
+                        l.id === label.id ? { ...l, x: pos.x, y: pos.y } : l
+                      )
+                    );
+                  }}
+                />
+              ))}
+              {lines.map((line) => (
+                <EditableHandDrawLine
+                  key={line.id}
+                  line={line}
+                  isSelected={selectedId === line.id}
+                  mode={mode}
+                  onSelect={() => onSelectId?.(line.id)}
+                  onChange={(updated) =>
+                    onLinesChange?.(
+                      lines.map((l) => (l.id === updated.id ? updated : l))
                     )
-                  );
-                }}
-                onTransform={handleResizing}
-                onTransformEnd={(e) => {
-                  handleResizeEnd(e);
-
-                  const node = (
-                    e.currentTarget as Konva.Transformer
-                  ).nodes()[0] as Konva.Node;
-                  if (!node) return;
-
-                  const newWidth = node.width() * node.scaleX();
-                  const newHeight = node.height() * node.scaleY();
-
-                  node.scaleX(1);
-                  node.scaleY(1);
-
-                  onImagesChange?.(
-                    images.map((it) =>
-                      it.id === img.id
-                        ? {
-                            ...it,
-                            x: node.x(),
-                            y: node.y(),
-                            width: newWidth,
-                            height: newHeight,
-                            rotation: node.rotation(),
-                          }
-                        : it
-                    )
-                  );
-                }}
-              />
-            ))}
-            {labels.map((label) => (
-              <NumberCircle
-                key={label.id}
-                label={label}
-                draggable={mode === "edit"}
-                mode={mode}
-                onSelect={() => onSelectId?.(label.id)}
-                isSelected={selectedId === label.id}
-                onDragMove={handleDragging}
-                onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
-                  handleDragEnd(e);
-                  const pos = e.target.position();
-                  onLabelsChange?.(
-                    labels.map((l) =>
-                      l.id === label.id ? { ...l, x: pos.x, y: pos.y } : l
-                    )
-                  );
-                }}
-              />
-            ))}
-            {lines.map((line) => (
-              <EditableHandDrawLine
-                key={line.id}
-                line={line}
-                isSelected={selectedId === line.id}
-                mode={mode}
-                onSelect={() => onSelectId?.(line.id)}
-                onChange={(updated) =>
-                  onLinesChange?.(
-                    lines.map((l) => (l.id === updated.id ? updated : l))
-                  )
-                }
-              />
-            ))}
-          </Layer>
-        </Stage>
+                  }
+                />
+              ))}
+            </Layer>
+          </Stage>
+        </div>
       </CardContent>
     </Card>
   );

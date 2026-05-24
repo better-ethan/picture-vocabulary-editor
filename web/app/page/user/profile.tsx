@@ -35,8 +35,8 @@ export default function Page() {
   };
 
   return (
-    <div className="flex justify-center items-start h-full px-4">
-      <Card className="w-full max-w-100">
+    <div className="flex justify-center items-start h-full">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>My Profile</CardTitle>
         </CardHeader>

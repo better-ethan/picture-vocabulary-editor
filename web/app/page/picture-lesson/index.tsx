@@ -65,7 +65,7 @@ export default function Page() {
   const [rate, setRate] = useState(1);
 
   return (
-    <div className="p-4 flex flex-col items-center">
+    <div className="flex flex-col items-center">
       <div className="w-full max-w-250 flex flex-col gap-4">
         {data.status === "draft" && (
           <div className="p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center">
