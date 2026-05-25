@@ -10,7 +10,8 @@ import {
   CardTitle,
 } from "@/components/retroui/Card";
 import { Button } from "@/components/retroui/Button";
-import { ArrowUpRightIcon, MoveUpRightIcon } from "lucide-react";
+import { ArrowUpRightIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -24,10 +25,15 @@ export default function Page() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <div className="p-4 container mx-auto max-w-4xl">
-      <Text as={"h2"} className="mb-4">
-        My Authored
-      </Text>
+    <div className="max-w-5xl w-full h-full flex flex-col">
+      <div className="flex items-center justify-between w-full mb-4">
+        <Text as={"h2"} className="mb-4 text-start">
+          My Authored
+        </Text>
+        <span className="text-muted-foreground">
+          {data.length} lesson{data.length > 1 ? "s" : ""}
+        </span>
+      </div>
 
       {data.length === 0 ? (
         <div className="flex justify-center mt-16">
@@ -38,7 +44,12 @@ export default function Page() {
           </Empty>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          className={cn(
+            "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mx-auto h-auto overflow-y-auto py-2",
+            "justify-items-center w-full"
+          )}
+        >
           {data.map((item, index) => (
             <Card className="max-w-60" key={index}>
               <CardContent className="flex items-center justify-center pb-0">

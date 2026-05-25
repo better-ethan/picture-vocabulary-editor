@@ -60,7 +60,7 @@ export default function AdminLayout() {
               </Button>
             </Drawer.Close>
           </Drawer.Header>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1">
             <MenuContent
               sections={menuSections}
               username={session?.user?.name as string}
@@ -76,15 +76,13 @@ export default function AdminLayout() {
         )}
       >
         {sidebarCollapsed ? (
-          <div>
-            <Button
-              variant={"link"}
-              size={"icon"}
-              onClick={() => setSidebarCollapsed(false)}
-            >
-              <MenuIcon className="size-6" />
-            </Button>
-          </div>
+          <Button
+            variant={"link"}
+            size={"icon"}
+            onClick={() => setSidebarCollapsed(false)}
+          >
+            <MenuIcon className="size-6" />
+          </Button>
         ) : (
           <div className="flex flex-col h-full">
             <div className="flex justify-end">
@@ -107,7 +105,7 @@ export default function AdminLayout() {
           </div>
         )}
       </aside>
-      <main className="flex w-full mx-auto p-3 overflow-hidden h-full">
+      <main className="flex justify-center w-full p-3 overflow-hidden h-full">
         <Outlet />
       </main>
     </div>
