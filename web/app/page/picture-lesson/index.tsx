@@ -72,7 +72,7 @@ export default function Page() {
             Draft lesson is only visible to author
           </div>
         )}
-        <div className="mt-8 flex justify-start">
+        <div className="mt-8 flex flex-col lg:flex-row justify-start gap-3">
           <VocabularyCanvas
             width={700}
             height={600}
@@ -82,9 +82,9 @@ export default function Page() {
             lines={lines}
           />
 
-          <Card className="w-full lg:w-64 shrink-0 ml-6">
-            <CardContent>
-              <CardTitle>Word List</CardTitle>
+          <Card className="lg:w-64">
+            <CardContent className="p-2">
+              <CardTitle className="text-lg lg:text-2xl">Word List</CardTitle>
               <Field className="flex flex-row justify-between items-center mb-4">
                 <Label htmlFor="rate">Rate</Label>
                 <Select
@@ -108,7 +108,7 @@ export default function Page() {
                   </SelectContent>
                 </Select>
               </Field>
-              <ul className="space-y-2">
+              <ul className="flex flex-col gap-2 pr-2 overflow-y-auto max-h-40 lg:max-h-full">
                 {words.map(({ number, word }) => (
                   <li key={number} className="flex items-center gap-2">
                     <Badge
