@@ -26,7 +26,7 @@ export default function Page() {
 
   return (
     <div className="max-w-5xl w-full h-full flex flex-col">
-      <div className="flex items-center justify-between w-full mb-4">
+      <div className="flex items-center justify-between mb-4">
         <Text as={"h2"} className="mb-4 text-start">
           My Authored
         </Text>
@@ -46,21 +46,21 @@ export default function Page() {
       ) : (
         <div
           className={cn(
-            "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mx-auto h-auto overflow-y-auto py-2",
+            "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 overflow-y-auto p-2",
             "justify-items-center w-full"
           )}
         >
           {data.map((item, index) => (
-            <Card className="max-w-60" key={index}>
+            <Card className="w-full" key={index}>
               <CardContent className="flex items-center justify-center pb-0">
-                <img className="w-50 h-auto" src={item.thumbnail} />
+                <img className="w-full h-auto" src={item.thumbnail} />
               </CardContent>
               <CardHeader className="pb-0">
                 <CardTitle className="text-base font-normal">
                   {item.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex items-center gap-2 justify-end">
+              <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
                 <Button size={"sm"} asChild>
                   <Link
                     to={`/admin/picture-lesson/${item.id}/${item.slug}/edit`}
