@@ -809,11 +809,15 @@ export function VocabularyEditor({
   };
 
   type Tool = "images" | "upload" | "words" | "tools";
-  const [activeTool, setActiveTool] = useState<Tool | null>("images");
-  const [isPanelOpen, setIsPanelOpen] = useState(() => {
-    if (typeof window === "undefined") return true;
-    return window.innerWidth >= 1024;
-  });
+  const [activeTool, setActiveTool] = useState<Tool | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      setIsPanelOpen(true);
+      setActiveTool("images");
+    }
+  }, []);
   const toggleTool = (tool: Tool) => {
     if (activeTool === tool) {
       setIsPanelOpen((prev) => !prev);
