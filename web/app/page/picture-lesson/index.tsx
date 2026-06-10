@@ -2,6 +2,7 @@ import { Link, useLoaderData } from "react-router";
 import type { Route } from "./+types/index";
 import { createTrpcClient } from "@/util";
 import {
+  playAudio,
   speak,
   VocabularyCanvas,
   VocabularyEditor,
@@ -109,7 +110,7 @@ export default function Page() {
                 </Select>
               </Field>
               <ul className="flex flex-col gap-2 pr-2 overflow-y-auto max-h-40 lg:max-h-full">
-                {words.map(({ number, word }) => (
+                {words.map(({ number, word, audio }) => (
                   <li key={number} className="flex items-center gap-2">
                     <Badge
                       variant="default"
@@ -126,7 +127,9 @@ export default function Page() {
                       variant="outline"
                       size="sm"
                       disabled={!word}
-                      onClick={() => speak(word, rate)}
+                      onClick={async () => {
+                        await playAudio(audio, rate);
+                      }}
                     >
                       <Volume2 className="w-4 h-4" />
                     </Button>

@@ -74,7 +74,7 @@ export interface CanvasContent {
   images: ImageItem[];
   labels: LabelItem[];
   lines: LineItem[];
-  words: { number: number; word: string }[];
+  words: { number: number; word: string; audio: string }[];
 }
 
 interface VocabularyEditorProps {
@@ -92,7 +92,7 @@ interface VocabularyEditorProps {
       images: ImageItem[];
       labels: LabelItem[];
       lines: LineItem[];
-      words: { number: number; word: string }[];
+      words: { number: number; word: string; audio: string }[];
     };
   };
 }
@@ -651,18 +651,20 @@ export function VocabularyEditor({
   ];
   const [numbers, setNumbers] = useState(initialNumbers);
 
-  const initialWordMap = data?.content.words.reduce<Record<number, string>>(
-    (map, w) => {
-      map[w.number] = w.word;
-      return map;
-    },
-    {}
-  );
-  const [wordMap, setWordMap] = useState<Record<number, string>>(
-    initialWordMap ?? {}
-  );
+  const initialWordMap = data?.content.words.reduce<
+    Record<number, { word: string; audio: string }>
+  >((map, w) => {
+    map[w.number] = { word: w.word, audio: w.audio };
+    return map;
+  }, {});
+  const [wordMap, setWordMap] = useState<
+    Record<number, { word: string; audio: string }>
+  >(initialWordMap ?? {});
 
-  const handleWordChange = (num: number, value: string) => {
+  const handleWordChange = (
+    num: number,
+    value: { word: string; audio?: string }
+  ) => {
     setWordMap((prev) => ({ ...prev, [num]: value }));
   };
 
@@ -797,7 +799,11 @@ export function VocabularyEditor({
     images,
     labels,
     lines,
-    words: numbers.map((num) => ({ number: num, word: wordMap[num] ?? "" })),
+    words: numbers.map((num) => ({
+      number: num,
+      word: wordMap[num]?.word ?? "",
+      audio: wordMap[num]?.audio,
+    })),
   };
 
   const handleSlugChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -1310,6 +1316,24 @@ export const speak = (word: string, rate = 1) => {
   else window.speechSynthesis.onvoiceschanged = applyVoiceAndSpeak;
 };
 
+let audio: HTMLAudioElement | null = null;
+
+export const playAudio = async (url: string, rate = 1) => {
+  if (!url) return;
+
+  if (audio) {
+    audio.pause();
+  }
+
+  audio = new Audio(url);
+
+  audio.src = url;
+  audio.currentTime = 0;
+  audio.playbackRate = rate;
+
+  await audio.play();
+};
+
 function WordsPanel({
   mode = "view",
   numbers,
@@ -1320,11 +1344,13 @@ function WordsPanel({
 }: {
   mode?: EditorMode;
   numbers: number[];
-  wordMap: Record<number, string>;
-  onWordChange: (num: number, value: string) => void;
+  wordMap: Record<number, { word: string; audio: string }>;
+  onWordChange: (num: number, value: { word: string; audio?: string }) => void;
   onDelete: (item: string) => void;
   onAdd: () => void;
 }) {
+  const trpc = useTRPC();
+  const uploadMutation = useMutation(trpc.audio.getUploadUrl.mutationOptions());
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b flex items-center justify-between">
@@ -1362,12 +1388,21 @@ function WordsPanel({
               </div>
               <Input
                 type="text"
-                value={wordMap[item] ?? ""}
+                value={wordMap[item]?.word ?? ""}
                 onChange={(e) =>
                   mode === "edit"
-                    ? onWordChange(item, e.target.value)
+                    ? onWordChange(item, { word: e.target.value })
                     : undefined
                 }
+                onBlur={async () => {
+                  if (!wordMap[item] || !wordMap[item]?.word?.trim()) return;
+
+                  const { url } = await uploadMutation.mutateAsync({
+                    text: wordMap[item].word,
+                  });
+
+                  onWordChange(item, { ...wordMap[item], audio: url });
+                }}
                 readOnly={mode === "view"}
                 className="w-42 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
               />
@@ -1375,8 +1410,12 @@ function WordsPanel({
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => speak(wordMap[item] ?? "")}
-                disabled={!wordMap[item]}
+                onClick={async () => {
+                  const audioUrl = wordMap[item]?.audio;
+                  if (!audioUrl) return;
+                  await playAudio(audioUrl);
+                }}
+                disabled={!wordMap[item]?.audio}
               >
                 <Volume2 className="w-4 h-4" />
               </Button>
