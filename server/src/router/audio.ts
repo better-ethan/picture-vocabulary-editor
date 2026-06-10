@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { eq } from "drizzle-orm";
 import { publicProcedure, router } from "../trpc.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "~/lib/s3.js";
-import { text2Speech } from "~/lib/polly.js";
+import { generateHash, text2Speech, voiceConfig } from "~/lib/polly.js";
+import { db, textSpeech } from "@package/drizzle";
 
 export const audioRouter = router({
   getUploadUrl: publicProcedure
@@ -12,7 +14,21 @@ export const audioRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      const key = `uploads/audios/${Date.now()}-${input.text}`;
+      const hash = generateHash({
+        text: input.text.trim(),
+      });
+      const key = `uploads/audios/${hash}.mp3`;
+
+      const result = await db
+        .select()
+        .from(textSpeech)
+        .where(eq(textSpeech.hash, hash));
+
+      if (result.length > 0) {
+        return {
+          url: result[0].audioUrl,
+        };
+      }
 
       const bytes = await text2Speech({ text: input.text });
 
@@ -25,8 +41,19 @@ export const audioRouter = router({
 
       await s3.send(command);
 
+      const audioUrl = `${process.env.VITE_CLOUDFLARE_PUBLIC_URL}/${key}`;
+
+      await db.insert(textSpeech).values({
+        text: input.text.trim(),
+        locale: voiceConfig.locale,
+        voice: voiceConfig.voice,
+        engine: voiceConfig.engine,
+        hash,
+        audioUrl,
+      });
+
       return {
-        url: `${process.env.VITE_CLOUDFLARE_PUBLIC_URL}/${key}`,
+        url: audioUrl,
       };
     }),
 

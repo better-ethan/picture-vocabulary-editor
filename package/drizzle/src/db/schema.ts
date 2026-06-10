@@ -27,3 +27,15 @@ export const uploadImage = pgTable("upload_image", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const textSpeech = pgTable("text_speech", {
+  id: serial("id").primaryKey(),
+  text: varchar("text", { length: 255 }).notNull(),
+  locale: varchar("locale", { length: 20 }).notNull(),
+  voice: varchar("voice", { length: 20 }).notNull(),
+  engine: varchar("engine", { length: 20 }).notNull(),
+  hash: varchar("hash", { length: 64 }).notNull().unique(),
+  audioUrl: varchar("audio_url", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});

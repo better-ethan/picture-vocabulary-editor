@@ -43,6 +43,13 @@
       "when": 1778288210226,
       "tag": "0005_lively_serpent_society",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1781093331526,
+      "tag": "0006_superb_human_torch",
+      "breakpoints": true
     }
   ]
 }

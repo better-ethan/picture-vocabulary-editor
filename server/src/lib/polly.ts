@@ -2,30 +2,41 @@ import {
   type Engine,
   type OutputFormat,
   type VoiceId,
+  type LanguageCode,
   PollyClient,
   SynthesizeSpeechCommand,
 } from "@aws-sdk/client-polly";
+import { createHash } from "node:crypto";
 
 const polly = new PollyClient({
   region: process.env.AWS_REGION,
 });
 
+export const voiceConfig = {
+  voice: "Joanna",
+  engine: "standard",
+  locale: "en-US",
+};
+
 export async function text2Speech({
   text,
   format = "mp3",
-  voiceId = "Joanna",
-  engine = "standard",
+  voiceId = voiceConfig.voice as VoiceId,
+  engine = voiceConfig.engine as Engine,
+  languageCode = voiceConfig.locale as LanguageCode,
 }: {
   text: string;
   format?: OutputFormat;
   voiceId?: VoiceId;
   engine?: Engine;
+  languageCode?: LanguageCode;
 }) {
   const command = new SynthesizeSpeechCommand({
     Text: text,
     OutputFormat: format,
     VoiceId: voiceId,
     Engine: engine,
+    LanguageCode: languageCode,
   });
 
   try {
@@ -42,3 +53,19 @@ export async function text2Speech({
     throw err;
   }
 }
+
+export const generateHash = ({
+  text,
+  locale = voiceConfig.locale,
+  voice = voiceConfig.voice,
+  engine = voiceConfig.engine,
+}: {
+  text: string;
+  locale?: string;
+  voice?: string;
+  engine?: string;
+}) => {
+  const input = [locale, voice, engine, text].join("|");
+
+  return createHash("sha256").update(input).digest("hex").slice(0, 32);
+};

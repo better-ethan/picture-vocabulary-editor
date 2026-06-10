@@ -658,7 +658,7 @@ export function VocabularyEditor({
     return map;
   }, {});
   const [wordMap, setWordMap] = useState<
-    Record<number, { word: string; audio: string }>
+    Record<number, { word: string; audio?: string }>
   >(initialWordMap ?? {});
 
   const handleWordChange = (
