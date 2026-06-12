@@ -32,6 +32,7 @@ import {
   BookAIcon,
   ToolCaseIcon,
   FileTextIcon,
+  Loader2Icon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
@@ -1351,6 +1352,25 @@ function WordsPanel({
 }) {
   const trpc = useTRPC();
   const uploadMutation = useMutation(trpc.audio.getUploadUrl.mutationOptions());
+
+  const [loadingItem, setLoadingItem] = useState<number | null>(null);
+
+  const generateAudio = async (item: number) => {
+    if (!wordMap[item] || !wordMap[item]?.word?.trim()) return;
+
+    setLoadingItem(item);
+
+    try {
+      const { url } = await uploadMutation.mutateAsync({
+        text: wordMap[item].word,
+      });
+
+      onWordChange(item, { ...wordMap[item], audio: url });
+    } catch (err) {
+    } finally {
+      setLoadingItem(null);
+    }
+  };
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b flex items-center justify-between">
@@ -1394,15 +1414,7 @@ function WordsPanel({
                     ? onWordChange(item, { word: e.target.value })
                     : undefined
                 }
-                onBlur={async () => {
-                  if (!wordMap[item] || !wordMap[item]?.word?.trim()) return;
-
-                  const { url } = await uploadMutation.mutateAsync({
-                    text: wordMap[item].word,
-                  });
-
-                  onWordChange(item, { ...wordMap[item], audio: url });
-                }}
+                onBlur={() => generateAudio(item)}
                 readOnly={mode === "view"}
                 className="w-42 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
               />
@@ -1417,7 +1429,11 @@ function WordsPanel({
                 }}
                 disabled={!wordMap[item]?.audio}
               >
-                <Volume2 className="w-4 h-4" />
+                {loadingItem === item ? (
+                  <Loader2Icon className="size-4 animate-spin" />
+                ) : (
+                  <Volume2 className="size-4" />
+                )}
               </Button>
               {mode === "edit" && (
                 <Button
