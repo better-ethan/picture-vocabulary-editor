@@ -428,19 +428,22 @@ function EditableHandDrawLine({
 function DraggableLine({
   color = "black",
   label = "Line",
+  onClick,
 }: {
   color?: string;
   label?: string;
+  onClick?: () => void;
 }) {
   return (
     <div
-      draggable
-      onDragStart={(e) => {
-        e.dataTransfer.setData(
-          "lineItem",
-          JSON.stringify({ color, strokeWidth: 2 })
-        );
-      }}
+      // draggable
+      // onDragStart={(e) => {
+      //   e.dataTransfer.setData(
+      //     "lineItem",
+      //     JSON.stringify({ color, strokeWidth: 2 })
+      //   );
+      // }}
+      onClick={onClick}
       className={cn(
         "flex flex-col items-center gap-1 p-2 rounded cursor-grab",
         "border border0dashed border-gray-300 hover:border-blue-400",
@@ -807,6 +810,49 @@ export function VocabularyEditor({
     })),
   };
 
+  const handleAddImage = (url: string) => {
+    setImages((prev) => [
+      ...prev,
+      {
+        id: `image-${Date.now()}`,
+        src: url,
+        x: width / 2 - 100,
+        y: height / 2 - 75,
+        width: 200,
+      },
+    ]);
+  };
+
+  const handleAddLabel = (number: number) => {
+    setLabels((prev) => {
+      const offset = prev.length * 5;
+
+      return [
+        ...prev,
+        {
+          id: `label-${Date.now()}`,
+          number,
+          x: width / 2 + offset,
+          y: height / 2 + offset,
+        },
+      ];
+    });
+  };
+
+  const handleAddLine = (color: string, strokeWidth: number) => {
+    const newLine: LineItem = {
+      id: `line-${Date.now()}`,
+      startX: width / 2 - 60,
+      startY: height / 2,
+      endX: width / 2 + 60,
+      endY: height / 2,
+      color,
+      strokeWidth,
+    };
+    setLines((prev) => [...prev, newLine]);
+    setSelectedId(newLine.id);
+  };
+
   const handleSlugChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSlug(event.target.value);
   };
@@ -939,8 +985,9 @@ export function VocabularyEditor({
                     : "h-0 lg:w-0 opacity-0"
                 )}
               >
-                {isPanelOpen && activeTool === "images" && <ImageSearchPanel />}
-                {isPanelOpen && activeTool === "upload" && <UploadPanel />}
+                {isPanelOpen && activeTool === "images" && (
+                  <ImageSearchPanel onAddImage={handleAddImage} />
+                )}
                 {isPanelOpen && activeTool === "words" && (
                   <WordsPanel
                     mode={mode}
@@ -951,9 +998,12 @@ export function VocabularyEditor({
                     onAdd={() =>
                       setNumbers((prev) => [...prev, prev.length + 1])
                     }
+                    onAddLabel={handleAddLabel}
                   />
                 )}
-                {isPanelOpen && activeTool === "tools" && <ToolsPanel />}
+                {isPanelOpen && activeTool === "tools" && (
+                  <ToolsPanel onAddLine={handleAddLine} />
+                )}
               </div>
               <Button
                 type="button"
@@ -990,8 +1040,6 @@ export function VocabularyEditor({
             onImagesChange={setImages}
             onLabelsChange={setLabels}
             onLinesChange={setLines}
-            containerRef={containerRef}
-            onDrop={handleDrop}
           />
 
           <Card className="w-full">
@@ -1122,7 +1170,11 @@ function ToolButton({
   );
 }
 
-function ImageSearchPanel({}: {}) {
+function ImageSearchPanel({
+  onAddImage,
+}: {
+  onAddImage?: (url: string) => void;
+}) {
   const [imageSearch, setImageSearch] = useState("");
   const [searchedImages, setSearchedImages] = useState<PixabayHit[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -1167,10 +1219,11 @@ function ImageSearchPanel({}: {}) {
           {searchedImages.map((img) => (
             <div
               key={img.id}
-              draggable
-              onDragStart={(e) =>
-                e.dataTransfer.setData("imageUrl", img.webformatURL)
-              }
+              // draggable
+              // onDragStart={(e) =>
+              //   e.dataTransfer.setData("imageUrl", img.webformatURL)
+              // }
+              onClick={() => onAddImage?.(img.webformatURL)}
               className={cn(
                 "rounded overflow-hidden border border-gray-200 mb-2",
                 "hover:ring-2 hover:ring-blue-400 cursor-pointer transition"
@@ -1342,6 +1395,7 @@ function WordsPanel({
   onWordChange,
   onDelete,
   onAdd,
+  onAddLabel,
 }: {
   mode?: EditorMode;
   numbers: number[];
@@ -1349,6 +1403,7 @@ function WordsPanel({
   onWordChange: (num: number, value: { word: string; audio?: string }) => void;
   onDelete: (item: string) => void;
   onAdd: () => void;
+  onAddLabel?: (num: number) => void;
 }) {
   const trpc = useTRPC();
   const uploadMutation = useMutation(trpc.audio.getUploadUrl.mutationOptions());
@@ -1395,10 +1450,11 @@ function WordsPanel({
           {numbers.map((item, index) => (
             <div key={item} className="flex items-center gap-2 mb-1">
               <div
-                draggable={mode === "edit"}
-                onDragStart={(e) =>
-                  e.dataTransfer.setData("labelNumber", String(item))
-                }
+                // draggable={mode === "edit"}
+                // onDragStart={(e) =>
+                //   e.dataTransfer.setData("labelNumber", String(item))
+                // }
+                onClick={() => mode === "edit" && onAddLabel?.(item)}
                 className={cn(
                   "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
                   "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
@@ -1454,12 +1510,20 @@ function WordsPanel({
   );
 }
 
-function ToolsPanel({}: {}) {
+function ToolsPanel({
+  onAddLine,
+}: {
+  onAddLine?: (color?: string, strokeWidth?: number) => void;
+}) {
   return (
     <div className="flex flex-col h-full p-4 gap-4">
       <Text>Drag these tools onto canvas</Text>
       <div>
-        <DraggableLine color="black" label="Helper Line" />
+        <DraggableLine
+          color="black"
+          label="Helper Line"
+          onClick={() => onAddLine?.("black", 2)}
+        />
       </div>
     </div>
   );
@@ -1509,8 +1573,6 @@ interface VocabularyCanvasProps {
   onImagesChange?: (images: ImageItem[]) => void;
   onLabelsChange?: (labels: LabelItem[]) => void;
   onLinesChange?: (lines: LineItem[]) => void;
-  containerRef?: React.RefObject<HTMLDivElement | null>;
-  onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
 export function VocabularyCanvas({
@@ -1525,8 +1587,6 @@ export function VocabularyCanvas({
   onImagesChange,
   onLabelsChange,
   onLinesChange,
-  containerRef,
-  onDrop,
 }: VocabularyCanvasProps) {
   const { handleDragging, handleDragEnd, handleResizing, handleResizeEnd } =
     useKonvaSnapping({
@@ -1558,12 +1618,7 @@ export function VocabularyCanvas({
   }, [width]);
 
   return (
-    <Card
-      ref={containerRef}
-      onDrop={onDrop}
-      onDragOver={(e) => e.preventDefault()}
-      className="w-full"
-    >
+    <Card className="w-full">
       <CardContent className="w-full">
         <div ref={wrapperRef} className="w-full overflow-hidden">
           <Stage
