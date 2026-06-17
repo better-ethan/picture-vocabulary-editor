@@ -69,7 +69,7 @@ export default function Page() {
     <div className="flex flex-col items-center">
       <div className="w-full max-w-250 flex flex-col gap-4">
         {data.status === "draft" && (
-          <div className="p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center">
+          <div className="p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center mt-3">
             Draft lesson is only visible to author
           </div>
         )}
