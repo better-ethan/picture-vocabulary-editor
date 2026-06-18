@@ -1046,7 +1046,7 @@ export function VocabularyEditor({
         )}
         <div className="flex flex-col items-center overflow-y-auto flex-1 gap-4 min-h-0 py-2 order-first lg:order-last">
           <Text className="text-left w-full text-gray-400">
-            Drag images onto the canvas 👇
+            Drag your local images onto the canvas 👇
           </Text>
           <VocabularyCanvas
             width={width}
@@ -1232,8 +1232,12 @@ function ImageSearchPanel({
             <Loader />
           </div>
         )}
-        {!isSearching && searchedImages.length === 0 && (
+        {!isSearching && searchedImages.length === 0 ? (
           <p className="text-gray-400 text-center py-4">No Results</p>
+        ) : (
+          <Text className="text-left w-full text-gray-400 px-1 mb-2">
+            Click an image to add it to the canvas 👉
+          </Text>
         )}
         <div className="columns-2 gap-2 px-1">
           {searchedImages.map((img) => (
@@ -1463,8 +1467,8 @@ function WordsPanel({
         )}
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 gap-2">
-        <Text className="mb-3">
-          Drag these number labels onto the canvas 👉
+        <Text className="mb-3 text-gray-400">
+          Click these number labels to add them to the canvas 👉
         </Text>
         <div className="flex flex-col gap-2">
           {numbers.map((item, index) => (
@@ -1537,7 +1541,9 @@ function ToolsPanel({
 }) {
   return (
     <div className="flex flex-col h-full p-4 gap-4">
-      <Text>Drag these tools onto canvas</Text>
+      <Text className="text-gray-400">
+        Click a line to add it to the canvas 👉
+      </Text>
       <div>
         <DraggableLine
           color="black"
