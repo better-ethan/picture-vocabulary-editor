@@ -811,26 +811,38 @@ export function VocabularyEditor({
   };
 
   const handleAddImage = (url: string) => {
-    setImages((prev) => [
-      ...prev,
-      {
-        id: `image-${Date.now()}`,
-        src: url,
-        x: width / 2 - 100,
-        y: height / 2 - 75,
-        width: 200,
-      },
-    ]);
-  };
+    const id = `image-${Date.now()}`;
+    setSelectedId(id);
 
-  const handleAddLabel = (number: number) => {
-    setLabels((prev) => {
-      const offset = prev.length * 5;
+    setImages((prev) => {
+      const MAX_OFFSET = 70;
+      const offset = (prev.length * 10) % MAX_OFFSET;
 
       return [
         ...prev,
         {
-          id: `label-${Date.now()}`,
+          id,
+          src: url,
+          x: width / 2 - 100 + offset,
+          y: height / 2 - 75 + offset,
+          width: 200,
+        },
+      ];
+    });
+  };
+
+  const handleAddLabel = (number: number) => {
+    const id = `label-${Date.now()}`;
+    setSelectedId(id);
+
+    setLabels((prev) => {
+      const MAX_OFFSET = 70;
+      const offset = (prev.length * 10) % MAX_OFFSET;
+
+      return [
+        ...prev,
+        {
+          id,
           number,
           x: width / 2 + offset,
           y: height / 2 + offset,
@@ -840,17 +852,25 @@ export function VocabularyEditor({
   };
 
   const handleAddLine = (color: string, strokeWidth: number) => {
-    const newLine: LineItem = {
-      id: `line-${Date.now()}`,
-      startX: width / 2 - 60,
-      startY: height / 2,
-      endX: width / 2 + 60,
-      endY: height / 2,
-      color,
-      strokeWidth,
-    };
-    setLines((prev) => [...prev, newLine]);
-    setSelectedId(newLine.id);
+    const id = `line-${Date.now()}`;
+    setSelectedId(id);
+
+    setLines((prev) => {
+      const MAX_OFFSET = 70;
+      const offset = (prev.length * 10) % MAX_OFFSET;
+
+      const newLine: LineItem = {
+        id,
+        startX: width / 2 - 60 + offset,
+        startY: height / 2 + offset,
+        endX: width / 2 + 60 + offset,
+        endY: height / 2 + offset,
+        color,
+        strokeWidth,
+      };
+
+      return [...prev, newLine];
+    });
   };
 
   const handleSlugChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -1513,7 +1533,7 @@ function WordsPanel({
 function ToolsPanel({
   onAddLine,
 }: {
-  onAddLine?: (color?: string, strokeWidth?: number) => void;
+  onAddLine?: (color: string, strokeWidth: number) => void;
 }) {
   return (
     <div className="flex flex-col h-full p-4 gap-4">
