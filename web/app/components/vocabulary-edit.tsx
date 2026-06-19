@@ -33,6 +33,7 @@ import {
   ToolCaseIcon,
   FileTextIcon,
   Loader2Icon,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
@@ -47,7 +48,7 @@ import {
   SelectContent,
 } from "@/components/retroui/Select";
 import { useTRPC } from "@/util";
-import { Form, useNavigate, useSubmit } from "react-router";
+import { Form, useNavigate, useNavigation, useSubmit } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Field, FieldDescription } from "@/components/ui/field";
 import { toast } from "sonner";
@@ -847,6 +848,7 @@ export function VocabularyEditor({
   const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
 
   const submit = useSubmit();
+  const navigation = useNavigation();
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -1109,8 +1111,17 @@ export function VocabularyEditor({
                 name="content"
                 value={JSON.stringify(content)}
               />
-              <Button size="sm" type="submit" className="h-8 px-5">
-                Save
+              <Button
+                size="sm"
+                type="submit"
+                className="h-8 px-5"
+                disabled={navigation.state !== "idle"}
+              >
+                {navigation.state === "idle" ? (
+                  "Save"
+                ) : (
+                  <Loader2 className="animate-spin" />
+                )}
               </Button>
               <Button
                 size="sm"

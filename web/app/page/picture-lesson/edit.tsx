@@ -1,7 +1,7 @@
 import { createTrpcClient } from "@/util";
 import { VocabularyEditor } from "@/components/vocabulary-edit";
 import { toast } from "sonner";
-import { useActionData, useLoaderData } from "react-router";
+import { useActionData, useLoaderData, useNavigate } from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/edit";
 import { reuploadPixabayImages } from "@/util/image";
@@ -57,9 +57,10 @@ export default function Page() {
   const data = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
+  const navigate = useNavigate();
   useEffect(() => {
     if (actionData && actionData.id) {
-      toast.success("Successfully update this picture lesson!");
+      navigate("/admin/picture-lesson/authored", { state: { updated: true } });
     }
   }, [actionData]);
 

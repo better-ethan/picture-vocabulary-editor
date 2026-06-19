@@ -1,4 +1,11 @@
-import { Link, useLoaderData } from "react-router";
+import {
+  Link,
+  Navigate,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router";
 import { createTrpcClient } from "@/util";
 import { EmptyContent, EmptyTitle, Empty } from "@/components/retroui/Empty";
 import type { Route } from "./+types/list";
@@ -12,6 +19,8 @@ import {
 import { Button } from "@/components/retroui/Button";
 import { ArrowUpRightIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -23,6 +32,16 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
 export default function Page() {
   const data = useLoaderData<typeof loader>();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const state = location.state;
+  useEffect(() => {
+    if (state?.created || state?.updated) {
+      toast.success(`${state.created ? "Created" : "Updated"} successfully!`);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, []);
 
   return (
     <div className="max-w-5xl w-full h-full flex flex-col">

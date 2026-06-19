@@ -4,7 +4,7 @@ import {
   type CanvasContent,
 } from "@/components/vocabulary-edit";
 import { toast } from "sonner";
-import { useActionData } from "react-router";
+import { useActionData, useNavigate } from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/create";
 import { Text } from "@/components/retroui/Text";
@@ -41,9 +41,11 @@ export const action = async ({ request }: Route.ActionArgs) => {
 export default function Page() {
   const actionData = useActionData<typeof action>();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (actionData && actionData.id) {
-      toast.success("Successfully created a new picture lesson!");
+      navigate("/admin/picture-lesson/authored", { state: { created: true } });
     }
   }, [actionData]);
 
