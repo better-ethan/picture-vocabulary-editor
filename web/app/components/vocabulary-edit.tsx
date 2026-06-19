@@ -901,6 +901,8 @@ export function VocabularyEditor({
     }
   };
 
+  const addImageInputRef = useRef<HTMLInputElement>(null);
+
   return (
     <Form
       method="post"
@@ -996,9 +998,19 @@ export function VocabularyEditor({
               type="file"
               accept="image/*"
               multiple
-              className="max-w-64"
+              hidden
+              ref={addImageInputRef}
               onChange={handleFileChange}
             />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="max-w-48"
+              onClick={() => addImageInputRef.current?.click()}
+            >
+              Add Images
+            </Button>
             <FieldDescription className="text-gray-400">
               Add images to the canvas 👇, png, jpg, webp suggested
             </FieldDescription>
