@@ -436,13 +436,6 @@ function DraggableLine({
 }) {
   return (
     <div
-      // draggable
-      // onDragStart={(e) => {
-      //   e.dataTransfer.setData(
-      //     "lineItem",
-      //     JSON.stringify({ color, strokeWidth: 2 })
-      //   );
-      // }}
       onClick={onClick}
       className={cn(
         "flex flex-col items-center gap-1 p-2 rounded cursor-grab",
@@ -529,10 +522,11 @@ function ThumbnailUploader({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
 
     if (!file) return;
+
     const url = URL.createObjectURL(file);
     setImageSrc(url);
 
@@ -709,87 +703,6 @@ export function VocabularyEditor({
     });
     const publicUrl = `${import.meta.env.VITE_CLOUDFLARE_PUBLIC_URL}/${key}`;
     return publicUrl;
-  };
-
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    if (!containerRef.current) return;
-
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const number = Number(e.dataTransfer.getData("labelNumber"));
-    if (number) {
-      setLabels((prev) => [
-        ...prev,
-        {
-          id: `label-${Date.now()}`,
-          number,
-          x,
-          y,
-        },
-      ]);
-    }
-
-    const imageUrl = e.dataTransfer.getData("imageUrl");
-    if (imageUrl) {
-      setImages((prev) => [
-        ...prev,
-        {
-          id: `image-${Date.now()}`,
-          src: imageUrl,
-          x,
-          y,
-          width: 200,
-        },
-      ]);
-    }
-
-    const lineItemData = e.dataTransfer.getData("lineItem");
-    if (lineItemData) {
-      const { color, strokeWidth } = JSON.parse(lineItemData);
-      const newLine: LineItem = {
-        id: `line-${Date.now()}`,
-        startX: x - 60,
-        startY: y,
-        endX: x + 60,
-        endY: y,
-        color,
-        strokeWidth,
-      };
-      setLines((prev) => [...prev, newLine]);
-      setSelectedId(newLine.id);
-    }
-
-    const files = Array.from(e.dataTransfer.files).filter((f) =>
-      f.type.startsWith("image/")
-    );
-    if (files.length > 0) {
-      toast.info(`Uploading ${files.length} image(s)...`);
-      try {
-        await Promise.all(
-          files.map(async (file, i) => {
-            const publicUrl = await uploadFileToR2({ file });
-            setImages((prev) => [
-              ...prev,
-              {
-                id: `image-${Date.now()}-${i}`,
-                src: publicUrl,
-                x: x + i * 20,
-                y: y + i * 20,
-                width: 200,
-              },
-            ]);
-          })
-        );
-        toast.success("Upload successful!");
-      } catch (error) {
-        console.error("Upload failed: ", error);
-        toast.error("Upload failed. Please try again.");
-      }
-    }
   };
 
   const [title, setTitle] = useState(data?.title ?? "");
@@ -1492,8 +1405,6 @@ function ImageGrid({
       {images.map((img) => (
         <div
           key={img.id}
-          draggable
-          onDragStart={(e) => e.dataTransfer.setData("imageUrl", img.url)}
           className={cn(
             "rounded overflow-hidden border border-gray-100 mb-2",
             "hover:ring-2 hover:ring-blue-400 cursor-pointer transition p-1"
