@@ -1006,7 +1006,7 @@ export function VocabularyEditor({
               type="button"
               variant="secondary"
               size="sm"
-              className="max-w-48"
+              className="max-w-32"
               onClick={() => addImageInputRef.current?.click()}
             >
               Add Images
