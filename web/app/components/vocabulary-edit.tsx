@@ -955,6 +955,39 @@ export function VocabularyEditor({
 
   const navigate = useNavigate();
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []).filter((f) =>
+      f.type.startsWith("image/")
+    );
+    if (files.length > 0) {
+      toast.info(`Uploading ${files.length} image(s)...`);
+      try {
+        await Promise.all(
+          files.map(async (file, i) => {
+            const publicUrl = await uploadFileToR2({ file });
+            const id = `image-${Date.now()}-${i}`;
+            setImages((prev) => [
+              ...prev,
+              {
+                id,
+                src: publicUrl,
+                x: width / 2 + i * 20,
+                y: height / 2 + i * 20,
+                width: 200,
+              },
+            ]);
+
+            setSelectedId(id);
+          })
+        );
+        toast.success("Upload successful!");
+      } catch (error) {
+        console.error("Upload failed: ", error);
+        toast.error("Upload failed. Please try again.");
+      }
+    }
+  };
+
   return (
     <Form
       method="post"
@@ -1045,9 +1078,18 @@ export function VocabularyEditor({
           </Card>
         )}
         <div className="flex flex-col items-center overflow-y-auto flex-1 gap-4 min-h-0 py-2 order-first lg:order-last">
-          <Text className="text-left w-full text-gray-400">
-            Drag your local images onto the canvas 👇
-          </Text>
+          <Field>
+            <Input
+              type="file"
+              accept="image/*"
+              multiple
+              className="max-w-64"
+              onChange={handleFileChange}
+            />
+            <FieldDescription className="text-gray-400">
+              Add images to the canvas 👇, png, jpg, webp suggested
+            </FieldDescription>
+          </Field>
           <VocabularyCanvas
             width={width}
             height={height}
@@ -1243,10 +1285,6 @@ function ImageSearchPanel({
           {searchedImages.map((img) => (
             <div
               key={img.id}
-              // draggable
-              // onDragStart={(e) =>
-              //   e.dataTransfer.setData("imageUrl", img.webformatURL)
-              // }
               onClick={() => onAddImage?.(img.webformatURL)}
               className={cn(
                 "rounded overflow-hidden border border-gray-200 mb-2",
@@ -1261,117 +1299,6 @@ function ImageSearchPanel({
             </div>
           ))}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function UploadPanel({}: {}) {
-  const trpc = useTRPC();
-  const uploadMutation = useMutation(
-    trpc.upload.getUploadUrl.mutationOptions()
-  );
-
-  const uploadCreateMutation = useMutation(
-    trpc.upload.create.mutationOptions()
-  );
-
-  const uploadListQuery = useQuery(trpc.upload.list.queryOptions());
-  const uploadedImageList = uploadListQuery.data ?? [];
-
-  const [file, setFile] = useState<File | null>(null);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [uploading, setUploading] = useState(false);
-
-  const handleUpload = async () => {
-    if (!file) return;
-    setUploading(true);
-    try {
-      const { url, key } = await uploadMutation.mutateAsync({
-        fileName: file.name,
-        fileType: file.type,
-      });
-      await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type,
-        },
-        body: file,
-      });
-
-      const publicUrl = `${import.meta.env.VITE_CLOUDFLARE_PUBLIC_URL}/${key}`;
-      await uploadCreateMutation.mutateAsync({ url: publicUrl });
-
-      await uploadListQuery.refetch();
-
-      toast.success("Upload successful!");
-
-      setFile(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    } catch (error) {
-      console.error("Upload failed", error);
-      toast.error("Upload failed. Please try again.");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  return (
-    <div className="flex flex-col p-2 h-full">
-      <div className="shrink-0">
-        <Field>
-          <Input
-            type="file"
-            accept="image/*"
-            className=""
-            ref={fileInputRef}
-            onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-          />
-          <FieldDescription>png, jpg, webp suggested</FieldDescription>
-          <Button
-            type="button"
-            className="h-10"
-            disabled={!file || uploading}
-            onClick={handleUpload}
-          >
-            {uploading ? <Loader variant="outline" /> : "Upload"}
-          </Button>
-        </Field>
-      </div>
-      {uploadedImageList.length > 0 && (
-        <div className="shrink-0 mt-4">
-          <p className="text-sm text-muted-foreground">
-            Drag images onto the canvas 👉
-          </p>
-          <p className="text-sm text-muted-foreground mt-1 text-right">
-            Total: {uploadedImageList.length}{" "}
-            {uploadedImageList.length === 1 ? "image" : "images"}
-          </p>
-        </div>
-      )}
-      <div className="mt-4 overflow-y-auto flex-1 min-h-0">
-        {uploadedImageList.length === 0 ? (
-          <Empty className="border border-dashed text-wrap">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <ImageIcon className="size-6 text-gray-400 bg-none" />
-              </EmptyMedia>
-              <EmptyTitle>You have no uploaded images</EmptyTitle>
-              <EmptyDescription>
-                Upload images to create picture lessons
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent></EmptyContent>
-          </Empty>
-        ) : (
-          <>
-            <ImageGrid images={uploadedImageList} />
-          </>
-        )}
       </div>
     </div>
   );
@@ -1423,7 +1350,7 @@ function WordsPanel({
 }: {
   mode?: EditorMode;
   numbers: number[];
-  wordMap: Record<number, { word: string; audio: string }>;
+  wordMap: Record<number, { word: string; audio?: string }>;
   onWordChange: (num: number, value: { word: string; audio?: string }) => void;
   onDelete: (item: string) => void;
   onAdd: () => void;
@@ -1474,10 +1401,6 @@ function WordsPanel({
           {numbers.map((item, index) => (
             <div key={item} className="flex items-center gap-2 mb-1">
               <div
-                // draggable={mode === "edit"}
-                // onDragStart={(e) =>
-                //   e.dataTransfer.setData("labelNumber", String(item))
-                // }
                 onClick={() => mode === "edit" && onAddLabel?.(item)}
                 className={cn(
                   "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
