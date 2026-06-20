@@ -30,6 +30,10 @@ export default [
       "/admin/picture-lesson/:id/:slug/edit",
       "page/picture-lesson/edit.tsx"
     ),
+    route(
+      "/admin/picture-lesson/:id/:slug/delete",
+      "page/picture-lesson/delete.tsx"
+    ),
 
     route("/admin/picture-lesson/authored", "page/picture-lesson/authored.tsx"),
 

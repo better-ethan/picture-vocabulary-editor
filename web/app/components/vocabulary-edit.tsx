@@ -48,7 +48,14 @@ import {
   SelectContent,
 } from "@/components/retroui/Select";
 import { useTRPC } from "@/util";
-import { Form, useNavigate, useNavigation, useSubmit } from "react-router";
+import {
+  Form,
+  useFetcher,
+  useNavigate,
+  useNavigation,
+  useParams,
+  useSubmit,
+} from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Field, FieldDescription } from "@/components/ui/field";
 import { toast } from "sonner";
@@ -852,8 +859,9 @@ export function VocabularyEditor({
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let newThumbnail = thumbnail;
     const formData = new FormData(e.currentTarget);
+
+    let newThumbnail = thumbnail;
     if (croppedImage) {
       const result = await uploadFileToR2({
         file: croppedImage,
@@ -905,8 +913,19 @@ export function VocabularyEditor({
 
   const addImageInputRef = useRef<HTMLInputElement>(null);
 
+  const params = useParams();
+
+  const handleDeleteRecord = () => {
+    const formData = new FormData();
+    submit(formData, {
+      method: "post",
+      action: `/admin/picture-lesson/${params.id}/${params.slug}/delete`,
+    });
+  };
+
   return (
     <Form
+      id="editor-form"
       method="post"
       className="flex flex-col w-full bg-inherit h-full"
       onSubmit={handleSubmit}
@@ -1123,6 +1142,37 @@ export function VocabularyEditor({
                   <Loader2 className="animate-spin" />
                 )}
               </Button>
+              <Dialog>
+                <Dialog.Trigger asChild>
+                  <Button size="sm" variant="destructive">
+                    Delete
+                  </Button>
+                </Dialog.Trigger>
+                <Dialog.Content className="max-w-lg">
+                  <Dialog.Header>
+                    <Text as="h5">Confirm Deletion?</Text>
+                  </Dialog.Header>
+                  <Dialog.Description className="text-xl p-4 py-6">
+                    Are you sure you want to delete this lesson? This action
+                    cannot be undone.
+                  </Dialog.Description>
+                  <Dialog.Footer>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleDeleteRecord}
+                    >
+                      Delete
+                    </Button>
+                    <Dialog.Trigger asChild>
+                      <Button variant="outline" size="sm" type="button">
+                        Cancel
+                      </Button>
+                    </Dialog.Trigger>
+                  </Dialog.Footer>
+                </Dialog.Content>
+              </Dialog>
               <Button
                 size="sm"
                 type="button"

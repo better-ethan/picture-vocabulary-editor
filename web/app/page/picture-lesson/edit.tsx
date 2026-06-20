@@ -1,7 +1,12 @@
 import { createTrpcClient } from "@/util";
 import { VocabularyEditor } from "@/components/vocabulary-edit";
 import { toast } from "sonner";
-import { useActionData, useLoaderData, useNavigate } from "react-router";
+import {
+  redirect,
+  useActionData,
+  useLoaderData,
+  useNavigate,
+} from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/edit";
 import { reuploadPixabayImages } from "@/util/image";
@@ -37,12 +42,14 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
   let status = formData.get("status");
   if (!status) status = "draft";
 
-  const updatedContent = await reuploadPixabayImages(JSON.parse(content));
-
   const trpc = createTrpcClient(request);
 
+  const id = parseInt(params.id);
+
+  const updatedContent = await reuploadPixabayImages(JSON.parse(content));
+
   const result = await trpc.pictureLesson.toggle.mutate({
-    id: parseInt(params.id!),
+    id,
     title,
     slug,
     description,
@@ -50,7 +57,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
     status: status as "draft" | "published",
     content: JSON.stringify(updatedContent),
   });
-  return result;
+  return { id: result.id, intent };
 };
 
 export default function Page() {
@@ -59,7 +66,7 @@ export default function Page() {
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (actionData && actionData.id) {
+    if (actionData?.id) {
       navigate("/admin/picture-lesson/authored", { state: { updated: true } });
     }
   }, [actionData]);

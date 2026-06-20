@@ -36,10 +36,16 @@ export default function Page() {
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state;
+  const searchParams = new URLSearchParams(location.search);
   useEffect(() => {
     if (state?.created || state?.updated) {
       toast.success(`${state.created ? "Created" : "Updated"} successfully!`);
+      // Remove the state
       navigate(location.pathname, { replace: true, state: {} });
+    } else if (searchParams.get("deleted") === "true") {
+      toast.success("Deleted successfully!");
+      // Remove the deleted query parameter from the URL
+      navigate(location.pathname, { replace: true });
     }
   }, []);
 
