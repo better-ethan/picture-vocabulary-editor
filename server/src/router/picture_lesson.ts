@@ -1,4 +1,4 @@
-import { desc, eq, and, inArray } from "drizzle-orm";
+import { desc, eq, and, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { db, pictureLesson, user } from "@package/drizzle";
 import { publicProcedure, router } from "../trpc.js";
@@ -9,7 +9,7 @@ export const pictureLessonRouter = router({
   list: publicProcedure
     .input(
       z.object({
-        userId: z.number().optional(),
+        userId: z.string().optional(),
         status: z.enum(["draft", "published"]).optional(),
       })
     )
@@ -19,6 +19,7 @@ export const pictureLessonRouter = router({
         .from(pictureLesson)
         .where(
           and(
+            isNull(pictureLesson.deletedAt),
             input.status !== undefined
               ? eq(pictureLesson.status, input.status)
               : undefined,
@@ -116,7 +117,12 @@ export const pictureLessonRouter = router({
   remove: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      await db.delete(pictureLesson).where(eq(pictureLesson.id, input.id));
+      await db
+        .update(pictureLesson)
+        .set({
+          deletedAt: new Date(),
+        })
+        .where(eq(pictureLesson.id, input.id));
     }),
 
   getById: publicProcedure
@@ -125,7 +131,9 @@ export const pictureLessonRouter = router({
       const [row] = await db
         .select()
         .from(pictureLesson)
-        .where(eq(pictureLesson.id, input.id));
+        .where(
+          and(isNull(pictureLesson.deletedAt), eq(pictureLesson.id, input.id))
+        );
 
       return row;
     }),
@@ -138,10 +146,15 @@ export const pictureLessonRouter = router({
         .from(pictureLesson)
         .where(
           and(
+            isNull(pictureLesson.deletedAt),
             eq(pictureLesson.id, input.id),
             eq(pictureLesson.slug, input.slug)
           )
         );
+
+      if (!row) {
+        return null;
+      }
 
       const [userRow] = await db
         .select()
@@ -172,6 +185,7 @@ export const pictureLessonRouter = router({
         .where(
           and(
             eq(pictureLesson.userId, userId),
+            isNull(pictureLesson.deletedAt),
             input.status ? eq(pictureLesson.status, input.status) : undefined
           )
         )
@@ -197,6 +211,7 @@ export const pictureLessonRouter = router({
         .from(pictureLesson)
         .where(
           and(
+            isNull(pictureLesson.deletedAt),
             eq(pictureLesson.id, input.id),
             eq(pictureLesson.slug, input.slug),
             eq(pictureLesson.userId, userId)

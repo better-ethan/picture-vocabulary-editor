@@ -8,6 +8,12 @@ import {
   json,
 } from "drizzle-orm/pg-core";
 
+const timestampFields = {
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  deletedAt: timestamp("deleted_at"),
+};
+
 export const pictureLesson = pgTable("picture_lesson", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
@@ -17,8 +23,7 @@ export const pictureLesson = pgTable("picture_lesson", {
   thumbnail: varchar("thumbnail", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull(),
   content: json("content"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  ...timestampFields,
 });
 
 export const uploadImage = pgTable("upload_image", {
@@ -36,6 +41,5 @@ export const textSpeech = pgTable("text_speech", {
   engine: varchar("engine", { length: 20 }).notNull(),
   hash: varchar("hash", { length: 64 }).notNull().unique(),
   audioUrl: varchar("audio_url", { length: 255 }).notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  ...timestampFields,
 });
