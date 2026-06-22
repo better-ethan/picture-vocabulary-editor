@@ -125,7 +125,7 @@ export default function Page() {
           />
 
           <Card className="lg:w-64">
-            <CardContent className="flex flex-col justify-between p-2 h-full">
+            <CardContent className="flex flex-col justify-between p-2 h-full gap-2">
               <div>
                 <CardTitle className="text-lg lg:text-2xl">Word List</CardTitle>
                 <Field className="flex flex-row justify-between items-center mb-4">
@@ -163,7 +163,7 @@ export default function Page() {
                     verify your answers.
                   </Text>
                 )}
-                <ul className="flex flex-col gap-2 pr-2 overflow-y-auto max-h-40 lg:max-h-full">
+                <ul className="flex flex-col gap-2 pr-2 pb-2 overflow-y-auto max-h-40 lg:max-h-full">
                   {wordArr.map(({ number, word, audio }, index) => (
                     <li key={number} className="flex items-center gap-2">
                       {(mode === "view" ||

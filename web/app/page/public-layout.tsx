@@ -18,7 +18,7 @@ export default function PublicLayout() {
   const { data: session } = authClient.useSession();
   return (
     <div className={cn("flex flex-col h-screen overflow-hidden")}>
-      <nav className="relative sticky top-0 z-50 border-b-2 border-black bg-white px-4 py-4 md:px-8">
+      <nav className="relative sticky top-0 z-50 border-b-2 border-black bg-white px-4 py-2 md:px-8">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <Link className="flex cursor-pointer items-center gap-2" to="/">
             <Text className="text-2xl text-black font-display font-black uppercase">
@@ -82,7 +82,7 @@ export default function PublicLayout() {
             <Drawer direction="right">
               <Drawer.Trigger asChild>
                 <Button size="icon">
-                  <MenuIcon />
+                  <MenuIcon className="size-4" />
                 </Button>
               </Drawer.Trigger>
               <Drawer.Content>
@@ -129,7 +129,7 @@ export default function PublicLayout() {
           </div>
         </div>
       </nav>
-      <main className="flex-1 overflow-y-auto px-4">
+      <main className="flex-1 overflow-y-auto px-4 pb-8">
         <Outlet />
       </main>
     </div>
