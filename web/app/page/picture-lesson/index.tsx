@@ -75,14 +75,14 @@ export default function Page() {
   const [userAnswers, setUserAnswers] = useState<string[]>([]);
   const [userAnswerResults, setUserAnswerResults] = useState<boolean[]>([]);
 
-  const [isCheckedAnswer, setIsCheckedAnswer] = useState(false);
+  const [hasCheckedAnswer, setHasCheckedAnswer] = useState(false);
 
   const handleFillIn = () => {
     setMode("fillIn");
     setUserAnswers(Array(words.length).fill(""));
     setUserAnswerResults(Array(words.length).fill(false));
 
-    setIsCheckedAnswer(false);
+    setHasCheckedAnswer(false);
   };
 
   const handleDictation = () => {
@@ -90,7 +90,7 @@ export default function Page() {
     setUserAnswers(Array(words.length).fill(""));
     setUserAnswerResults(Array(words.length).fill(false));
 
-    setIsCheckedAnswer(false);
+    setHasCheckedAnswer(false);
 
     // because Array.sort() will change the original array, we need to create a new array first
     const dictationWordArr = [...wordArr].sort(() => Math.random() - 0.5);
@@ -103,7 +103,7 @@ export default function Page() {
       return userAnswer.trim().toLowerCase() === word.word.trim().toLowerCase();
     });
     setUserAnswerResults(results);
-    setIsCheckedAnswer(true);
+    setHasCheckedAnswer(true);
   };
 
   return (
@@ -168,7 +168,7 @@ export default function Page() {
                     <li key={number} className="flex items-center gap-2">
                       {(mode === "view" ||
                         mode === "fillIn" ||
-                        (mode === "dictation" && isCheckedAnswer)) && (
+                        (mode === "dictation" && hasCheckedAnswer)) && (
                         <Badge
                           variant="default"
                           className={cn(
@@ -191,10 +191,10 @@ export default function Page() {
                           className={cn(
                             "flex-1 border rounded px-2 py-1",
                             userAnswerResults[index] === true &&
-                              isCheckedAnswer &&
+                              hasCheckedAnswer &&
                               "border-green-500 bg-green-100",
                             userAnswerResults[index] === false &&
-                              isCheckedAnswer &&
+                              hasCheckedAnswer &&
                               "border-red-600 bg-red-300"
                           )}
                         />
