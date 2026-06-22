@@ -58,7 +58,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   return result;
 };
 
-type Mode = "view" | "fillIn" | "dictation" | "wordBuilding";
+type Mode = "view" | "fillIn" | "dictation";
 
 export default function Page() {
   const data = useLoaderData<typeof loader>();
@@ -96,8 +96,6 @@ export default function Page() {
     const dictationWordArr = [...wordArr].sort(() => Math.random() - 0.5);
     setWordArr(dictationWordArr);
   };
-
-  const handleWordBuilding = () => {};
 
   const handleCheckAnswer = () => {
     const results = wordArr.map((word, index) => {
@@ -255,9 +253,6 @@ export default function Page() {
             onClick={handleDictation}
           >
             Dictation
-          </Button>
-          <Button type="button" size="sm" variant={"secondary"}>
-            Word Building
           </Button>
         </div>
         <div className="flex flex-col gap-2">
