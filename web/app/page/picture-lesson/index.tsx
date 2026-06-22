@@ -70,6 +70,8 @@ export default function Page() {
 
   const [mode, setMode] = useState<Mode>("view");
 
+  const [wordArr, setWordArr] = useState(words);
+
   const [userAnswers, setUserAnswers] = useState<string[]>([]);
   const [userAnswerResults, setUserAnswerResults] = useState<boolean[]>([]);
 
@@ -83,12 +85,22 @@ export default function Page() {
     setIsCheckedAnswer(false);
   };
 
-  const handleDictation = () => {};
+  const handleDictation = () => {
+    setMode("dictation");
+    setUserAnswers(Array(words.length).fill(""));
+    setUserAnswerResults(Array(words.length).fill(false));
+
+    setIsCheckedAnswer(false);
+
+    // because Array.sort() will change the original array, we need to create a new array first
+    const dictationWordArr = [...wordArr].sort(() => Math.random() - 0.5);
+    setWordArr(dictationWordArr);
+  };
 
   const handleWordBuilding = () => {};
 
   const handleCheckAnswer = () => {
-    const results = words.map((word, index) => {
+    const results = wordArr.map((word, index) => {
       const userAnswer = userAnswers[index] || "";
       return userAnswer.trim().toLowerCase() === word.word.trim().toLowerCase();
     });
@@ -147,19 +159,29 @@ export default function Page() {
                     answers.
                   </Text>
                 )}
+                {mode === "dictation" && (
+                  <Text className="text-sm text-gray-500 my-2">
+                    Listen to the audio and fill in the blanks. Click "Check" to
+                    verify your answers.
+                  </Text>
+                )}
                 <ul className="flex flex-col gap-2 pr-2 overflow-y-auto max-h-40 lg:max-h-full">
-                  {words.map(({ number, word, audio }, index) => (
+                  {wordArr.map(({ number, word, audio }, index) => (
                     <li key={number} className="flex items-center gap-2">
-                      <Badge
-                        variant="default"
-                        className={cn(
-                          "w-6 h-6 flex items-center justify-center shrink-0 rounded-full p-0",
-                          "bg-white text-gray-700 border"
-                        )}
-                      >
-                        {number}
-                      </Badge>
-                      {mode === "fillIn" && (
+                      {(mode === "view" ||
+                        mode === "fillIn" ||
+                        (mode === "dictation" && isCheckedAnswer)) && (
+                        <Badge
+                          variant="default"
+                          className={cn(
+                            "w-6 h-6 flex items-center justify-center shrink-0 rounded-full p-0",
+                            "bg-white text-gray-700 border"
+                          )}
+                        >
+                          {number}
+                        </Badge>
+                      )}
+                      {(mode === "fillIn" || mode === "dictation") && (
                         <Input
                           type="text"
                           value={userAnswers[index] || ""}
@@ -197,13 +219,14 @@ export default function Page() {
                   ))}
                 </ul>
               </div>
-              {mode === "fillIn" && (
+              {(mode === "fillIn" || mode === "dictation") && (
                 <div className="flex justify-between">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => {
                       setMode("view");
+                      setWordArr(words);
                     }}
                   >
                     Exit
@@ -225,7 +248,12 @@ export default function Page() {
           >
             Fill in
           </Button>
-          <Button type="button" size="sm" variant={"secondary"}>
+          <Button
+            type="button"
+            size="sm"
+            variant={"secondary"}
+            onClick={handleDictation}
+          >
             Dictation
           </Button>
           <Button type="button" size="sm" variant={"secondary"}>
