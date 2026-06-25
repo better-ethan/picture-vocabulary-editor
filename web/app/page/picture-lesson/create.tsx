@@ -51,7 +51,7 @@ export default function Page() {
 
   return (
     <div className="w-full h-full overflow-y-auto">
-      <VocabularyEditor width={700} height={600} mode="edit" />
+      <VocabularyEditor mode="edit" />
     </div>
   );
 }

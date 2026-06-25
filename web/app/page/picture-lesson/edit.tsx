@@ -57,7 +57,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
     status: status as "draft" | "published",
     content: JSON.stringify(updatedContent),
   });
-  return { id: result.id, intent };
+  return { id: result.id };
 };
 
 export default function Page() {
@@ -74,8 +74,6 @@ export default function Page() {
   return (
     <div className="w-full h-full overflow-y-auto">
       <VocabularyEditor
-        width={700}
-        height={600}
         mode="edit"
         operation="edit"
         data={{

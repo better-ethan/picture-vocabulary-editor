@@ -87,8 +87,6 @@ export interface CanvasContent {
 }
 
 interface VocabularyEditorProps {
-  width: number;
-  height: number;
   mode?: "edit" | "view";
   operation?: "create" | "edit";
   data?: {
@@ -265,6 +263,9 @@ interface LabelItem {
   x: number;
   y: number;
 }
+
+const WIDTH = 800;
+const HEIGHT = 600;
 
 function NumberCircle({
   label,
@@ -631,8 +632,6 @@ function ThumbnailUploader({
 }
 
 export function VocabularyEditor({
-  width,
-  height,
   mode = "view",
   operation = "create",
   data,
@@ -744,8 +743,8 @@ export function VocabularyEditor({
         {
           id,
           src: url,
-          x: width / 2 - 100 + offset,
-          y: height / 2 - 75 + offset,
+          x: WIDTH / 2 - 100 + offset,
+          y: HEIGHT / 2 - 75 + offset,
           width: 200,
         },
       ];
@@ -765,8 +764,8 @@ export function VocabularyEditor({
         {
           id,
           number,
-          x: width / 2 + offset,
-          y: height / 2 + offset,
+          x: WIDTH / 2 + offset,
+          y: HEIGHT / 2 + offset,
         },
       ];
     });
@@ -782,10 +781,10 @@ export function VocabularyEditor({
 
       const newLine: LineItem = {
         id,
-        startX: width / 2 - 60 + offset,
-        startY: height / 2 + offset,
-        endX: width / 2 + 60 + offset,
-        endY: height / 2 + offset,
+        startX: WIDTH / 2 - 60 + offset,
+        startY: HEIGHT / 2 + offset,
+        endX: WIDTH / 2 + 60 + offset,
+        endY: HEIGHT / 2 + offset,
         color,
         strokeWidth,
       };
@@ -894,8 +893,8 @@ export function VocabularyEditor({
               {
                 id,
                 src: publicUrl,
-                x: width / 2 + i * 20,
-                y: height / 2 + i * 20,
+                x: WIDTH / 2 + i * 20,
+                y: HEIGHT / 2 + i * 20,
                 width: 200,
               },
             ]);
@@ -1013,7 +1012,7 @@ export function VocabularyEditor({
             </CardContent>
           </Card>
         )}
-        <div className="flex flex-col items-center overflow-y-auto flex-1 gap-4 min-h-0 py-2 order-first lg:order-last">
+        <div className="flex flex-col justify-start items-center overflow-y-auto flex-1 gap-4 min-h-0 py-2 order-first lg:order-last">
           <Field>
             <Input
               type="file"
@@ -1037,8 +1036,6 @@ export function VocabularyEditor({
             </FieldDescription>
           </Field>
           <VocabularyCanvas
-            width={width}
-            height={height}
             mode={mode}
             images={images}
             labels={labels}
@@ -1050,7 +1047,7 @@ export function VocabularyEditor({
             onLinesChange={setLines}
           />
 
-          <Card className="w-full">
+          <Card className="w-full max-w-200">
             <CardHeader className="">
               <CardTitle className="text-base font-medium">
                 Lesson settings
@@ -1495,8 +1492,6 @@ function ImageGrid({
 }
 
 interface VocabularyCanvasProps {
-  width: number;
-  height: number;
   mode: EditorMode;
   images: ImageItem[];
   labels: LabelItem[];
@@ -1509,8 +1504,6 @@ interface VocabularyCanvasProps {
 }
 
 export function VocabularyCanvas({
-  width,
-  height,
   mode = "view",
   images,
   labels,
@@ -1534,26 +1527,28 @@ export function VocabularyCanvas({
     });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [stageWidth, setStageWidth] = useState(width);
-  const scale = stageWidth / width;
-  const stageHeight = height * scale;
+  const [stageWidth, setStageWidth] = useState(WIDTH);
+  const scale = stageWidth / WIDTH;
+  const stageHeight = HEIGHT * scale;
 
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
 
+    setStageWidth(Math.min(el.getBoundingClientRect().width, WIDTH));
+
     const observer = new ResizeObserver((entries) => {
       const w = entries[0].contentRect.width;
-      setStageWidth(Math.min(w, width));
+      setStageWidth(Math.min(w, WIDTH));
     });
     observer.observe(el);
     return () => observer.disconnect();
-  }, [width]);
+  }, []);
 
   return (
     <Card className="w-full">
-      <CardContent className="w-full">
-        <div ref={wrapperRef} className="w-full overflow-hidden">
+      <CardContent className="">
+        <div ref={wrapperRef} className="overflow-hidden w-full">
           <Stage
             width={stageWidth}
             height={stageHeight}

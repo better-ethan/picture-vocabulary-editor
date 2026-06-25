@@ -44,7 +44,7 @@ export default function AdminLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex w-full h-dvh flex-col md:flex-row bg-white overflow-hidden">
+    <div className="flex mx-auto max-w-screen-2xl h-dvh flex-col md:flex-row bg-white overflow-hidden">
       <Drawer open={open} onOpenChange={setOpen} direction="left">
         <Drawer.Trigger asChild className="md:hidden self-start">
           <Button type="button" variant={"link"} size={"icon"}>

@@ -107,24 +107,25 @@ export default function Page() {
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="w-full max-w-250 flex flex-col gap-4">
+    <div className="flex gap-2 w-full">
+      <div className="hidden lg:w-45 lg:h-screen lg:block bg-white mt-8"></div>
+      <div className="flex flex-col gap-4 min-w-0 overflow-hidden flex-1">
         {data.status === "draft" && (
           <div className="p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center mt-3">
             Draft lesson is only visible to author
           </div>
         )}
-        <div className="mt-8 flex flex-col lg:flex-row justify-start gap-3">
-          <VocabularyCanvas
-            width={700}
-            height={600}
-            mode="view"
-            images={images}
-            labels={labels}
-            lines={lines}
-          />
+        <div className="mt-8 flex flex-col lg:flex-row justify-start gap-3 px-2">
+          <div className="flex-1 min-w-0">
+            <VocabularyCanvas
+              mode="view"
+              images={images}
+              labels={labels}
+              lines={lines}
+            />
+          </div>
 
-          <Card className="lg:w-64">
+          <Card className="lg:w-70">
             <CardContent className="flex flex-col justify-between p-2 h-full gap-2">
               <div>
                 <CardTitle className="text-lg lg:text-2xl">Word List</CardTitle>
@@ -237,7 +238,7 @@ export default function Page() {
             </CardContent>
           </Card>
         </div>
-        <div className="flex gap-2 justify-end w-full px-2">
+        <div className="flex gap-2 justify-end px-2">
           <Button
             type="button"
             size="sm"
@@ -285,7 +286,7 @@ function DescriptionSection({ description }: { description: string }) {
   }, [description]);
 
   return (
-    <div className="bg-[#EEEEEE] p-4 min-h-25 rounded-lg">
+    <div className="bg-white p-4 min-h-25 rounded-lg">
       <p ref={textRef} className={cn("", !expanded && "line-clamp-1")}>
         {description}
       </p>
