@@ -1443,7 +1443,7 @@ function WordsPanel({
                 }
                 onBlur={() => generateAudio(item)}
                 readOnly={mode === "view"}
-                className="w-42 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                className="w-42 px-2.5 py-1 shadow-none"
               />
               {/* <Button
                 type="button"

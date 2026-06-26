@@ -165,7 +165,12 @@ export default function Page() {
                     verify your answers.
                   </Text>
                 )}
-                <ul className="flex flex-col gap-2 pr-2 pb-2 overflow-y-auto max-h-40 lg:max-h-full">
+                <ul
+                  className={cn(
+                    "flex flex-col gap-2 py-2 overflow-y-auto max-h-40 lg:max-h-full",
+                    mode === "dictation" && "pl-2"
+                  )}
+                >
                   {wordArr.map(({ number, word, audio }, index) => (
                     <li key={number} className="flex items-center gap-2">
                       {(mode === "view" ||
@@ -192,6 +197,7 @@ export default function Page() {
                           }}
                           className={cn(
                             "flex-1 border rounded px-2 py-1",
+                            "shadow-none",
                             userAnswerResults[index] === true &&
                               hasCheckedAnswer &&
                               "border-green-500 bg-green-100",
