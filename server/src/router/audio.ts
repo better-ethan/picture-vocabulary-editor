@@ -3,7 +3,12 @@ import { eq } from "drizzle-orm";
 import { publicProcedure, router } from "../trpc.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "~/lib/s3.js";
-import { generateHash, text2Speech, voiceConfig } from "~/lib/polly.js";
+import {
+  generateHash,
+  generateSsmlText,
+  text2Speech,
+  voiceConfig,
+} from "~/lib/polly.js";
 import { db, textSpeech } from "@package/drizzle";
 
 export const audioRouter = router({
@@ -15,7 +20,7 @@ export const audioRouter = router({
     )
     .mutation(async ({ input }) => {
       const hash = generateHash({
-        text: input.text.trim(),
+        text: generateSsmlText(input.text.trim()),
       });
       const key = `uploads/audios/${hash}.mp3`;
 

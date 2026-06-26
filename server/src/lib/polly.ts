@@ -18,6 +18,14 @@ export const voiceConfig = {
   locale: "en-US",
 };
 
+export const generateSsmlText = (text: string) => {
+  return `<speak>
+    <prosody volume="+6dB" rate="85%">
+      ${text}
+    </prosody>
+  </speak>`;
+};
+
 export async function text2Speech({
   text,
   format = "mp3",
@@ -31,12 +39,15 @@ export async function text2Speech({
   engine?: Engine;
   languageCode?: LanguageCode;
 }) {
+  const ssmlText = generateSsmlText(text);
+
   const command = new SynthesizeSpeechCommand({
-    Text: text,
+    Text: ssmlText,
     OutputFormat: format,
     VoiceId: voiceId,
     Engine: engine,
     LanguageCode: languageCode,
+    TextType: "ssml",
   });
 
   try {

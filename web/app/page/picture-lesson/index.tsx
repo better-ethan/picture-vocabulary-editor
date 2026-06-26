@@ -6,6 +6,7 @@ import {
   speak,
   VocabularyCanvas,
   VocabularyEditor,
+  WordAudio,
   type CanvasContent,
 } from "@/components/vocabulary-edit";
 import { User2Icon, Volume2 } from "lucide-react";
@@ -203,7 +204,7 @@ export default function Page() {
                       {mode === "view" && (
                         <Text className="flex-1 font-normal">{word}</Text>
                       )}
-                      <Button
+                      {/* <Button
                         type="button"
                         variant="outline"
                         size="sm"
@@ -213,7 +214,12 @@ export default function Page() {
                         }}
                       >
                         <Volume2 className="w-4 h-4" />
-                      </Button>
+                      </Button> */}
+                      <WordAudio
+                        disabled={!word}
+                        url={audio}
+                        playbackRate={rate}
+                      />
                     </li>
                   ))}
                 </ul>

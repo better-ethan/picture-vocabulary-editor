@@ -1317,12 +1317,51 @@ export const playAudio = async (url: string, rate = 1) => {
 
   audio = new Audio(url);
 
-  audio.src = url;
-  audio.currentTime = 0;
   audio.playbackRate = rate;
 
   await audio.play();
 };
+
+export function WordAudio({
+  url,
+  playbackRate = 1,
+  disabled = false,
+  isLoading = false,
+}: {
+  url?: string;
+  playbackRate?: number;
+  disabled?: boolean;
+  isLoading?: boolean;
+}) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const play = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.playbackRate = playbackRate;
+    audio.play();
+  };
+
+  return (
+    <div className="flex items-center justify-center">
+      <audio ref={audioRef} src={url} preload="auto" />
+      <Button
+        type="button"
+        onClick={play}
+        disabled={!url || disabled}
+        size="icon"
+        variant={"ghost"}
+      >
+        {isLoading ? (
+          <Loader2Icon className="size-4 animate-spin" />
+        ) : (
+          <Volume2 className="size-4" strokeWidth="2.5" />
+        )}
+      </Button>
+    </div>
+  );
+}
 
 function WordsPanel({
   mode = "view",
@@ -1406,7 +1445,7 @@ function WordsPanel({
                 readOnly={mode === "view"}
                 className="w-42 border border-gray-300 rounded px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
               />
-              <Button
+              {/* <Button
                 type="button"
                 variant="ghost"
                 size="sm"
@@ -1422,7 +1461,12 @@ function WordsPanel({
                 ) : (
                   <Volume2 className="size-4" />
                 )}
-              </Button>
+              </Button> */}
+              <WordAudio
+                url={wordMap[item]?.audio}
+                disabled={!wordMap[item]?.audio}
+                isLoading={loadingItem === item}
+              />
               {mode === "edit" && (
                 <Button
                   type="button"
