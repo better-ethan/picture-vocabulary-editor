@@ -55,7 +55,7 @@ export default function Page() {
         <Text as={"h2"} className="mb-4 text-start">
           My Authored
         </Text>
-        <span className="text-muted-foreground">
+        <span>
           {data.length} lesson{data.length > 1 ? "s" : ""}
         </span>
       </div>
