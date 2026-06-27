@@ -447,9 +447,9 @@ function DraggableLine({
     <div
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center gap-1 p-2 rounded cursor-grab",
-        "border border0dashed border-gray-300 hover:border-blue-400",
-        "hover:bg-blue-50 transition select-none"
+        "flex flex-col items-center gap-1 p-2 rounded cursor-pointer",
+        "border border-dashed border-gray-300 hover:border-primary",
+        "hover:bg-primary/20 transition select-none"
       )}
     >
       <svg width="80" height="24" viewBox="0 0 80 24">
@@ -1047,7 +1047,7 @@ export function VocabularyEditor({
             onLinesChange={setLines}
           />
 
-          <Card className="w-full max-w-200">
+          <Card className="w-full">
             <CardHeader className="">
               <CardTitle className="text-base font-medium">
                 Lesson settings
@@ -1417,7 +1417,7 @@ function WordsPanel({
           </Button>
         )}
       </div>
-      <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 gap-2">
+      <div className="flex-1 min-h-0 overflow-y-auto px-2 py-2 gap-2">
         <Text className="mb-3 text-gray-400">
           Click these number labels to add them to the canvas 👉
         </Text>
@@ -1427,8 +1427,8 @@ function WordsPanel({
               <div
                 onClick={() => mode === "edit" && onAddLabel?.(item)}
                 className={cn(
-                  "w-6 h-6 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-400",
-                  "cursor-grab text-lg hover:bg-gray-100 active:cursor-grabbing select-none"
+                  "w-6 h-6 rounded-full bg-white flex items-center justify-center border",
+                  "cursor-pointer text-lg hover:bg-primary shrink-0"
                 )}
               >
                 {item}
@@ -1443,7 +1443,7 @@ function WordsPanel({
                 }
                 onBlur={() => generateAudio(item)}
                 readOnly={mode === "view"}
-                className="px-2 py-1 shadow-none"
+                className="px-1 py-1 shadow-none"
               />
               {/* <Button
                 type="button"
@@ -1471,7 +1471,7 @@ function WordsPanel({
                 <Button
                   type="button"
                   variant="destructive"
-                  size="sm"
+                  size="icon"
                   disabled={index !== numbers.length - 1}
                   onClick={() => onDelete(String(item))}
                 >

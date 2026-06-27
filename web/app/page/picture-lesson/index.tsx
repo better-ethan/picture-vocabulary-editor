@@ -180,7 +180,7 @@ export default function Page() {
                           variant="default"
                           className={cn(
                             "w-6 h-6 flex items-center justify-center shrink-0 rounded-full p-0",
-                            "bg-white text-gray-700 border"
+                            "bg-white border"
                           )}
                         >
                           {number}
