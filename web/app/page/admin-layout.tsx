@@ -158,7 +158,8 @@ function MenuContent({
                   className={cn(
                     "w-full justify-start text-sm font-medium",
                     "hover:bg-primary/20",
-                    isActive(currentPath, item.path) && "bg-primary"
+                    isActive(currentPath, item.path) &&
+                      "bg-primary shadow-xs border-2"
                   )}
                 >
                   <Link to={item.path}>{item.label}</Link>
@@ -180,7 +181,8 @@ function MenuContent({
             className={cn(
               "w-full justify-start text-sm font-medium",
               "hover:bg-primary/20",
-              isActive(currentPath, "/admin/user/profile") && "bg-primary"
+              isActive(currentPath, "/admin/user/profile") &&
+                "bg-primary shadow-xs border-2"
             )}
           >
             <Link to="/admin/user/profile">My Profile</Link>

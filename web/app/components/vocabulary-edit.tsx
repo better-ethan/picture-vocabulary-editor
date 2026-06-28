@@ -1142,7 +1142,12 @@ export function VocabularyEditor({
               {operation === "edit" && (
                 <Dialog>
                   <Dialog.Trigger asChild>
-                    <Button size="sm" variant="destructive">
+                    <Button
+                      size="sm"
+                      type="button"
+                      variant="destructive"
+                      className="h-8"
+                    >
                       Delete
                     </Button>
                   </Dialog.Trigger>
