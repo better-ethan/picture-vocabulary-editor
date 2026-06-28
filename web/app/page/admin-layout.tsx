@@ -157,7 +157,7 @@ function MenuContent({
                   variant="link"
                   className={cn(
                     "w-full justify-start text-sm font-medium",
-                    "hover:bg-primary/20",
+                    "hover:bg-primary/20 hover:no-underline",
                     isActive(currentPath, item.path) &&
                       "bg-primary shadow-xs border-2"
                   )}
@@ -180,7 +180,7 @@ function MenuContent({
             variant={"link"}
             className={cn(
               "w-full justify-start text-sm font-medium",
-              "hover:bg-primary/20",
+              "hover:bg-primary/20 hover:no-underline",
               isActive(currentPath, "/admin/user/profile") &&
                 "bg-primary shadow-xs border-2"
             )}
@@ -192,9 +192,9 @@ function MenuContent({
             variant={"link"}
             className={cn(
               "w-full justify-start text-sm font-medium",
-              "hover:bg-primary/20",
+              "hover:bg-primary/20 hover:no-underline",
               isActive(currentPath, "/admin/user/change-password") &&
-                "bg-primary"
+                "bg-primary shadow-xs border-2"
             )}
           >
             <Link to="/admin/user/change-password">Change Password</Link>

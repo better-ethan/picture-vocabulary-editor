@@ -942,7 +942,7 @@ export function VocabularyEditor({
             <CardContent className="flex flex-col-reverse lg:flex-row p-0 relative h-full">
               <div
                 className={cn(
-                  "w-full lg:w-16 flex flex-row justify-around lg:flex-col lg:justify-start items-center",
+                  "w-full lg:w-16.5 flex flex-row justify-around lg:flex-col lg:justify-start items-center",
                   isPanelOpen && "border-r border-gray-300"
                 )}
               >
@@ -951,6 +951,7 @@ export function VocabularyEditor({
                   text="Images"
                   onClick={() => toggleTool("images")}
                   active={activeTool === "images"}
+                  className="lg:rounded-tl-md"
                 />
                 <ToolButton
                   ButtonIcon={BookAIcon}
@@ -1199,21 +1200,24 @@ function ToolButton({
   text,
   active = false,
   onClick,
+  className,
 }: {
   ButtonIcon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   text: string;
   active?: boolean;
   onClick?: () => void;
+  className?: string;
 }) {
   return (
     <Button
       type="button"
       onClick={onClick}
       className={cn(
-        "size-16 flex flex-col items-center justify-center transition",
+        "size-16 flex flex-col items-center justify-center transition px-1",
         "rounded-none text-xs shadow-none border-none bg-inherit",
         "hover:bg-muted/50 hover:translate-y-0.5 hover:shadow-none",
-        active && "bg-primary"
+        active && "bg-primary",
+        className
       )}
     >
       <ButtonIcon className="size-6" />
@@ -1604,7 +1608,7 @@ export function VocabularyCanvas({
           className={cn("overflow-hidden w-full flex justify-center")}
         >
           <div
-            className="bg-white border border-gray-300 border-dashed overflow-hidden"
+            className="bg-white border border-gray-400 border-dashed overflow-hidden"
             style={{ width: stageWidth, height: stageHeight }}
           >
             <Stage
