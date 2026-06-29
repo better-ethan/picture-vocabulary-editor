@@ -86,7 +86,12 @@ export default function AdminLayout() {
           </Button>
         ) : (
           <div className="flex flex-col h-full">
-            <div className="flex justify-end">
+            <div className="flex justify-between py-4">
+              <Button asChild variant="link">
+                <Link to="/" className="hover:text-[#3B82F6]">
+                  Easy English
+                </Link>
+              </Button>
               <Button
                 variant={"link"}
                 size={"icon"}
