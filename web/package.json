@@ -18,6 +18,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.2",
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
     "@fontsource-variable/noto-sans": "^5.2.10",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-label": "^2.1.8",
