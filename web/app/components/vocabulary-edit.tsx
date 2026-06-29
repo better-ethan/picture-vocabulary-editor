@@ -34,6 +34,14 @@ import {
   FileTextIcon,
   Loader2Icon,
   Loader2,
+  RectangleEllipsisIcon,
+  EllipsisVerticalIcon,
+  RotateCwIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+  MoveUpIcon,
+  MoveDownIcon,
+  ChevronDownIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
@@ -78,6 +86,7 @@ import { useKonvaSnapping } from "use-konva-snapping";
 import { Label } from "@/components/retroui/Label";
 import Cropper, { type Area } from "react-easy-crop";
 import { Dialog } from "@/components/retroui/Dialog";
+import { Menu } from "@/components/retroui/Menu";
 
 export interface CanvasContent {
   images: ImageItem[];
@@ -682,6 +691,31 @@ export function VocabularyEditor({
     });
   };
 
+  const handleMoveUp = (item: number) => {
+    if (item <= 1) return;
+
+    const currentWord = wordMap[item];
+    setWordMap((prev) => {
+      const newMap = { ...prev };
+      newMap[item] = prev[item - 1];
+      newMap[item - 1] = currentWord;
+      return newMap;
+    });
+  };
+
+  const handleMoveDown = (item: number) => {
+    const maxNumber = Math.max(...Object.keys(wordMap).map(Number));
+    if (item >= maxNumber) return;
+
+    const currentWord = wordMap[item];
+    setWordMap((prev) => {
+      const newMap = { ...prev };
+      newMap[item] = prev[item + 1];
+      newMap[item + 1] = currentWord;
+      return newMap;
+    });
+  };
+
   const trpc = useTRPC();
   const uploadMutation = useMutation(
     trpc.upload.getUploadUrl.mutationOptions()
@@ -987,6 +1021,8 @@ export function VocabularyEditor({
                     onAdd={() =>
                       setNumbers((prev) => [...prev, prev.length + 1])
                     }
+                    handleMoveUp={handleMoveUp}
+                    handleMoveDown={handleMoveDown}
                     onAddLabel={handleAddLabel}
                   />
                 )}
@@ -1371,6 +1407,36 @@ export function WordAudio({
     </div>
   );
 }
+function MenuItemButton({
+  ButtonIcon,
+  text,
+  onClick,
+  disabled = false,
+  className,
+}: {
+  ButtonIcon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  text: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        "text-sm font-sans gap-2 hover:bg-primary w-full justify-start",
+        className
+      )}
+    >
+      <ButtonIcon className="size-4" />
+      <span>{text}</span>
+    </Button>
+  );
+}
 
 function WordsPanel({
   mode = "view",
@@ -1379,6 +1445,8 @@ function WordsPanel({
   onWordChange,
   onDelete,
   onAdd,
+  handleMoveUp,
+  handleMoveDown,
   onAddLabel,
 }: {
   mode?: EditorMode;
@@ -1387,6 +1455,8 @@ function WordsPanel({
   onWordChange: (num: number, value: { word: string; audio?: string }) => void;
   onDelete: (item: string) => void;
   onAdd: () => void;
+  handleMoveUp: (item: number) => void;
+  handleMoveDown: (item: number) => void;
   onAddLabel?: (num: number) => void;
 }) {
   const trpc = useTRPC();
@@ -1410,6 +1480,7 @@ function WordsPanel({
       setLoadingItem(null);
     }
   };
+
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b flex items-center justify-between">
@@ -1477,15 +1548,49 @@ function WordsPanel({
                 isLoading={loadingItem === item}
               />
               {mode === "edit" && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  disabled={index !== numbers.length - 1}
-                  onClick={() => onDelete(String(item))}
-                >
-                  <TrashIcon className="size-4" />
-                </Button>
+                <Menu>
+                  <Menu.Trigger className="w-8 h-8 hover:bg-primary/20">
+                    <RectangleEllipsisIcon
+                      className="size-4"
+                      strokeWidth={2.5}
+                    />
+                  </Menu.Trigger>
+                  <Menu.Content>
+                    <Menu.Item>
+                      <MenuItemButton
+                        onClick={() => generateAudio(item)}
+                        disabled={!wordMap[item]?.word}
+                        ButtonIcon={RotateCwIcon}
+                        text="Create Audio"
+                      />
+                    </Menu.Item>
+                    <Menu.Item>
+                      <MenuItemButton
+                        ButtonIcon={MoveUpIcon}
+                        text="Move Up"
+                        onClick={() => handleMoveUp(item)}
+                      />
+                    </Menu.Item>
+                    <Menu.Item>
+                      <MenuItemButton
+                        ButtonIcon={MoveDownIcon}
+                        text="Move Down"
+                        onClick={() => handleMoveDown(item)}
+                      />
+                    </Menu.Item>
+                    <Menu.Item
+                      className={"hover:bg-destructive focus:bg-destructive"}
+                    >
+                      <MenuItemButton
+                        disabled={index !== numbers.length - 1}
+                        onClick={() => onDelete(String(item))}
+                        ButtonIcon={TrashIcon}
+                        text="Remove"
+                        className="text-destructive hover:bg-destructive hover:text-white"
+                      />
+                    </Menu.Item>
+                  </Menu.Content>
+                </Menu>
               )}
             </div>
           ))}
