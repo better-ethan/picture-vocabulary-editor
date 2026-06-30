@@ -1549,7 +1549,7 @@ function WordsPanel({
               />
               {mode === "edit" && (
                 <Menu>
-                  <Menu.Trigger className="w-8 h-8 hover:bg-primary/20">
+                  <Menu.Trigger className="p-2 rounded hover:bg-accent">
                     <RectangleEllipsisIcon
                       className="size-4"
                       strokeWidth={2.5}

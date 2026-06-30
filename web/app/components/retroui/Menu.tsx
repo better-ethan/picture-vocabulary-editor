@@ -12,10 +12,10 @@ const Content = ({
   ...props
 }: React.ComponentProps<typeof BaseMenu.Popup>) => (
   <BaseMenu.Portal>
-    <BaseMenu.Positioner>
+    <BaseMenu.Positioner className="z-50">
       <BaseMenu.Popup
         className={cn(
-          "bg-white border-2 shadow-md absolute top-2 min-w-40 z-50",
+          "bg-white border-2 rounded shadow-md absolute top-2 min-w-40",
           className
         )}
         {...props}
