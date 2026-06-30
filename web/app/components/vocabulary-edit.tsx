@@ -1481,6 +1481,13 @@ function WordsPanel({
     }
   };
 
+  const [highlightedItem, setHighlightedItem] = useState<number | null>(null);
+
+  const triggerHighlight = (item: number) => {
+    setHighlightedItem(item);
+    setTimeout(() => setHighlightedItem(null), 1000);
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b flex items-center justify-between">
@@ -1523,7 +1530,10 @@ function WordsPanel({
                 }
                 onBlur={() => generateAudio(item)}
                 readOnly={mode === "view"}
-                className="px-1 py-1 shadow-none"
+                className={cn(
+                  "px-1 py-1 shadow-none",
+                  highlightedItem === item && "bg-primary"
+                )}
               />
               {/* <Button
                 type="button"
@@ -1568,14 +1578,20 @@ function WordsPanel({
                       <MenuItemButton
                         ButtonIcon={MoveUpIcon}
                         text="Move Up"
-                        onClick={() => handleMoveUp(item)}
+                        onClick={() => {
+                          handleMoveUp(item);
+                          triggerHighlight(item - 1);
+                        }}
                       />
                     </Menu.Item>
                     <Menu.Item>
                       <MenuItemButton
                         ButtonIcon={MoveDownIcon}
                         text="Move Down"
-                        onClick={() => handleMoveDown(item)}
+                        onClick={() => {
+                          handleMoveDown(item);
+                          triggerHighlight(item + 1);
+                        }}
                       />
                     </Menu.Item>
                     <Menu.Item
