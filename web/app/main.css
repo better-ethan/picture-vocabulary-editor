@@ -46,6 +46,7 @@ body {
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-popover: var(--popover);
 }
 
 :root {
@@ -66,6 +67,7 @@ body {
   --destructive: #e63946;
   --destructive-foreground: #fff;
   --border: #000;
+  --popover: #fff;
 }
 
 .dark {

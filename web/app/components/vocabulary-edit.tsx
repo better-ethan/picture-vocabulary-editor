@@ -87,6 +87,7 @@ import { Label } from "@/components/retroui/Label";
 import Cropper, { type Area } from "react-easy-crop";
 import { Dialog } from "@/components/retroui/Dialog";
 import { Menu } from "@/components/retroui/Menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export interface CanvasContent {
   images: ImageItem[];
@@ -1488,6 +1489,10 @@ function WordsPanel({
     setTimeout(() => setHighlightedItem(null), 1000);
   };
 
+  const [menuSheetOpenedItem, setMenuSheetOpenedItem] = useState<number | null>(
+    null
+  );
+
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b flex items-center justify-between">
@@ -1558,55 +1563,112 @@ function WordsPanel({
                 isLoading={loadingItem === item}
               />
               {mode === "edit" && (
-                <Menu>
-                  <Menu.Trigger className="p-2 rounded hover:bg-accent">
-                    <RectangleEllipsisIcon
-                      className="size-4"
-                      strokeWidth={2.5}
-                    />
-                  </Menu.Trigger>
-                  <Menu.Content>
-                    <Menu.Item>
+                <>
+                  <Menu>
+                    <Menu.Trigger className="p-2 rounded hover:bg-accent hidden md:block">
+                      <RectangleEllipsisIcon
+                        className="size-4"
+                        strokeWidth={2.5}
+                      />
+                    </Menu.Trigger>
+                    <Menu.Content>
+                      <Menu.Item>
+                        <MenuItemButton
+                          onClick={() => generateAudio(item)}
+                          disabled={!wordMap[item]?.word}
+                          ButtonIcon={RotateCwIcon}
+                          text="Create Audio"
+                        />
+                      </Menu.Item>
+                      <Menu.Item>
+                        <MenuItemButton
+                          ButtonIcon={MoveUpIcon}
+                          text="Move Up"
+                          onClick={() => {
+                            handleMoveUp(item);
+                            triggerHighlight(item - 1);
+                          }}
+                        />
+                      </Menu.Item>
+                      <Menu.Item>
+                        <MenuItemButton
+                          ButtonIcon={MoveDownIcon}
+                          text="Move Down"
+                          onClick={() => {
+                            handleMoveDown(item);
+                            triggerHighlight(item + 1);
+                          }}
+                        />
+                      </Menu.Item>
+                      <Menu.Item
+                        className={"hover:bg-destructive focus:bg-destructive"}
+                      >
+                        <MenuItemButton
+                          disabled={index !== numbers.length - 1}
+                          onClick={() => onDelete(String(item))}
+                          ButtonIcon={TrashIcon}
+                          text="Remove"
+                          className="text-destructive hover:bg-destructive hover:text-white"
+                        />
+                      </Menu.Item>
+                    </Menu.Content>
+                  </Menu>
+                  <Sheet
+                    open={menuSheetOpenedItem === item}
+                    onOpenChange={(open) =>
+                      setMenuSheetOpenedItem(open ? item : null)
+                    }
+                  >
+                    <SheetTrigger asChild className="block md:hidden">
+                      <Button type="button" variant="ghost">
+                        <RectangleEllipsisIcon className="size-4" />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent
+                      side="bottom"
+                      showCloseButton={false}
+                      className="p-2"
+                    >
                       <MenuItemButton
-                        onClick={() => generateAudio(item)}
+                        onClick={() => {
+                          generateAudio(item);
+                          setMenuSheetOpenedItem(null);
+                        }}
                         disabled={!wordMap[item]?.word}
                         ButtonIcon={RotateCwIcon}
                         text="Create Audio"
                       />
-                    </Menu.Item>
-                    <Menu.Item>
                       <MenuItemButton
                         ButtonIcon={MoveUpIcon}
                         text="Move Up"
                         onClick={() => {
                           handleMoveUp(item);
                           triggerHighlight(item - 1);
+                          setMenuSheetOpenedItem(null);
                         }}
                       />
-                    </Menu.Item>
-                    <Menu.Item>
                       <MenuItemButton
                         ButtonIcon={MoveDownIcon}
                         text="Move Down"
                         onClick={() => {
                           handleMoveDown(item);
                           triggerHighlight(item + 1);
+                          setMenuSheetOpenedItem(null);
                         }}
                       />
-                    </Menu.Item>
-                    <Menu.Item
-                      className={"hover:bg-destructive focus:bg-destructive"}
-                    >
                       <MenuItemButton
                         disabled={index !== numbers.length - 1}
-                        onClick={() => onDelete(String(item))}
+                        onClick={() => {
+                          onDelete(String(item));
+                          setMenuSheetOpenedItem(null);
+                        }}
                         ButtonIcon={TrashIcon}
                         text="Remove"
                         className="text-destructive hover:bg-destructive hover:text-white"
                       />
-                    </Menu.Item>
-                  </Menu.Content>
-                </Menu>
+                    </SheetContent>
+                  </Sheet>
+                </>
               )}
             </div>
           ))}
