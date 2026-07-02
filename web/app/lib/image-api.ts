@@ -9,8 +9,9 @@ interface PixabayImageItem {
 }
 
 export async function fetchImagesFromPixabay(
-  query: string
-): Promise<PixabayImageItem[] | null> {
+  query: string,
+  page = 1
+): Promise<{ hits: PixabayImageItem[]; totalHits: number } | null> {
   if (!PIXABAY_API_KEY) {
     console.error("Pixabay API key is not set.");
     return null;
@@ -18,14 +19,14 @@ export async function fetchImagesFromPixabay(
 
   const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(
     query
-  )}&image_type=photo&per_page=50`;
+  )}&image_type=photo&per_page=50&page=${page}`;
 
   try {
     const response = await fetch(url);
     const data = await response.json();
 
     if (data.hits && data.hits.length > 0) {
-      return data.hits;
+      return { hits: data.hits, totalHits: data.totalHits };
     } else {
       console.warn("No images found for query:", query);
       return null;

@@ -1270,17 +1270,34 @@ function ImageSearchPanel({
 }) {
   const [imageSearch, setImageSearch] = useState("");
   const [searchedImages, setSearchedImages] = useState<PixabayHit[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalHits, setTotalHits] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
 
   const handleImageSearch = async (query: string) => {
     if (!query.trim()) return;
     setIsSearching(true);
+    setCurrentPage(1);
+
     try {
-      const hits = await fetchImagesFromPixabay(query);
-      setSearchedImages(hits ?? []);
+      const result = await fetchImagesFromPixabay(query);
+      setSearchedImages(result?.hits ?? []);
+      setTotalHits(result?.totalHits ?? 0);
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const hasMore = searchedImages.length < totalHits;
+
+  const handleLoadMore = async () => {
+    const nextPage = currentPage + 1;
+    setIsLoadingMore(true);
+    const result = await fetchImagesFromPixabay(imageSearch, nextPage);
+    setSearchedImages((prev) => [...prev, ...(result?.hits ?? [])]);
+    setCurrentPage(nextPage);
+    setIsLoadingMore(false);
   };
 
   useEffect(() => {
@@ -1288,7 +1305,7 @@ function ImageSearchPanel({
   }, []);
 
   return (
-    <div className="flex flex-col h-full p-2">
+    <div className="flex flex-col h-full p-2 gap-2">
       <div className="">
         <Input
           type="search"
@@ -1299,16 +1316,16 @@ function ImageSearchPanel({
           disabled={isSearching}
         />
       </div>
-      <div className="flex-1 min-h-0 overflow-y-auto mt-4">
+      <div className="flex-1 min-h-0 overflow-y-auto">
         {isSearching && (
           <div className="flex items-center justify-center py-5">
             <Loader />
           </div>
         )}
         {!isSearching && searchedImages.length === 0 ? (
-          <p className="text-gray-400 text-center py-4">No Results</p>
+          <p className="text-gray-400 text-sm text-center py-4">No Results</p>
         ) : (
-          <Text className="text-left w-full text-gray-400 px-1 mb-2">
+          <Text className="text-left w-full text-gray-400 text-sm px-1 py-3">
             Click an image to add it to the canvas 👉
           </Text>
         )}
@@ -1329,6 +1346,29 @@ function ImageSearchPanel({
               />
             </div>
           ))}
+        </div>
+        <div className="flex justify-center py-3">
+          {hasMore ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleLoadMore}
+              disabled={isLoadingMore}
+              className="flex gap-2"
+            >
+              {isLoadingMore ? (
+                <Loader2Icon className="size-4 animate-spin" />
+              ) : (
+                <ChevronDownIcon className="size-4" />
+              )}
+              Load More
+            </Button>
+          ) : (
+            <Text className="text-gray-400 text-sm">
+              You've reached the end.
+            </Text>
+          )}
         </div>
       </div>
     </div>
