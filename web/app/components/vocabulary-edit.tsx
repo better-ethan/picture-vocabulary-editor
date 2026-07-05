@@ -238,6 +238,7 @@ function URLImage({
         <Transformer
           ref={trRef}
           rotateEnabled={true}
+          keepRatio={false}
           boundBoxFunc={(oldBox, newBox) => {
             if (newBox.width < 10 || newBox.height < 10) {
               return oldBox;
@@ -1851,6 +1852,7 @@ export function VocabularyCanvas({
                     key={index}
                     mode={mode}
                     width={img.width ?? 200}
+                    height={img.height}
                     draggable={mode === "edit"}
                     src={img.src}
                     x={img.x}
@@ -1869,8 +1871,6 @@ export function VocabularyCanvas({
                     }}
                     onTransform={handleResizing}
                     onTransformEnd={(e) => {
-                      handleResizeEnd(e);
-
                       const node = (
                         e.currentTarget as Konva.Transformer
                       ).nodes()[0] as Konva.Node;
@@ -1878,6 +1878,8 @@ export function VocabularyCanvas({
 
                       const newWidth = node.width() * node.scaleX();
                       const newHeight = node.height() * node.scaleY();
+
+                      handleResizeEnd(e);
 
                       node.scaleX(1);
                       node.scaleY(1);
