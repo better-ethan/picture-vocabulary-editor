@@ -2,6 +2,7 @@ import { createTrpcClient } from "@/util";
 import { VocabularyEditor } from "@/components/vocabulary-edit";
 import { toast } from "sonner";
 import {
+  data,
   redirect,
   useActionData,
   useLoaderData,
@@ -29,7 +30,9 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
-  return result;
+  const category = await trpc.category.list.query();
+
+  return { data: result, category };
 };
 
 export const action = async ({ params, request }: Route.ActionArgs) => {
@@ -41,6 +44,8 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
   const content = formData.get("content") as string;
   let status = formData.get("status");
   if (!status) status = "draft";
+
+  const categoryIdString = formData.get("categoryId") as string;
 
   const trpc = createTrpcClient(request);
 
@@ -55,13 +60,14 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
     description,
     thumbnail,
     status: status as "draft" | "published",
+    categoryId: parseInt(categoryIdString, 10),
     content: JSON.stringify(updatedContent),
   });
   return { id: result.id };
 };
 
 export default function Page() {
-  const data = useLoaderData<typeof loader>();
+  const { data, category } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const navigate = useNavigate();
@@ -76,10 +82,12 @@ export default function Page() {
       <VocabularyEditor
         mode="edit"
         operation="edit"
+        category={category}
         data={{
           title: data.title,
           slug: data.slug,
           status: data.status as "draft" | "published",
+          categoryId: data.categoryId,
           description: data.description as string,
           thumbnail: data.thumbnail,
           content: data.content!,

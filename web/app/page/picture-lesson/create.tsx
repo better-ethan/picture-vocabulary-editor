@@ -4,13 +4,21 @@ import {
   type CanvasContent,
 } from "@/components/vocabulary-edit";
 import { toast } from "sonner";
-import { useActionData, useNavigate } from "react-router";
+import { useActionData, useLoaderData, useNavigate } from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/create";
 import { Text } from "@/components/retroui/Text";
 import { reuploadPixabayImages } from "@/util/image";
 
-export const loader = async () => {};
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const trpc = createTrpcClient(request);
+
+  const category = await trpc.category.list.query();
+
+  return {
+    category,
+  };
+};
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
@@ -22,6 +30,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
   let status = formData.get("status");
   if (!status) status = "draft";
 
+  const categoryIdString = formData.get("categoryId") as string;
+
   // download and re-upload images to our R2, then replace the src in content
   const updatedContent = await reuploadPixabayImages(JSON.parse(content));
 
@@ -31,6 +41,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     slug,
     description,
     status: status as "draft" | "published",
+    categoryId: parseInt(categoryIdString, 10),
     thumbnail,
     content: JSON.stringify(updatedContent),
   });
@@ -39,6 +50,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
 };
 
 export default function Page() {
+  const { category } = useLoaderData<typeof loader>();
+
   const actionData = useActionData<typeof action>();
 
   const navigate = useNavigate();
@@ -51,7 +64,7 @@ export default function Page() {
 
   return (
     <div className="w-full h-full overflow-y-auto">
-      <VocabularyEditor mode="edit" />
+      <VocabularyEditor mode="edit" category={category} />
     </div>
   );
 }

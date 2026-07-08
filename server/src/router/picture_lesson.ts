@@ -54,6 +54,7 @@ export const pictureLessonRouter = router({
         slug: z.string().min(1).max(255),
         description: z.string().optional(),
         status: z.enum(["draft", "published"]).default("draft"),
+        categoryId: z.number(),
         thumbnail: z.string().max(255),
         content: z.json().optional(),
       })
@@ -76,6 +77,7 @@ export const pictureLessonRouter = router({
           slug: input.slug,
           description: input.description,
           status: input.status,
+          categoryId: input.categoryId,
           thumbnail: input.thumbnail,
           content: input.content,
         })
@@ -92,6 +94,7 @@ export const pictureLessonRouter = router({
         slug: z.string().min(1).max(255),
         description: z.string().optional(),
         status: z.enum(["draft", "published"]).default("draft"),
+        categoryId: z.number(),
         thumbnail: z.string().max(255),
         content: z.json().optional(),
       })
@@ -104,6 +107,7 @@ export const pictureLessonRouter = router({
           slug: input.slug,
           description: input.description,
           status: input.status,
+          categoryId: input.categoryId,
           thumbnail: input.thumbnail,
           content: input.content,
           updatedAt: new Date(),

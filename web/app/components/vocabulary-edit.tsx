@@ -96,13 +96,21 @@ export interface CanvasContent {
   words: { number: number; word: string; audio: string }[];
 }
 
+interface CategoryItem {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 interface VocabularyEditorProps {
   mode?: "edit" | "view";
   operation?: "create" | "edit";
+  category: CategoryItem[];
   data?: {
     title: string;
     slug?: string;
     status?: "draft" | "published";
+    categoryId: number;
     description: string;
     thumbnail: string;
     content: {
@@ -645,6 +653,7 @@ function ThumbnailUploader({
 export function VocabularyEditor({
   mode = "view",
   operation = "create",
+  category,
   data,
 }: VocabularyEditorProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -753,6 +762,10 @@ export function VocabularyEditor({
   const [description, setDescription] = useState(data?.description ?? "");
   const [status, setStatus] = useState<"draft" | "published" | undefined>(
     data?.status
+  );
+
+  const [categoryId, setCategoryId] = useState<number | undefined>(
+    data?.categoryId
   );
 
   const content = {
@@ -1146,11 +1159,33 @@ export function VocabularyEditor({
                   required
                 >
                   <SelectTrigger id="status" className="flex-1 h-8 text-sm">
-                    <SelectValue placeholder="Select status" />
+                    <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="draft">Draft</SelectItem>
                     <SelectItem value="published">Published</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field>
+                <Label htmlFor="status">Category *</Label>
+                <Select
+                  value={categoryId?.toString()}
+                  onValueChange={(value) =>
+                    setCategoryId(value ? parseInt(value) : undefined)
+                  }
+                  name="categoryId"
+                  required
+                >
+                  <SelectTrigger id="status" className="flex-1 h-8 text-sm">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-48 overflow-y-auto">
+                    {category.map((item) => (
+                      <SelectItem value={item.id.toString()}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </Field>

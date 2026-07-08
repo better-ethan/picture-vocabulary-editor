@@ -57,6 +57,20 @@
       "when": 1781965584623,
       "tag": "0007_watery_edwin_jarvis",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1783502790422,
+      "tag": "0008_ambitious_oracle",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1783511751294,
+      "tag": "0009_puzzling_mystique",
+      "breakpoints": true
     }
   ]
 }
