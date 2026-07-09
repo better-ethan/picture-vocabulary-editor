@@ -9,41 +9,137 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { MenuIcon, User2Icon } from "lucide-react";
-import { Link, Outlet } from "react-router";
+import {
+  isRouteErrorResponse,
+  Link,
+  Outlet,
+  useLoaderData,
+} from "react-router";
+import {
+  NavigationMenu,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  NavigationMenuIndicator,
+} from "@/components/retroui/navigation-menu";
+import { createTrpcClient } from "@/util";
+import type { Route } from "./+types/public-layout";
+import { useState } from "react";
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const trpc = createTrpcClient(request);
+
+  const category = await trpc.category.list.query();
+
+  return {
+    category,
+  };
+};
 
 const baseDrawerLinkClasses =
   "font-bold text-black decoration-2 underline-offset-4 transition-colors hover:text-[#3B82F6] hover:underline";
 
 export default function PublicLayout() {
+  const { category } = useLoaderData<typeof loader>();
   const { data: session } = authClient.useSession();
+
+  const [navigationMenuOpened, setNavigationMenuOpened] = useState<true | null>(
+    null
+  );
   return (
     <div className={cn("flex flex-col h-screen overflow-hidden")}>
       <nav className="relative sticky top-0 z-50 border-b-2 border-black bg-white px-4 py-2 md:px-8">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between">
           <Link className="flex cursor-pointer items-center gap-2" to="/">
             <Text className="text-2xl text-black font-display font-black uppercase">
-              Picture Lesson
+              EASY ENGLISH
             </Text>
           </Link>
           <div className="hidden items-center gap-8 md:flex">
-            <Link
-              className="font-bold text-black decoration-2 underline-offset-4 transition-colors hover:text-[#3B82F6] hover:underline"
-              to="/how-it-works"
+            <NavigationMenu
+              value={navigationMenuOpened}
+              onValueChange={setNavigationMenuOpened}
             >
-              How it works
-            </Link>
-            <Link
-              className=" font-bold text-black decoration-2 underline-offset-4 transition-colors hover:text-[#3B82F6] hover:underline"
-              to="/picture-lesson/list"
-            >
-              Lessons
-            </Link>
-            <Link
-              className=" font-bold text-black decoration-2 underline-offset-4 transition-colors hover:text-[#3B82F6] hover:underline"
-              to="/pricing"
-            >
-              Pricing
-            </Link>
+              <NavigationMenuList className={"flex gap-1"}>
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    render={
+                      <Link
+                        to="/how-it-works"
+                        className={cn("font-bold text-black")}
+                      />
+                    }
+                  >
+                    How it works
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn("font-bold text-black [&_svg]:size-4")}
+                  >
+                    Lessons
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid w-150 grid-cols-[1fr_1.5fr] gap-0">
+                      <div className="flex flex-col justify-between rounded-l-md bg-gradient-to-b from-yellow-400 to-yellow-500 p-5 text-white">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-widest opacity-90">
+                            Get Started
+                          </p>
+                          <h3 className="mt-2 text-lg font-bold leading-tight">
+                            Find your perfect lesson
+                          </h3>
+                          <p className="mt-2 text-sm opacity-80">
+                            Browse all categories and skill levels.
+                          </p>
+                        </div>
+                        <NavigationMenuLink
+                          render={
+                            <Link
+                              to="/category/all"
+                              onClick={() => setNavigationMenuOpened(null)}
+                            />
+                          }
+                          className="mt-4 inline-flex items-center gap-1 text-sm font-semibold underline underline-offset-4 hover:opacity-80"
+                        >
+                          View all lessons →
+                        </NavigationMenuLink>
+                      </div>
+
+                      <ul className="grid grid-cols-2 gap-1 p-3">
+                        {category.map((cat) => (
+                          <li key={cat.slug}>
+                            <NavigationMenuLink
+                              render={<Link to={`/category/${cat.slug}`} />}
+                              className="flex flex-col gap-0.5 rounded-md p-3 items-start transition-colors hover:bg-accent"
+                              onClick={() => setNavigationMenuOpened(null)}
+                            >
+                              <span className="font-medium text-sm">
+                                {cat.name}
+                              </span>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    render={
+                      <Link
+                        to="/pricing"
+                        className={cn("font-bold text-black")}
+                      />
+                    }
+                  >
+                    Pricing
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
             <div className="ml-2 flex items-center gap-3">
               {session ? (
                 <Popover>

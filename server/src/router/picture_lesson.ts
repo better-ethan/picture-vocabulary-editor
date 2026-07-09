@@ -11,6 +11,7 @@ export const pictureLessonRouter = router({
       z.object({
         userId: z.string().optional(),
         status: z.enum(["draft", "published"]).optional(),
+        categoryId: z.number().optional(),
       })
     )
     .query(async ({ input }) => {
@@ -25,6 +26,9 @@ export const pictureLessonRouter = router({
               : undefined,
             input.userId !== undefined
               ? eq(pictureLesson.userId, input.userId)
+              : undefined,
+            input.categoryId !== undefined
+              ? eq(pictureLesson.categoryId, input.categoryId)
               : undefined
           )
         )

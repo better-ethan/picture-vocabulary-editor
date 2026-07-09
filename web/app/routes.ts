@@ -10,6 +10,7 @@ export default [
     route("/", "page/home.tsx"),
 
     route("/picture-lesson/list", "page/picture-lesson/list.tsx"),
+    route("/category/:slug", "page/category/index.tsx"),
     route("/picture-lesson/:id/:slug", "page/picture-lesson/index.tsx"),
 
     // user

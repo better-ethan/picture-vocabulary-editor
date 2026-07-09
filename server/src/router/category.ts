@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { eq, isNull } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { publicProcedure, router } from "../trpc.js";
 
-import { db, category } from "@package/drizzle";
+import { db, category, pictureLesson } from "@package/drizzle";
 
 export const categoryRouter = router({
   list: publicProcedure.query(async () => {
@@ -18,4 +18,23 @@ export const categoryRouter = router({
 
     return result;
   }),
+  getBySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ input }) => {
+      const categoryRecord = await db
+        .select({
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+        })
+        .from(category)
+        .where(and(eq(category.slug, input.slug), isNull(category.deletedAt)))
+        .limit(1);
+
+      if (categoryRecord.length === 0) {
+        return null;
+      }
+
+      return categoryRecord[0];
+    }),
 });
