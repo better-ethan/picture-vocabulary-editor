@@ -22,7 +22,7 @@ import {
   NavigationMenuItem,
   NavigationMenuContent,
   NavigationMenuTrigger,
-  NavigationMenuIndicator,
+  NavigationMenuViewport,
 } from "@/components/retroui/navigation-menu";
 import { createTrpcClient } from "@/util";
 import type { Route } from "./+types/public-layout";
@@ -45,9 +45,10 @@ export default function PublicLayout() {
   const { category } = useLoaderData<typeof loader>();
   const { data: session } = authClient.useSession();
 
-  const [navigationMenuOpened, setNavigationMenuOpened] = useState<true | null>(
-    null
-  );
+  const [navigationMenuOpened, setNavigationMenuOpened] = useState<
+    string | undefined
+  >(undefined);
+
   return (
     <div className={cn("flex flex-col h-screen overflow-hidden")}>
       <nav className="relative sticky top-0 z-50 border-b-2 border-black bg-white px-4 py-2 md:px-8">
@@ -61,27 +62,26 @@ export default function PublicLayout() {
             <NavigationMenu
               value={navigationMenuOpened}
               onValueChange={setNavigationMenuOpened}
+              viewport={false}
             >
               <NavigationMenuList className={"flex gap-1"}>
                 <NavigationMenuItem>
-                  <NavigationMenuLink
-                    render={
-                      <Link
-                        to="/how-it-works"
-                        className={cn("font-bold text-black")}
-                      />
-                    }
-                  >
-                    How it works
+                  <NavigationMenuLink asChild>
+                    <Link
+                      to="/how-it-works"
+                      className={cn("font-bold text-black")}
+                    >
+                      How it works
+                    </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
+                <NavigationMenuItem value="lessons">
                   <NavigationMenuTrigger
                     className={cn("font-bold text-black [&_svg]:size-4")}
                   >
                     Lessons
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent>
+                  <NavigationMenuContent className="left-1/2 -translate-x-1/2">
                     <div className="grid w-150 grid-cols-[1fr_1.5fr] gap-0">
                       <div className="flex flex-col justify-between rounded-l-md bg-gradient-to-b from-yellow-400 to-yellow-500 p-5 text-white">
                         <div>
@@ -96,15 +96,15 @@ export default function PublicLayout() {
                           </p>
                         </div>
                         <NavigationMenuLink
-                          render={
-                            <Link
-                              to="/category/all"
-                              onClick={() => setNavigationMenuOpened(null)}
-                            />
-                          }
+                          asChild
                           className="mt-4 inline-flex items-center gap-1 text-sm font-semibold underline underline-offset-4 hover:opacity-80"
                         >
-                          View all lessons →
+                          <Link
+                            to="/category/all"
+                            onClick={() => setNavigationMenuOpened(undefined)}
+                          >
+                            View all lessons →
+                          </Link>
                         </NavigationMenuLink>
                       </div>
 
@@ -112,13 +112,19 @@ export default function PublicLayout() {
                         {category.map((cat) => (
                           <li key={cat.slug}>
                             <NavigationMenuLink
-                              render={<Link to={`/category/${cat.slug}`} />}
+                              asChild
                               className="flex flex-col gap-0.5 rounded-md p-3 items-start transition-colors hover:bg-accent"
-                              onClick={() => setNavigationMenuOpened(null)}
                             >
-                              <span className="font-medium text-sm">
-                                {cat.name}
-                              </span>
+                              <Link
+                                to={`/category/${cat.slug}`}
+                                onClick={() =>
+                                  setNavigationMenuOpened(undefined)
+                                }
+                              >
+                                <span className="font-medium text-sm">
+                                  {cat.name}
+                                </span>
+                              </Link>
                             </NavigationMenuLink>
                           </li>
                         ))}
@@ -127,15 +133,10 @@ export default function PublicLayout() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink
-                    render={
-                      <Link
-                        to="/pricing"
-                        className={cn("font-bold text-black")}
-                      />
-                    }
-                  >
-                    Pricing
+                  <NavigationMenuLink asChild>
+                    <Link to="/pricing" className={cn("font-bold text-black")}>
+                      Pricing
+                    </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>
