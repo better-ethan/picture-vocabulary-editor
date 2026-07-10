@@ -1,16 +1,17 @@
-import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu"
-import { cva } from "class-variance-authority"
-import { ChevronDownIcon } from "lucide-react"
+import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu";
+import { cva } from "class-variance-authority";
+import { ChevronDownIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function NavigationMenu({
   align = "start",
+  sideOffset = 8,
   className,
   children,
   ...props
 }: NavigationMenuPrimitive.Root.Props &
-  Pick<NavigationMenuPrimitive.Positioner.Props, "align">) {
+  Pick<NavigationMenuPrimitive.Positioner.Props, "align" | "sideOffset">) {
   return (
     <NavigationMenuPrimitive.Root
       data-slot="navigation-menu"
@@ -21,9 +22,9 @@ function NavigationMenu({
       {...props}
     >
       {children}
-      <NavigationMenuPositioner align={align} />
+      <NavigationMenuPositioner align={align} sideOffset={sideOffset} />
     </NavigationMenuPrimitive.Root>
-  )
+  );
 }
 
 function NavigationMenuList({
@@ -39,7 +40,7 @@ function NavigationMenuList({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function NavigationMenuItem({
@@ -52,12 +53,12 @@ function NavigationMenuItem({
       className={cn("relative", className)}
       {...props}
     />
-  )
+  );
 }
 
 const navigationMenuTriggerStyle = cva(
   "group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 data-popup-open:bg-accent data-popup-open:text-accent-foreground data-open:bg-accent data-open:text-accent-foreground"
-)
+);
 
 function NavigationMenuTrigger({
   className,
@@ -76,7 +77,7 @@ function NavigationMenuTrigger({
         aria-hidden="true"
       />
     </NavigationMenuPrimitive.Trigger>
-  )
+  );
 }
 
 function NavigationMenuContent({
@@ -92,7 +93,7 @@ function NavigationMenuContent({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function NavigationMenuPositioner({
@@ -121,7 +122,7 @@ function NavigationMenuPositioner({
         </NavigationMenuPrimitive.Popup>
       </NavigationMenuPrimitive.Positioner>
     </NavigationMenuPrimitive.Portal>
-  )
+  );
 }
 
 function NavigationMenuLink({
@@ -137,7 +138,7 @@ function NavigationMenuLink({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function NavigationMenuIndicator({
@@ -155,7 +156,7 @@ function NavigationMenuIndicator({
     >
       <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
     </NavigationMenuPrimitive.Icon>
-  )
+  );
 }
 
 export {
@@ -168,4 +169,4 @@ export {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
   NavigationMenuPositioner,
-}
+};

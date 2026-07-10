@@ -22,7 +22,7 @@ import {
   NavigationMenuItem,
   NavigationMenuContent,
   NavigationMenuTrigger,
-  NavigationMenuIndicator,
+  NavigationMenuPositioner,
 } from "@/components/retroui/navigation-menu";
 import { createTrpcClient } from "@/util";
 import type { Route } from "./+types/public-layout";
@@ -61,6 +61,8 @@ export default function PublicLayout() {
             <NavigationMenu
               value={navigationMenuOpened}
               onValueChange={setNavigationMenuOpened}
+              align="center"
+              sideOffset={16}
             >
               <NavigationMenuList className={"flex gap-1"}>
                 <NavigationMenuItem>
@@ -85,13 +87,13 @@ export default function PublicLayout() {
                     <div className="grid w-150 grid-cols-[1fr_1.5fr] gap-0">
                       <div className="flex flex-col justify-between rounded-l-md bg-gradient-to-b from-yellow-400 to-yellow-500 p-5 text-white">
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-widest opacity-90">
+                          <p className="text-sm font-semibold uppercase tracking-widest opacity-90">
                             Get Started
                           </p>
                           <h3 className="mt-2 text-lg font-bold leading-tight">
                             Find your perfect lesson
                           </h3>
-                          <p className="mt-2 text-sm opacity-80">
+                          <p className="mt-2 text-sm opacity-90">
                             Browse all categories and skill levels.
                           </p>
                         </div>
