@@ -8,7 +8,7 @@ import {
 } from "@/components/retroui/Popover";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { MenuIcon, User2Icon } from "lucide-react";
+import { ChevronDownIcon, MenuIcon, User2Icon } from "lucide-react";
 import {
   isRouteErrorResponse,
   Link,
@@ -48,6 +48,10 @@ export default function PublicLayout() {
   const [navigationMenuOpened, setNavigationMenuOpened] = useState<true | null>(
     null
   );
+
+  const [drawerOpened, setDrawerOpened] = useState(false);
+  const [lessonsOpened, setLessonsOpened] = useState(false);
+
   return (
     <div className={cn("flex flex-col h-screen overflow-hidden")}>
       <nav className="relative sticky top-0 z-50 border-b-2 border-black bg-white px-4 py-2 md:px-8">
@@ -177,27 +181,68 @@ export default function PublicLayout() {
             </div>
           </div>
           <div className="flex items-center gap-3 md:hidden">
-            <Drawer direction="right">
+            <Drawer
+              direction="right"
+              open={drawerOpened}
+              onOpenChange={setDrawerOpened}
+            >
               <Drawer.Trigger asChild>
                 <Button size="icon">
                   <MenuIcon className="size-4" />
                 </Button>
               </Drawer.Trigger>
-              <Drawer.Content>
-                <div className="flex h-full flex-col gap-8 p-4">
+              <Drawer.Content className="flex flex-col h-full overflow-y-auto py-4">
+                <div className="flex flex-col gap-8 p-4">
                   <Link
                     to="/how-it-works"
                     className={cn(baseDrawerLinkClasses)}
+                    onClick={() => setDrawerOpened(false)}
                   >
                     How it works
                   </Link>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      className={cn(
+                        baseDrawerLinkClasses,
+                        "flex items-center justify-between w-full text-left"
+                      )}
+                      onClick={() => setLessonsOpened((v) => !v)}
+                    >
+                      Lessons
+                      <ChevronDownIcon
+                        className={cn(
+                          "size-4 transition-transform duration-200",
+                          lessonsOpened && "rotate-180"
+                        )}
+                      />
+                    </button>
+                    {lessonsOpened && (
+                      <div className="flex flex-col gap-2 pl-2 text-gray-800">
+                        {category.map((cat) => (
+                          <Link
+                            key={cat.slug}
+                            to={`/category/${cat.slug}`}
+                            className="text-base py-2"
+                            onClick={() => setDrawerOpened(false)}
+                          >
+                            {cat.name}
+                          </Link>
+                        ))}
+                        <Link
+                          to="/category/all"
+                          className="text-base py-2"
+                          onClick={() => setDrawerOpened(false)}
+                        >
+                          View All →
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                   <Link
-                    to="/picture-lesson/list"
+                    to="/pricing"
                     className={cn(baseDrawerLinkClasses)}
+                    onClick={() => setDrawerOpened(false)}
                   >
-                    Lessons
-                  </Link>
-                  <Link to="/pricing" className={cn(baseDrawerLinkClasses)}>
                     Pricing
                   </Link>
                   {session ? (
@@ -205,19 +250,27 @@ export default function PublicLayout() {
                       <Link
                         to="/admin/user/profile"
                         className={cn(baseDrawerLinkClasses)}
+                        onClick={() => setDrawerOpened(false)}
                       >
                         Profile
                       </Link>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => authClient.signOut()}
+                        onClick={() => {
+                          authClient.signOut();
+                          setDrawerOpened(false);
+                        }}
                       >
                         Log out
                       </Button>
                     </>
                   ) : (
-                    <Link to="/signin" className={cn(baseDrawerLinkClasses)}>
+                    <Link
+                      to="/signin"
+                      className={cn(baseDrawerLinkClasses)}
+                      onClick={() => setDrawerOpened(false)}
+                    >
                       Log in
                     </Link>
                   )}
