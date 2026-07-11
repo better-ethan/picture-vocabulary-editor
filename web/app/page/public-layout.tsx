@@ -191,8 +191,8 @@ export default function PublicLayout() {
                   <MenuIcon className="size-4" />
                 </Button>
               </Drawer.Trigger>
-              <Drawer.Content className="flex flex-col h-full overflow-y-auto py-4">
-                <div className="flex flex-col gap-8 p-4">
+              <Drawer.Content className="flex flex-col py-4">
+                <div className="flex flex-col h-dvh gap-8 p-4 overflow-y-auto">
                   <Link
                     to="/how-it-works"
                     className={cn(baseDrawerLinkClasses)}
@@ -204,7 +204,8 @@ export default function PublicLayout() {
                     <button
                       className={cn(
                         baseDrawerLinkClasses,
-                        "flex items-center justify-between w-full text-left"
+                        "flex items-center justify-between w-full text-left",
+                        "hover:no-underline"
                       )}
                       onClick={() => setLessonsOpened((v) => !v)}
                     >
@@ -230,7 +231,7 @@ export default function PublicLayout() {
                         ))}
                         <Link
                           to="/category/all"
-                          className="text-base py-2"
+                          className="text-base py-2 underline"
                           onClick={() => setDrawerOpened(false)}
                         >
                           View All →
