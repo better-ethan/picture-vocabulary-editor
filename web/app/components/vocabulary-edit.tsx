@@ -1064,7 +1064,7 @@ export function VocabularyEditor({
             </CardContent>
           </Card>
         )}
-        <div className="flex flex-col justify-start items-center overflow-y-auto flex-1 gap-4 min-h-0 p-2 order-first lg:order-last">
+        <div className="flex flex-col justify-start items-center overflow-y-auto flex-1 gap-4 min-h-0 p-1 order-first lg:order-last">
           <Field>
             <Input
               type="file"
@@ -1861,7 +1861,7 @@ export function VocabularyCanvas({
 
   return (
     <Card className="w-full">
-      <CardContent className="">
+      <CardContent className="p-2 md:p-4">
         <div
           ref={wrapperRef}
           className={cn("overflow-hidden w-full flex justify-center")}

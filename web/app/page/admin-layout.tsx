@@ -112,7 +112,7 @@ export default function AdminLayout() {
           </div>
         )}
       </aside>
-      <main className="flex justify-center w-full p-3 overflow-hidden h-full">
+      <main className="flex justify-center w-full py-2 px-1.5 lg:p-3 overflow-hidden h-full">
         <Outlet />
       </main>
     </div>
