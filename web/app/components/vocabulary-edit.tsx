@@ -1860,11 +1860,11 @@ export function VocabularyCanvas({
   }, []);
 
   return (
-    <Card className="w-full">
+    <Card className="">
       <CardContent className="p-2 md:p-4">
         <div
           ref={wrapperRef}
-          className={cn("overflow-hidden w-full flex justify-center")}
+          className={cn("overflow-hidden flex justify-center")}
         >
           <div
             className="bg-white border border-gray-400 border-dashed overflow-hidden"
