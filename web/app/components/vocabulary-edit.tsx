@@ -88,6 +88,13 @@ import Cropper, { type Area } from "react-easy-crop";
 import { Dialog } from "@/components/retroui/Dialog";
 import { Menu } from "@/components/retroui/Menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/retroui/Badge";
+
+interface WordItem {
+  number: number;
+  word: string;
+  audio: string;
+}
 
 export interface CanvasContent {
   images: ImageItem[];
@@ -1092,6 +1099,7 @@ export function VocabularyEditor({
             images={images}
             labels={labels}
             lines={lines}
+            words={data?.content.words ?? []}
             selectedId={selectedId}
             onSelectId={setSelectedId}
             onImagesChange={setImages}
@@ -1810,6 +1818,7 @@ interface VocabularyCanvasProps {
   images: ImageItem[];
   labels: LabelItem[];
   lines: LineItem[];
+  words: WordItem[];
   selectedId?: string | null;
   onSelectId?: (id: string | null) => void;
   onImagesChange?: (images: ImageItem[]) => void;
@@ -1822,6 +1831,7 @@ export function VocabularyCanvas({
   images,
   labels,
   lines,
+  words,
   selectedId,
   onSelectId,
   onImagesChange,
@@ -1864,117 +1874,302 @@ export function VocabularyCanvas({
       <CardContent className="p-2 md:p-4">
         <div
           ref={wrapperRef}
-          className={cn("overflow-hidden flex justify-center")}
+          className={cn(
+            "overflow-hidden flex flex-col gap-2 justify-center items-center"
+          )}
         >
           <div
-            className="bg-white border border-gray-400 border-dashed overflow-hidden"
-            style={{ width: stageWidth, height: stageHeight }}
+            className="w-full flex flex-col gap-2"
+            style={{ maxWidth: stageWidth }}
           >
-            <Stage
-              width={stageWidth}
-              height={stageHeight}
-              scaleX={scale}
-              scaleY={scale}
-              onMouseDown={(e) => {
-                if (e.target === e.target.getStage()) {
-                  onSelectId?.(null);
-                }
-              }}
+            <div
+              className="bg-white border border-gray-400 border-dashed overflow-hidden"
+              style={{ width: stageWidth, height: stageHeight }}
             >
-              <Layer>
-                {images.map((img, index) => (
-                  <URLImage
-                    key={index}
-                    mode={mode}
-                    width={img.width ?? 200}
-                    height={img.height}
-                    draggable={mode === "edit"}
-                    src={img.src}
-                    x={img.x}
-                    y={img.y}
-                    isSelected={selectedId === img.id}
-                    onClick={() => onSelectId?.(img.id)}
-                    onDragMove={handleDragging}
-                    onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
-                      handleDragEnd(e);
-                      const pos = e.target.position();
-                      onImagesChange?.(
-                        images.map((it) =>
-                          it.id === img.id ? { ...it, x: pos.x, y: pos.y } : it
+              <Stage
+                width={stageWidth}
+                height={stageHeight}
+                scaleX={scale}
+                scaleY={scale}
+                onMouseDown={(e) => {
+                  if (e.target === e.target.getStage()) {
+                    onSelectId?.(null);
+                  }
+                }}
+              >
+                <Layer>
+                  {images.map((img, index) => (
+                    <URLImage
+                      key={index}
+                      mode={mode}
+                      width={img.width ?? 200}
+                      height={img.height}
+                      draggable={mode === "edit"}
+                      src={img.src}
+                      x={img.x}
+                      y={img.y}
+                      isSelected={selectedId === img.id}
+                      onClick={() => onSelectId?.(img.id)}
+                      onDragMove={handleDragging}
+                      onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
+                        handleDragEnd(e);
+                        const pos = e.target.position();
+                        onImagesChange?.(
+                          images.map((it) =>
+                            it.id === img.id
+                              ? { ...it, x: pos.x, y: pos.y }
+                              : it
+                          )
+                        );
+                      }}
+                      onTransform={handleResizing}
+                      onTransformEnd={(e) => {
+                        const node = (
+                          e.currentTarget as Konva.Transformer
+                        ).nodes()[0] as Konva.Node;
+                        if (!node) return;
+
+                        const newWidth = node.width() * node.scaleX();
+                        const newHeight = node.height() * node.scaleY();
+
+                        handleResizeEnd(e);
+
+                        node.scaleX(1);
+                        node.scaleY(1);
+
+                        onImagesChange?.(
+                          images.map((it) =>
+                            it.id === img.id
+                              ? {
+                                  ...it,
+                                  x: node.x(),
+                                  y: node.y(),
+                                  width: newWidth,
+                                  height: newHeight,
+                                  rotation: node.rotation(),
+                                }
+                              : it
+                          )
+                        );
+                      }}
+                    />
+                  ))}
+                  {labels.map((label) => (
+                    <NumberCircle
+                      key={label.id}
+                      label={label}
+                      draggable={mode === "edit"}
+                      mode={mode}
+                      onSelect={() => onSelectId?.(label.id)}
+                      isSelected={selectedId === label.id}
+                      onDragMove={handleDragging}
+                      onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
+                        handleDragEnd(e);
+                        const pos = e.target.position();
+                        onLabelsChange?.(
+                          labels.map((l) =>
+                            l.id === label.id ? { ...l, x: pos.x, y: pos.y } : l
+                          )
+                        );
+                      }}
+                    />
+                  ))}
+                  {lines.map((line) => (
+                    <EditableHandDrawLine
+                      key={line.id}
+                      line={line}
+                      isSelected={selectedId === line.id}
+                      mode={mode}
+                      onSelect={() => onSelectId?.(line.id)}
+                      onChange={(updated) =>
+                        onLinesChange?.(
+                          lines.map((l) => (l.id === updated.id ? updated : l))
                         )
-                      );
-                    }}
-                    onTransform={handleResizing}
-                    onTransformEnd={(e) => {
-                      const node = (
-                        e.currentTarget as Konva.Transformer
-                      ).nodes()[0] as Konva.Node;
-                      if (!node) return;
-
-                      const newWidth = node.width() * node.scaleX();
-                      const newHeight = node.height() * node.scaleY();
-
-                      handleResizeEnd(e);
-
-                      node.scaleX(1);
-                      node.scaleY(1);
-
-                      onImagesChange?.(
-                        images.map((it) =>
-                          it.id === img.id
-                            ? {
-                                ...it,
-                                x: node.x(),
-                                y: node.y(),
-                                width: newWidth,
-                                height: newHeight,
-                                rotation: node.rotation(),
-                              }
-                            : it
-                        )
-                      );
-                    }}
-                  />
-                ))}
-                {labels.map((label) => (
-                  <NumberCircle
-                    key={label.id}
-                    label={label}
-                    draggable={mode === "edit"}
-                    mode={mode}
-                    onSelect={() => onSelectId?.(label.id)}
-                    isSelected={selectedId === label.id}
-                    onDragMove={handleDragging}
-                    onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
-                      handleDragEnd(e);
-                      const pos = e.target.position();
-                      onLabelsChange?.(
-                        labels.map((l) =>
-                          l.id === label.id ? { ...l, x: pos.x, y: pos.y } : l
-                        )
-                      );
-                    }}
-                  />
-                ))}
-                {lines.map((line) => (
-                  <EditableHandDrawLine
-                    key={line.id}
-                    line={line}
-                    isSelected={selectedId === line.id}
-                    mode={mode}
-                    onSelect={() => onSelectId?.(line.id)}
-                    onChange={(updated) =>
-                      onLinesChange?.(
-                        lines.map((l) => (l.id === updated.id ? updated : l))
-                      )
-                    }
-                  />
-                ))}
-              </Layer>
-            </Stage>
+                      }
+                    />
+                  ))}
+                </Layer>
+              </Stage>
+            </div>
+            <WordList words={words} />
           </div>
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+type WordListMode = "view" | "fillIn" | "dictation";
+
+function WordList({ words }: { words: WordItem[] }) {
+  const [rate, setRate] = useState(1);
+
+  const [mode, setMode] = useState<WordListMode>("view");
+
+  const [wordArr, setWordArr] = useState(words);
+
+  const [userAnswers, setUserAnswers] = useState<string[]>([]);
+  const [userAnswerResults, setUserAnswerResults] = useState<boolean[]>([]);
+
+  const [hasCheckedAnswer, setHasCheckedAnswer] = useState(false);
+
+  const handleFillIn = () => {
+    setMode("fillIn");
+    setUserAnswers(Array(words.length).fill(""));
+    setUserAnswerResults(Array(words.length).fill(false));
+
+    setHasCheckedAnswer(false);
+  };
+
+  const handleDictation = () => {
+    setMode("dictation");
+    setUserAnswers(Array(words.length).fill(""));
+    setUserAnswerResults(Array(words.length).fill(false));
+
+    setHasCheckedAnswer(false);
+
+    // because Array.sort() will change the original array, we need to create a new array first
+    const dictationWordArr = [...wordArr].sort(() => Math.random() - 0.5);
+    setWordArr(dictationWordArr);
+  };
+
+  const handleCheckAnswer = () => {
+    const results = wordArr.map((word, index) => {
+      const userAnswer = userAnswers[index] || "";
+      return userAnswer.trim().toLowerCase() === word.word.trim().toLowerCase();
+    });
+    setUserAnswerResults(results);
+    setHasCheckedAnswer(true);
+  };
+
+  return (
+    <div className="flex flex-col w-full gap-4 py-2">
+      <div>
+        <div className="flex flex-row justify-end items-center">
+          <Select
+            value={rate.toString()}
+            onValueChange={(value) => setRate(parseFloat(value))}
+          >
+            <SelectTrigger
+              id="rate"
+              className="min-w-12 h-8 p-2 py-1 shadow-none"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="w-12">
+              <SelectItem value="0.5">🐢 0.5x</SelectItem>
+              <SelectItem value="0.75">🚶 0.75x</SelectItem>
+              <SelectItem value="1">🚴 1x</SelectItem>
+              <SelectItem value="1.25">🏃 1.25x</SelectItem>
+              <SelectItem value="1.5">🚗 1.5x</SelectItem>
+              <SelectItem value="1.75">✈️ 1.75x</SelectItem>
+              <SelectItem value="2">🚀 2x</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        {mode === "fillIn" && (
+          <Text className="text-sm text-gray-500 my-2">
+            Fill in the blanks, then click "Check" to verify your answers.
+          </Text>
+        )}
+        {mode === "dictation" && (
+          <Text className="text-sm text-gray-500 my-2">
+            Listen to the audio and fill in the blanks. Click "Check" to verify
+            your answers.
+          </Text>
+        )}
+        <div className="overflow-y-auto max-h-40 lg:max-h-50">
+          <div
+            className={cn(
+              "columns-1 lg:columns-3 py-2",
+              mode === "dictation" && "pl-2"
+            )}
+          >
+            {wordArr?.map(({ number, word, audio }, index) => (
+              <div
+                key={number}
+                className="flex items-center gap-2 break-inside-avoid mb-2"
+              >
+                {(mode === "view" ||
+                  mode === "fillIn" ||
+                  (mode === "dictation" && hasCheckedAnswer)) && (
+                  <Badge
+                    variant="default"
+                    className={cn(
+                      "w-6 h-6 flex items-center justify-center shrink-0 rounded-full p-0",
+                      "bg-white"
+                    )}
+                  >
+                    {number}.
+                  </Badge>
+                )}
+                {(mode === "fillIn" || mode === "dictation") && (
+                  <Input
+                    type="text"
+                    value={userAnswers[index] || ""}
+                    onChange={(e) => {
+                      const newAnswers = [...userAnswers];
+                      newAnswers[index] = e.target.value;
+                      setUserAnswers(newAnswers);
+                    }}
+                    className={cn(
+                      "flex-1 border rounded px-2 py-1",
+                      "shadow-none",
+                      userAnswerResults[index] === true &&
+                        hasCheckedAnswer &&
+                        "border-green-500 bg-green-100",
+                      userAnswerResults[index] === false &&
+                        hasCheckedAnswer &&
+                        "border-red-600 bg-red-300"
+                    )}
+                  />
+                )}
+                {mode === "view" && (
+                  <Text className="flex-1 font-normal">{word}</Text>
+                )}
+
+                <WordAudio disabled={!word} url={audio} playbackRate={rate} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {(mode === "fillIn" || mode === "dictation") && (
+        <div className="flex justify-between">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setMode("view");
+              setWordArr(words);
+            }}
+          >
+            Exit
+          </Button>
+          <Button size="sm" onClick={handleCheckAnswer}>
+            Check
+          </Button>
+        </div>
+      )}
+
+      <div className="flex gap-2 justify-end px-2">
+        <Button
+          type="button"
+          size="sm"
+          variant={"secondary"}
+          onClick={handleFillIn}
+        >
+          Fill in
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={"secondary"}
+          onClick={handleDictation}
+        >
+          Dictation
+        </Button>
+      </div>
+    </div>
   );
 }
