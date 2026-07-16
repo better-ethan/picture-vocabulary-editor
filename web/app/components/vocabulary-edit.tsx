@@ -127,6 +127,7 @@ interface VocabularyEditorProps {
       words: { number: number; word: string; audio: string }[];
     };
   };
+  canvasClassName?: string;
 }
 
 type EditorMode = "edit" | "view";
@@ -662,6 +663,7 @@ export function VocabularyEditor({
   operation = "create",
   category,
   data,
+  canvasClassName,
 }: VocabularyEditorProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [labels, setLabels] = useState<LabelItem[]>(
@@ -1071,7 +1073,7 @@ export function VocabularyEditor({
             </CardContent>
           </Card>
         )}
-        <div className="flex flex-col justify-start items-center overflow-y-auto flex-1 gap-4 min-h-0 p-1 order-first lg:order-last">
+        <div className="flex flex-col justify-start overflow-y-auto flex-1 gap-4 min-h-0 p-1 order-first lg:order-last">
           <Field>
             <Input
               type="file"
@@ -1094,182 +1096,186 @@ export function VocabularyEditor({
               Add images to the canvas 👇, png, jpg, webp suggested
             </FieldDescription>
           </Field>
-          <VocabularyCanvas
-            mode={mode}
-            images={images}
-            labels={labels}
-            lines={lines}
-            words={data?.content.words ?? []}
-            selectedId={selectedId}
-            onSelectId={setSelectedId}
-            onImagesChange={setImages}
-            onLabelsChange={setLabels}
-            onLinesChange={setLines}
-          />
+          <div className={cn("flex flex-col gap-4 max-w-210")}>
+            <VocabularyCanvas
+              mode={mode}
+              images={images}
+              labels={labels}
+              lines={lines}
+              words={data?.content.words ?? []}
+              selectedId={selectedId}
+              onSelectId={setSelectedId}
+              onImagesChange={setImages}
+              onLabelsChange={setLabels}
+              onLinesChange={setLines}
+            />
 
-          <Card className="w-full">
-            <CardHeader className="">
-              <CardTitle className="text-base font-medium">
-                Lesson settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="w-full flex flex-col gap-6">
-              <Field>
-                <Label htmlFor="title">Title *</Label>
-                <Input
-                  type="text"
-                  value={title}
-                  placeholder="Weather"
-                  onChange={(e) => setTitle(e.target.value)}
-                  onBlur={handleTitleBlur}
-                  className="flex-1 h-8"
-                  required
-                  name="title"
-                  id="title"
+            <Card className="w-full">
+              <CardHeader className="">
+                <CardTitle className="text-base font-medium">
+                  Lesson settings
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="w-full flex flex-col gap-6">
+                <Field>
+                  <Label htmlFor="title">Title *</Label>
+                  <Input
+                    type="text"
+                    value={title}
+                    placeholder="Weather"
+                    onChange={(e) => setTitle(e.target.value)}
+                    onBlur={handleTitleBlur}
+                    className="flex-1 h-8"
+                    required
+                    name="title"
+                    id="title"
+                  />
+                </Field>
+                <Field>
+                  <Label htmlFor="slug">Slug *</Label>
+                  <Input
+                    type="text"
+                    value={slug}
+                    onChange={handleSlugChange}
+                    placeholder="weather"
+                    className="flex-1 h-8"
+                    required
+                    name="slug"
+                    id="slug"
+                  />
+                </Field>
+                <Field>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    placeholder="About weather vocabulary, you can learn words like sunny, rainy, cloudy..."
+                    className="flex-1 resize-none"
+                    rows={2}
+                    value={description}
+                    readOnly={mode === "view"}
+                    onChange={(e) =>
+                      mode === "edit"
+                        ? setDescription(e.target.value)
+                        : undefined
+                    }
+                    name="description"
+                    id="description"
+                  />
+                </Field>
+                <Field>
+                  <Label htmlFor="status">Status *</Label>
+                  <Select
+                    value={status}
+                    onValueChange={(value) =>
+                      setStatus(value as "draft" | "published")
+                    }
+                    name="status"
+                    required
+                  >
+                    <SelectTrigger id="status" className="flex-1 h-8 text-sm">
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="published">Published</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <Label htmlFor="status">Category *</Label>
+                  <Select
+                    value={categoryId?.toString()}
+                    onValueChange={(value) =>
+                      setCategoryId(value ? parseInt(value) : undefined)
+                    }
+                    name="categoryId"
+                    required
+                  >
+                    <SelectTrigger id="status" className="flex-1 h-8 text-sm">
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-48 overflow-y-auto">
+                      {category.map((item) => (
+                        <SelectItem key={item.id} value={item.id.toString()}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <Label htmlFor="thumbnail">Thumbnail *</Label>
+                  <ThumbnailUploader
+                    thumbnail={thumbnail}
+                    onCropped={setCroppedImage}
+                  />
+                </Field>
+                <input
+                  type="hidden"
+                  name="content"
+                  value={JSON.stringify(content)}
                 />
-              </Field>
-              <Field>
-                <Label htmlFor="slug">Slug *</Label>
-                <Input
-                  type="text"
-                  value={slug}
-                  onChange={handleSlugChange}
-                  placeholder="weather"
-                  className="flex-1 h-8"
-                  required
-                  name="slug"
-                  id="slug"
-                />
-              </Field>
-              <Field>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  placeholder="About weather vocabulary, you can learn words like sunny, rainy, cloudy..."
-                  className="flex-1 resize-none"
-                  rows={2}
-                  value={description}
-                  readOnly={mode === "view"}
-                  onChange={(e) =>
-                    mode === "edit" ? setDescription(e.target.value) : undefined
-                  }
-                  name="description"
-                  id="description"
-                />
-              </Field>
-              <Field>
-                <Label htmlFor="status">Status *</Label>
-                <Select
-                  value={status}
-                  onValueChange={(value) =>
-                    setStatus(value as "draft" | "published")
-                  }
-                  name="status"
-                  required
+                <Button
+                  size="sm"
+                  type="submit"
+                  className="h-8 px-5"
+                  disabled={navigation.state !== "idle"}
                 >
-                  <SelectTrigger id="status" className="flex-1 h-8 text-sm">
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <Label htmlFor="status">Category *</Label>
-                <Select
-                  value={categoryId?.toString()}
-                  onValueChange={(value) =>
-                    setCategoryId(value ? parseInt(value) : undefined)
-                  }
-                  name="categoryId"
-                  required
-                >
-                  <SelectTrigger id="status" className="flex-1 h-8 text-sm">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-48 overflow-y-auto">
-                    {category.map((item) => (
-                      <SelectItem value={item.id.toString()}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <Label htmlFor="thumbnail">Thumbnail *</Label>
-                <ThumbnailUploader
-                  thumbnail={thumbnail}
-                  onCropped={setCroppedImage}
-                />
-              </Field>
-              <input
-                type="hidden"
-                name="content"
-                value={JSON.stringify(content)}
-              />
-              <Button
-                size="sm"
-                type="submit"
-                className="h-8 px-5"
-                disabled={navigation.state !== "idle"}
-              >
-                {navigation.state === "idle" ? (
-                  "Save"
-                ) : (
-                  <Loader2 className="animate-spin" />
-                )}
-              </Button>
-              {operation === "edit" && (
-                <Dialog>
-                  <Dialog.Trigger asChild>
-                    <Button
-                      size="sm"
-                      type="button"
-                      variant="destructive"
-                      className="h-8"
-                    >
-                      Delete
-                    </Button>
-                  </Dialog.Trigger>
-                  <Dialog.Content className="max-w-lg">
-                    <Dialog.Header>
-                      <Text as="h5">Confirm Deletion?</Text>
-                    </Dialog.Header>
-                    <Dialog.Description className="text-xl p-4 py-6">
-                      Are you sure you want to delete this lesson? This action
-                      cannot be undone.
-                    </Dialog.Description>
-                    <Dialog.Footer>
+                  {navigation.state === "idle" ? (
+                    "Save"
+                  ) : (
+                    <Loader2 className="animate-spin" />
+                  )}
+                </Button>
+                {operation === "edit" && (
+                  <Dialog>
+                    <Dialog.Trigger asChild>
                       <Button
+                        size="sm"
                         type="button"
                         variant="destructive"
-                        size="sm"
-                        onClick={handleDeleteRecord}
+                        className="h-8"
                       >
                         Delete
                       </Button>
-                      <Dialog.Trigger asChild>
-                        <Button variant="outline" size="sm" type="button">
-                          Cancel
+                    </Dialog.Trigger>
+                    <Dialog.Content className="max-w-lg">
+                      <Dialog.Header>
+                        <Text as="h5">Confirm Deletion?</Text>
+                      </Dialog.Header>
+                      <Dialog.Description className="text-xl p-4 py-6">
+                        Are you sure you want to delete this lesson? This action
+                        cannot be undone.
+                      </Dialog.Description>
+                      <Dialog.Footer>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={handleDeleteRecord}
+                        >
+                          Delete
                         </Button>
-                      </Dialog.Trigger>
-                    </Dialog.Footer>
-                  </Dialog.Content>
-                </Dialog>
-              )}
-              <Button
-                size="sm"
-                type="button"
-                variant={"outline"}
-                className="h-8 px-5"
-                onClick={() => navigate(-1)}
-              >
-                Cancel
-              </Button>
-            </CardContent>
-          </Card>
+                        <Dialog.Trigger asChild>
+                          <Button variant="outline" size="sm" type="button">
+                            Cancel
+                          </Button>
+                        </Dialog.Trigger>
+                      </Dialog.Footer>
+                    </Dialog.Content>
+                  </Dialog>
+                )}
+                <Button
+                  size="sm"
+                  type="button"
+                  variant={"outline"}
+                  className="h-8 px-5"
+                  onClick={() => navigate(-1)}
+                >
+                  Cancel
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </Form>
@@ -1870,7 +1876,7 @@ export function VocabularyCanvas({
   }, []);
 
   return (
-    <Card className="">
+    <Card className="w-full">
       <CardContent className="p-2 md:p-4">
         <div
           ref={wrapperRef}
@@ -1878,10 +1884,7 @@ export function VocabularyCanvas({
             "overflow-hidden flex flex-col gap-2 justify-center items-center"
           )}
         >
-          <div
-            className="w-full flex flex-col gap-2"
-            style={{ maxWidth: stageWidth }}
-          >
+          <div className="flex flex-col gap-2" style={{ maxWidth: stageWidth }}>
             <div
               className="bg-white border border-gray-400 border-dashed overflow-hidden"
               style={{ width: stageWidth, height: stageHeight }}
@@ -1991,7 +1994,7 @@ export function VocabularyCanvas({
                 </Layer>
               </Stage>
             </div>
-            <WordList words={words} />
+            {mode === "view" && <WordList words={words} />}
           </div>
         </div>
       </CardContent>

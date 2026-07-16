@@ -117,7 +117,7 @@ export default function Page() {
           </div>
         )}
         <div className="mt-8 flex flex-col justify-start gap-3 px-2">
-          <div className="flex-1 min-w-0 flex flex-col max-w-5xl gap-4">
+          <div className="flex flex-col gap-4 max-w-210">
             <VocabularyCanvas
               mode="view"
               images={images}
