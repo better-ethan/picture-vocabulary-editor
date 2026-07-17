@@ -930,6 +930,23 @@ export function VocabularyEditor({
 
     formData.set("thumbnail", newThumbnail!);
 
+    // preview image
+    const canvas = containerRef.current?.querySelector("canvas");
+    if (canvas) {
+      const previewBlob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob((blob) => resolve(blob), "image/webp", 0.85)
+      );
+
+      if (previewBlob) {
+        const previewUrl = await uploadFileToR2({
+          file: previewBlob,
+          source: "preview",
+        });
+
+        formData.set("preview", previewUrl);
+      }
+    }
+
     submit(formData, { method: "post" });
   };
 
@@ -1096,7 +1113,10 @@ export function VocabularyEditor({
               Add images to the canvas 👇, png, jpg, webp suggested
             </FieldDescription>
           </Field>
-          <div className={cn("flex flex-col gap-4 max-w-210")}>
+          <div
+            ref={containerRef}
+            className={cn("flex flex-col gap-4 max-w-210")}
+          >
             <VocabularyCanvas
               mode={mode}
               images={images}
