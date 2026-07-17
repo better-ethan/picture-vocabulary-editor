@@ -16,12 +16,13 @@ const timestampFields = {
 };
 
 export const pictureLesson = pgTable("picture_lesson", {
-  id: serial("id").primaryKey(),
+  id: varchar("id", { length: 16 }).primaryKey(),
   userId: text("user_id").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   status: varchar("status", { length: 50 }).notNull().default("draft"),
   thumbnail: varchar("thumbnail", { length: 255 }).notNull(),
+  preview: varchar("preview", { length: 255 }),
   slug: varchar("slug", { length: 255 }).notNull(),
   content: json("content"),
   categoryId: integer("category_id").notNull(),

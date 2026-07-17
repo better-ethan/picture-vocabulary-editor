@@ -90,6 +90,8 @@ import { Menu } from "@/components/retroui/Menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/retroui/Badge";
 
+import nanoid from "@/lib/nanoid";
+
 interface WordItem {
   number: number;
   word: string;
@@ -744,14 +746,21 @@ export function VocabularyEditor({
   const uploadFileToR2 = async ({
     file,
     source,
+    defaultFileName,
   }: {
     file: File | Blob;
     source?: string;
+    defaultFileName?: string;
   }): Promise<string> => {
-    const filename =
-      file instanceof File
-        ? file.name
-        : `${Math.random().toString().slice(2, 7)}.webp`;
+    let filename = defaultFileName;
+
+    if (!filename) {
+      filename =
+        file instanceof File
+          ? file.name
+          : `${Math.random().toString().slice(2, 7)}.webp`;
+    }
+
     const { url, key } = await uploadMutation.mutateAsync({
       fileName: filename,
       fileType: file.type,
@@ -913,8 +922,11 @@ export function VocabularyEditor({
 
   const submit = useSubmit();
   const navigation = useNavigation();
+  const [isSaving, setIsSaving] = useState(false);
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setIsSaving(true);
 
     const formData = new FormData(e.currentTarget);
 
@@ -930,17 +942,32 @@ export function VocabularyEditor({
 
     formData.set("thumbnail", newThumbnail!);
 
+    if (operation === "create") {
+      const id = nanoid();
+      formData.set("id", id);
+    }
+
     // preview image
     const canvas = containerRef.current?.querySelector("canvas");
     if (canvas) {
       const previewBlob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob((blob) => resolve(blob), "image/webp", 0.85)
+        canvas.toBlob((blob) => resolve(blob), "image/webp", 1)
       );
 
       if (previewBlob) {
+        let id: string | undefined;
+
+        if (operation === "create") {
+          id = formData.get("id") as string;
+        } else {
+          id = params.id;
+        }
+
+        const slug = formData.get("slug") as string;
         const previewUrl = await uploadFileToR2({
           file: previewBlob,
           source: "preview",
+          defaultFileName: `lesson/${id}/${slug}.webp`,
         });
 
         formData.set("preview", previewUrl);
@@ -948,6 +975,8 @@ export function VocabularyEditor({
     }
 
     submit(formData, { method: "post" });
+
+    setIsSaving(false);
   };
 
   const navigate = useNavigate();
@@ -1238,7 +1267,7 @@ export function VocabularyEditor({
                   size="sm"
                   type="submit"
                   className="h-8 px-5"
-                  disabled={navigation.state !== "idle"}
+                  disabled={isSaving || navigation.state !== "idle"}
                 >
                   {navigation.state === "idle" ? (
                     "Save"

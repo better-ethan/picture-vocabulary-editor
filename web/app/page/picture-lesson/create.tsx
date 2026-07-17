@@ -22,10 +22,12 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
+  const id = formData.get("id") as string;
   const title = formData.get("title") as string;
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string;
   const thumbnail = formData.get("thumbnail") as string;
+  const preview = formData.get("preview") as string;
   const content = formData.get("content") as string;
   let status = formData.get("status");
   if (!status) status = "draft";
@@ -37,12 +39,14 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   const trpc = createTrpcClient(request);
   const result = await trpc.pictureLesson.create.mutate({
+    id,
     title,
     slug,
     description,
     status: status as "draft" | "published",
     categoryId: parseInt(categoryIdString, 10),
     thumbnail,
+    preview,
     content: JSON.stringify(updatedContent),
   });
 

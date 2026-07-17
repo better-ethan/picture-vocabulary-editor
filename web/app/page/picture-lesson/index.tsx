@@ -42,7 +42,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
 
   const result = await trpc.pictureLesson.getByIdAndSlug.query({
-    id: parseInt(id),
+    id,
     slug,
   });
 

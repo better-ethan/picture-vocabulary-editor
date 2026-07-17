@@ -22,7 +22,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
 
   const result = await trpc.pictureLesson.getByIdAndSlug.query({
-    id: parseInt(id),
+    id,
     slug,
   });
 
@@ -41,6 +41,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string;
   const thumbnail = formData.get("thumbnail") as string;
+  const preview = formData.get("preview") as string;
   const content = formData.get("content") as string;
   let status = formData.get("status");
   if (!status) status = "draft";
@@ -49,7 +50,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
 
   const trpc = createTrpcClient(request);
 
-  const id = parseInt(params.id);
+  const id = params.id;
 
   const updatedContent = await reuploadPixabayImages(JSON.parse(content));
 
@@ -59,6 +60,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
     slug,
     description,
     thumbnail,
+    preview,
     status: status as "draft" | "published",
     categoryId: parseInt(categoryIdString, 10),
     content: JSON.stringify(updatedContent),

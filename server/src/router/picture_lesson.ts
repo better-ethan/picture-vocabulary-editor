@@ -54,12 +54,14 @@ export const pictureLessonRouter = router({
   create: publicProcedure
     .input(
       z.object({
+        id: z.string().length(16),
         title: z.string().min(1).max(255),
         slug: z.string().min(1).max(255),
         description: z.string().optional(),
         status: z.enum(["draft", "published"]).default("draft"),
         categoryId: z.number(),
         thumbnail: z.string().max(255),
+        preview: z.string().max(255),
         content: z.json().optional(),
       })
     )
@@ -76,6 +78,7 @@ export const pictureLessonRouter = router({
       const [row] = await db
         .insert(pictureLesson)
         .values({
+          id: input.id,
           userId,
           title: input.title,
           slug: input.slug,
@@ -83,6 +86,7 @@ export const pictureLessonRouter = router({
           status: input.status,
           categoryId: input.categoryId,
           thumbnail: input.thumbnail,
+          preview: input.preview,
           content: input.content,
         })
         .returning();
@@ -93,13 +97,14 @@ export const pictureLessonRouter = router({
   toggle: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.string(),
         title: z.string().min(1).max(255),
         slug: z.string().min(1).max(255),
         description: z.string().optional(),
         status: z.enum(["draft", "published"]).default("draft"),
         categoryId: z.number(),
         thumbnail: z.string().max(255),
+        preview: z.string().max(255),
         content: z.json().optional(),
       })
     )
@@ -113,6 +118,7 @@ export const pictureLessonRouter = router({
           status: input.status,
           categoryId: input.categoryId,
           thumbnail: input.thumbnail,
+          preview: input.preview,
           content: input.content,
           updatedAt: new Date(),
         })
@@ -123,7 +129,7 @@ export const pictureLessonRouter = router({
     }),
 
   remove: publicProcedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
       await db
         .update(pictureLesson)
@@ -134,7 +140,7 @@ export const pictureLessonRouter = router({
     }),
 
   getById: publicProcedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
       const [row] = await db
         .select()
@@ -147,7 +153,7 @@ export const pictureLessonRouter = router({
     }),
 
   getByIdAndSlug: publicProcedure
-    .input(z.object({ id: z.number(), slug: z.string() }))
+    .input(z.object({ id: z.string(), slug: z.string() }))
     .query(async ({ input }) => {
       const [row] = await db
         .select()
@@ -203,7 +209,7 @@ export const pictureLessonRouter = router({
     }),
 
   preview: publicProcedure
-    .input(z.object({ id: z.number(), slug: z.string() }))
+    .input(z.object({ id: z.string(), slug: z.string() }))
     .query(async ({ input, ctx }) => {
       const session = await auth.api.getSession({
         headers: fromNodeHeaders(ctx.req.headers),
