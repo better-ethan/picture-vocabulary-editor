@@ -934,7 +934,8 @@ export function VocabularyEditor({
     let id: string | undefined;
 
     if (operation === "create") {
-      id = formData.get("id") as string;
+      id = nanoid();
+      formData.set("id", id);
     } else {
       id = params.id;
     }
