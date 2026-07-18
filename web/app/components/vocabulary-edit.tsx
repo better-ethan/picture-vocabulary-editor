@@ -65,7 +65,7 @@ import {
   useSubmit,
 } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Field, FieldDescription } from "@/components/ui/field";
+import { Field, FieldGroup } from "@/components/retroui/Field";
 import { toast } from "sonner";
 import {
   Empty,
@@ -85,12 +85,26 @@ import {
 import { useKonvaSnapping } from "use-konva-snapping";
 import { Label } from "@/components/retroui/Label";
 import Cropper, { type Area } from "react-easy-crop";
-import { Dialog } from "@/components/retroui/Dialog";
+import {
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+  DialogDescription,
+} from "@/components/retroui/Dialog";
 import { Menu } from "@/components/retroui/Menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/retroui/Badge";
 
 import nanoid from "@/lib/nanoid";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/retroui/Tooltip";
 
 interface WordItem {
   number: number;
@@ -627,8 +641,8 @@ function ThumbnailUploader({
       )}
 
       <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
-        <Dialog.Content className="flex flex-col items-center justify-center overflow-hidden">
-          <Dialog.Header>Crop Thumbnail</Dialog.Header>
+        <DialogContent className="flex flex-col items-center justify-center overflow-hidden">
+          <DialogHeader>Crop Thumbnail</DialogHeader>
           <div className="relative w-100 h-100">
             <Cropper
               image={imageSrc ?? undefined}
@@ -641,7 +655,7 @@ function ThumbnailUploader({
             />
           </div>
 
-          <Dialog.Footer>
+          <DialogFooter>
             <Button
               type="button"
               variant={"secondary"}
@@ -653,8 +667,8 @@ function ThumbnailUploader({
             <Button type="button" onClick={handleCropConfirm}>
               Confirm
             </Button>
-          </Dialog.Footer>
-        </Dialog.Content>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );
@@ -1025,6 +1039,55 @@ export function VocabularyEditor({
     });
   };
 
+  const [column, setColumn] = useState(4);
+
+  const handleAutoGrid = () => {
+    const n = images.length;
+    if (n === 0) return;
+
+    const PADDING = 20;
+    const cols = column;
+    const rows = Math.ceil(n / cols);
+
+    const cellWidth = (WIDTH - PADDING * (cols + 1)) / cols;
+    const cellHeight = (HEIGHT - PADDING * (rows + 1)) / rows;
+
+    const sortedImages = [...images].sort((a, b) => {
+      const rowA = Math.floor((a.y ?? 0) / (cellHeight + PADDING));
+      const rowB = Math.floor((b.y ?? 0) / (cellHeight + PADDING));
+      if (rowA !== rowB) return rowA - rowB;
+      return (a.x ?? 0) - (b.x ?? 0);
+    });
+
+    const newImages = sortedImages.map((img, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+
+      const cellX = PADDING + col * (cellWidth + PADDING);
+      const cellY = PADDING + row * (cellHeight + PADDING);
+
+      const naturalWidth = img.width ?? 200;
+      const naturalHeight = img.height ?? naturalWidth;
+
+      const scale = Math.min(
+        cellWidth / naturalWidth,
+        cellHeight / naturalHeight
+      );
+      const newWidth = naturalWidth * scale;
+      const newHeight = naturalHeight * scale;
+
+      return {
+        ...img,
+        x: cellX + (cellWidth - newWidth) / 2,
+        y: cellY + (cellHeight - newHeight) / 2,
+        width: newWidth,
+        height: newHeight,
+      };
+    });
+
+    setImages(newImages);
+  };
+
   return (
     <Form
       id="editor-form"
@@ -1119,7 +1182,7 @@ export function VocabularyEditor({
           </Card>
         )}
         <div className="flex flex-col justify-start overflow-y-auto flex-1 gap-4 min-h-0 p-1 order-first lg:order-last">
-          <Field>
+          <div className="flex justify-between items-center gap-4">
             <Input
               type="file"
               accept="image/*"
@@ -1137,10 +1200,50 @@ export function VocabularyEditor({
             >
               Add Images
             </Button>
-            <FieldDescription className="text-gray-400">
-              Add images to the canvas 👇, png, jpg, webp suggested
-            </FieldDescription>
-          </Field>
+            <Dialog>
+              <DialogTrigger
+                render={
+                  <Button type="button" variant="secondary" size="sm">
+                    Auto Grid
+                  </Button>
+                }
+              ></DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Auto Grid</DialogTitle>
+                  <DialogDescription>
+                    This feature will automatically arrange the images in a grid
+                    layout. It will not modify the labels or lines.
+                  </DialogDescription>
+                </DialogHeader>
+                <FieldGroup>
+                  <Field>
+                    <Label>Column</Label>
+                    <Input
+                      id="column"
+                      type="number"
+                      min={1}
+                      value={column}
+                      onChange={(e) => setColumn(parseInt(e.target.value))}
+                      placeholder="Default is 4"
+                    />
+                  </Field>
+                </FieldGroup>
+                <DialogFooter>
+                  <Button type="button" size="sm" onClick={handleAutoGrid}>
+                    Confirm
+                  </Button>
+                  <DialogClose
+                    render={
+                      <Button type="button" variant="outline" size="sm" />
+                    }
+                  >
+                    Cancel
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
           <div
             ref={containerRef}
             className={cn("flex flex-col gap-4 max-w-210")}
@@ -1276,25 +1379,27 @@ export function VocabularyEditor({
                 </Button>
                 {operation === "edit" && (
                   <Dialog>
-                    <Dialog.Trigger asChild>
-                      <Button
-                        size="sm"
-                        type="button"
-                        variant="destructive"
-                        className="h-8"
-                      >
-                        Delete
-                      </Button>
-                    </Dialog.Trigger>
-                    <Dialog.Content className="max-w-lg">
-                      <Dialog.Header>
+                    <DialogTrigger
+                      render={
+                        <Button
+                          size="sm"
+                          type="button"
+                          variant="destructive"
+                          className="h-8"
+                        >
+                          Delete
+                        </Button>
+                      }
+                    ></DialogTrigger>
+                    <DialogContent className="max-w-lg">
+                      <DialogHeader>
                         <Text as="h5">Confirm Deletion?</Text>
-                      </Dialog.Header>
-                      <Dialog.Description className="text-xl p-4 py-6">
+                      </DialogHeader>
+                      <DialogDescription className="text-xl p-4 py-6">
                         Are you sure you want to delete this lesson? This action
                         cannot be undone.
-                      </Dialog.Description>
-                      <Dialog.Footer>
+                      </DialogDescription>
+                      <DialogFooter>
                         <Button
                           type="button"
                           variant="destructive"
@@ -1303,13 +1408,15 @@ export function VocabularyEditor({
                         >
                           Delete
                         </Button>
-                        <Dialog.Trigger asChild>
-                          <Button variant="outline" size="sm" type="button">
-                            Cancel
-                          </Button>
-                        </Dialog.Trigger>
-                      </Dialog.Footer>
-                    </Dialog.Content>
+                        <DialogTrigger
+                          render={
+                            <Button variant="outline" size="sm" type="button">
+                              Cancel
+                            </Button>
+                          }
+                        ></DialogTrigger>
+                      </DialogFooter>
+                    </DialogContent>
                   </Dialog>
                 )}
                 <Button
