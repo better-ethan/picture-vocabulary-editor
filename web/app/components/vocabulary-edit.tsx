@@ -1088,6 +1088,44 @@ export function VocabularyEditor({
     setImages(newImages);
   };
 
+  const handleAutoLabels = () => {
+    if (images.length === 0 || numbers.length === 0) return;
+
+    const newLabels = [...labels];
+
+    images.forEach((img, i) => {
+      const number = numbers[i];
+      if (number === undefined) return;
+
+      const imgX = img.x ?? 0;
+      const imgY = img.y ?? 0;
+      const imgWidth = img.width ?? 200;
+      const imgHeight = img.height ?? 200;
+
+      const targetX = imgX + imgWidth / 2;
+      const targetY = imgY + imgHeight + 4;
+
+      const existingIndex = newLabels.findIndex((l) => l.number === number);
+
+      if (existingIndex !== -1) {
+        newLabels[existingIndex] = {
+          ...newLabels[existingIndex],
+          x: targetX,
+          y: targetY,
+        };
+      } else {
+        newLabels.push({
+          id: `label-${Date.now()}-${number}`,
+          number,
+          x: targetX,
+          y: targetY,
+        });
+      }
+    });
+
+    setLabels(newLabels);
+  };
+
   return (
     <Form
       id="editor-form"
@@ -1156,6 +1194,7 @@ export function VocabularyEditor({
                     handleMoveUp={handleMoveUp}
                     handleMoveDown={handleMoveDown}
                     onAddLabel={handleAddLabel}
+                    autoLablesHandler={handleAutoLabels}
                   />
                 )}
                 {isPanelOpen && activeTool === "tools" && (
@@ -1694,6 +1733,7 @@ function WordsPanel({
   handleMoveUp,
   handleMoveDown,
   onAddLabel,
+  autoLablesHandler,
 }: {
   mode?: EditorMode;
   numbers: number[];
@@ -1704,6 +1744,7 @@ function WordsPanel({
   handleMoveUp: (item: number) => void;
   handleMoveDown: (item: number) => void;
   onAddLabel?: (num: number) => void;
+  autoLablesHandler: () => void;
 }) {
   const trpc = useTRPC();
   const uploadMutation = useMutation(trpc.audio.getUploadUrl.mutationOptions());
@@ -1743,15 +1784,26 @@ function WordsPanel({
       <div className="px-4 py-3 border-b flex items-center justify-between">
         <Text>Word List</Text>
         {mode === "edit" && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            className="px-1"
-            onClick={onAdd}
-          >
-            <PlusIcon className="size-5" />
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="px-1"
+              onClick={autoLablesHandler}
+            >
+              Auto Label
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="px-1"
+              onClick={onAdd}
+            >
+              <PlusIcon className="size-5" />
+            </Button>
+          </div>
         )}
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto px-2 py-2 gap-2">
