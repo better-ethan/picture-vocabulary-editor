@@ -923,6 +923,7 @@ export function VocabularyEditor({
   const submit = useSubmit();
   const navigation = useNavigation();
   const [isSaving, setIsSaving] = useState(false);
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -930,22 +931,28 @@ export function VocabularyEditor({
 
     const formData = new FormData(e.currentTarget);
 
+    let id: string | undefined;
+
+    if (operation === "create") {
+      id = formData.get("id") as string;
+    } else {
+      id = params.id;
+    }
+
+    const slug = formData.get("slug") as string;
+
     let newThumbnail = thumbnail;
     if (croppedImage) {
       const result = await uploadFileToR2({
         file: croppedImage,
         source: "thumbnail",
+        defaultFileName: `lesson/${id}/${slug}.webp`,
       });
 
       newThumbnail = result;
     }
 
     formData.set("thumbnail", newThumbnail!);
-
-    if (operation === "create") {
-      const id = nanoid();
-      formData.set("id", id);
-    }
 
     // preview image
     const canvas = containerRef.current?.querySelector("canvas");
@@ -955,15 +962,6 @@ export function VocabularyEditor({
       );
 
       if (previewBlob) {
-        let id: string | undefined;
-
-        if (operation === "create") {
-          id = formData.get("id") as string;
-        } else {
-          id = params.id;
-        }
-
-        const slug = formData.get("slug") as string;
         const previewUrl = await uploadFileToR2({
           file: previewBlob,
           source: "preview",

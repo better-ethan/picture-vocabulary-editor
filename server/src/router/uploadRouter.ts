@@ -20,7 +20,7 @@ export const uploadRouter = router({
       if (input.source === "pixabay") {
         key = `uploads/pixabay/${Date.now()}-${input.fileName}`;
       } else if (input.source === "thumbnail") {
-        key = `uploads/thumbnail/${Date.now()}-${input.fileName}`;
+        key = `uploads/thumbnail/${input.fileName}`;
       } else if (input.source === "preview") {
         key = `uploads/preview/${input.fileName}`;
       }
