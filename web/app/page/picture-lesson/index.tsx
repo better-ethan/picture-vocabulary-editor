@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/retroui/Select";
-import { Field } from "@/components/ui/field";
+import { Field } from "@/components/retroui/Field";
 import { Input } from "@/components/retroui/Input";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {

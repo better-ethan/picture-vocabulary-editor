@@ -88,7 +88,7 @@ import {
   DialogDescription,
 } from "@/components/retroui/Dialog";
 import { Menu } from "@/components/retroui/Menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/retroui/sheet";
 import { Badge } from "@/components/retroui/Badge";
 
 import nanoid from "@/lib/nanoid";

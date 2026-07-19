@@ -6,9 +6,9 @@ import {
   CardTitle,
 } from "@/components/retroui/Card";
 import { Input } from "@/components/retroui/Input";
-import { Field } from "@/components/ui/field";
-import { Label } from "@/components/ui/label";
-import { PasswordInput } from "@/components/ui/password-input";
+import { Field } from "@/components/retroui/Field";
+import { Label } from "@/components/retroui/Label";
+import { Input as PasswordInput } from "@/components/retroui/Input";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";

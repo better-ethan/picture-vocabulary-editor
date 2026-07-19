@@ -12,8 +12,8 @@ import { Form, Link } from "react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { PasswordInput } from "@/components/ui/password-input";
-import { Field } from "@/components/ui/field";
+import { Input as PasswordInput } from "@/components/retroui/Input";
+import { Field } from "@/components/retroui/Field";
 
 export default function Page() {
   const [email, setEmail] = useState("");

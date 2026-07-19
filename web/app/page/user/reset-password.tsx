@@ -11,9 +11,9 @@ import { useState } from "react";
 import { Form, useLoaderData, useNavigate } from "react-router";
 import type { Route } from "./+types/reset-password";
 import { toast } from "sonner";
-import { PasswordInput } from "@/components/ui/password-input";
+import { Input as PasswordInput } from "@/components/retroui/Input";
 import { Label } from "@/components/retroui/Label";
-import { Field } from "@/components/ui/field";
+import { Field } from "@/components/retroui/Field";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
