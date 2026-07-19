@@ -105,6 +105,12 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/retroui/Tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/retroui/dropdown-menu";
 
 interface WordItem {
   number: number;
@@ -1861,55 +1867,49 @@ function WordsPanel({
               />
               {mode === "edit" && (
                 <>
-                  <Menu>
-                    <Menu.Trigger className="p-2 rounded hover:bg-accent hidden md:block">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-2 rounded hover:bg-accent hidden md:block">
                       <RectangleEllipsisIcon
                         className="size-4"
                         strokeWidth={2.5}
                       />
-                    </Menu.Trigger>
-                    <Menu.Content>
-                      <Menu.Item>
-                        <MenuItemButton
-                          onClick={() => generateAudio(item)}
-                          disabled={!wordMap[item]?.word}
-                          ButtonIcon={RotateCwIcon}
-                          text="Create Audio"
-                        />
-                      </Menu.Item>
-                      <Menu.Item>
-                        <MenuItemButton
-                          ButtonIcon={MoveUpIcon}
-                          text="Move Up"
-                          onClick={() => {
-                            handleMoveUp(item);
-                            triggerHighlight(item - 1);
-                          }}
-                        />
-                      </Menu.Item>
-                      <Menu.Item>
-                        <MenuItemButton
-                          ButtonIcon={MoveDownIcon}
-                          text="Move Down"
-                          onClick={() => {
-                            handleMoveDown(item);
-                            triggerHighlight(item + 1);
-                          }}
-                        />
-                      </Menu.Item>
-                      <Menu.Item
-                        className={"hover:bg-destructive focus:bg-destructive"}
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => generateAudio(item)}
+                        disabled={!wordMap[item]?.word}
                       >
-                        <MenuItemButton
-                          disabled={index !== numbers.length - 1}
-                          onClick={() => onDelete(String(item))}
-                          ButtonIcon={TrashIcon}
-                          text="Remove"
-                          className="text-destructive hover:bg-destructive hover:text-white"
-                        />
-                      </Menu.Item>
-                    </Menu.Content>
-                  </Menu>
+                        <RotateCwIcon />
+                        Create Audio
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          handleMoveUp(item);
+                          triggerHighlight(item - 1);
+                        }}
+                      >
+                        <MoveUpIcon />
+                        Move Up
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          handleMoveDown(item);
+                          triggerHighlight(item + 1);
+                        }}
+                      >
+                        <MoveDownIcon />
+                        Move Down
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        variant="destructive"
+                        disabled={index !== numbers.length - 1}
+                        onClick={() => onDelete(String(item))}
+                      >
+                        <TrashIcon />
+                        Remove
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Sheet
                     open={menuSheetOpenedItem === item}
                     onOpenChange={(open) =>
