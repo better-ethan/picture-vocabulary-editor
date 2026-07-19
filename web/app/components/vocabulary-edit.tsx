@@ -1903,11 +1903,14 @@ function WordsPanel({
                       setMenuSheetOpenedItem(open ? item : null)
                     }
                   >
-                    <SheetTrigger asChild className="block md:hidden">
-                      <Button type="button" variant="ghost">
-                        <RectangleEllipsisIcon className="size-4" />
-                      </Button>
-                    </SheetTrigger>
+                    <SheetTrigger
+                      render={
+                        <Button type="button" variant="ghost">
+                          <RectangleEllipsisIcon className="size-4" />
+                        </Button>
+                      }
+                      className="block md:hidden"
+                    ></SheetTrigger>
                     <SheetContent
                       side="bottom"
                       showCloseButton={false}
