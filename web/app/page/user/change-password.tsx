@@ -41,7 +41,7 @@ export default function Page() {
 
   return (
     <div className="flex justify-center items-start h-full px-4">
-      <Card className="w-full max-w-100">
+      <Card className="w-full max-w-100 shadow-sm">
         <CardHeader>
           <CardTitle>Change Password</CardTitle>
         </CardHeader>
@@ -54,6 +54,7 @@ export default function Page() {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Current Password"
+                className="shadow-sm"
               />
             </Field>
             <Field>
@@ -63,6 +64,7 @@ export default function Page() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="New Password"
+                className="shadow-sm"
               />
             </Field>
             <Field>
@@ -72,12 +74,14 @@ export default function Page() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm New Password"
+                className="shadow-sm"
               />
             </Field>
 
             <Button
               onClick={handleSave}
               disabled={!currentPassword || !newPassword || !confirmPassword}
+              className="shadow-sm"
             >
               Save
             </Button>

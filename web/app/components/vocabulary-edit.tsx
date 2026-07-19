@@ -614,7 +614,7 @@ function ThumbnailUploader({
         accept="image/*"
         ref={fileInputRef}
         onChange={handleFileChange}
-        className={isThumbnailExist ? "hidden" : ""}
+        className={cn("shadow-sm", isThumbnailExist ? "hidden" : "")}
       />
 
       {isThumbnailExist && (
@@ -627,6 +627,7 @@ function ThumbnailUploader({
             onClick={() => {
               fileInputRef.current?.click();
             }}
+            className="shadow-sm"
           >
             Change
           </Button>
@@ -1135,7 +1136,7 @@ export function VocabularyEditor({
       )}
       <div className="flex flex-col lg:flex-row w-full overflow-hidden py-1 bg-inherit gap-6 flex-1 min-h-0 px-1">
         {mode === "edit" && (
-          <Card className="w-full lg:w-auto h-auto lg:h-full order-last lg:order-first">
+          <Card className="w-full lg:w-auto h-auto lg:h-full order-last lg:order-first shadow-sm">
             <CardContent className="flex flex-col-reverse lg:flex-row p-0 relative h-full">
               <div
                 className={cn(
@@ -1199,7 +1200,7 @@ export function VocabularyEditor({
                 variant="secondary"
                 onClick={togglePanel}
                 className={cn(
-                  "absolute top-1/2 -translate-y-1/2 -right-3",
+                  "absolute top-1/2 -translate-y-1/2 -right-3 shadow-sm",
                   "h-12 w-6 p-0 text-gray-300",
                   "hidden lg:flex items-center justify-center",
                   "border-none rounded-full",
@@ -1227,7 +1228,7 @@ export function VocabularyEditor({
               type="button"
               variant="secondary"
               size="sm"
-              className="max-w-32"
+              className="max-w-32 shadow-sm"
               onClick={() => addImageInputRef.current?.click()}
             >
               Add Images
@@ -1235,12 +1236,17 @@ export function VocabularyEditor({
             <Dialog>
               <DialogTrigger
                 render={
-                  <Button type="button" variant="secondary" size="sm">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    className="shadow-sm"
+                  >
                     Auto Grid
                   </Button>
                 }
               ></DialogTrigger>
-              <DialogContent>
+              <DialogContent className="shadow-sm">
                 <DialogHeader>
                   <DialogTitle>Auto Grid</DialogTitle>
                   <DialogDescription>
@@ -1262,12 +1268,22 @@ export function VocabularyEditor({
                   </Field>
                 </FieldGroup>
                 <DialogFooter>
-                  <Button type="button" size="sm" onClick={handleAutoGrid}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleAutoGrid}
+                    className="shadow-sm"
+                  >
                     Confirm
                   </Button>
                   <DialogClose
                     render={
-                      <Button type="button" variant="outline" size="sm" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="shadow-sm"
+                      />
                     }
                   >
                     Cancel
@@ -1293,7 +1309,7 @@ export function VocabularyEditor({
               onLinesChange={setLines}
             />
 
-            <Card className="w-full">
+            <Card className="w-full shadow-sm">
               <CardHeader className="">
                 <CardTitle className="text-base font-medium">
                   Lesson settings
@@ -1308,7 +1324,7 @@ export function VocabularyEditor({
                     placeholder="Weather"
                     onChange={(e) => setTitle(e.target.value)}
                     onBlur={handleTitleBlur}
-                    className="flex-1 h-8"
+                    className="flex-1 h-8 shadow-sm"
                     required
                     name="title"
                     id="title"
@@ -1321,7 +1337,7 @@ export function VocabularyEditor({
                     value={slug}
                     onChange={handleSlugChange}
                     placeholder="weather"
-                    className="flex-1 h-8"
+                    className="flex-1 h-8 shadow-sm"
                     required
                     name="slug"
                     id="slug"
@@ -1331,7 +1347,7 @@ export function VocabularyEditor({
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     placeholder="About weather vocabulary, you can learn words like sunny, rainy, cloudy..."
-                    className="flex-1 resize-none"
+                    className="flex-1 resize-none shadow-sm"
                     rows={2}
                     value={description}
                     readOnly={mode === "view"}
@@ -1354,7 +1370,10 @@ export function VocabularyEditor({
                     name="status"
                     required
                   >
-                    <SelectTrigger id="status" className="flex-1 h-8 text-sm">
+                    <SelectTrigger
+                      id="status"
+                      className="flex-1 h-8 text-sm shadow-sm"
+                    >
                       <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1373,7 +1392,10 @@ export function VocabularyEditor({
                     name="categoryId"
                     required
                   >
-                    <SelectTrigger id="status" className="flex-1 h-8 text-sm">
+                    <SelectTrigger
+                      id="status"
+                      className="flex-1 h-8 text-sm shadow-sm"
+                    >
                       <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
                     <SelectContent className="max-h-48 overflow-y-auto">
@@ -1400,7 +1422,7 @@ export function VocabularyEditor({
                 <Button
                   size="sm"
                   type="submit"
-                  className="h-8 px-5"
+                  className="h-8 px-5 shadow-sm"
                   disabled={isSaving || navigation.state !== "idle"}
                 >
                   {navigation.state === "idle" ? (
@@ -1417,7 +1439,7 @@ export function VocabularyEditor({
                           size="sm"
                           type="button"
                           variant="destructive"
-                          className="h-8"
+                          className="h-8 shadow-sm"
                         >
                           Delete
                         </Button>
@@ -1437,12 +1459,18 @@ export function VocabularyEditor({
                           variant="destructive"
                           size="sm"
                           onClick={handleDeleteRecord}
+                          className="shadow-sm"
                         >
                           Delete
                         </Button>
                         <DialogTrigger
                           render={
-                            <Button variant="outline" size="sm" type="button">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              type="button"
+                              className="shadow-sm"
+                            >
                               Cancel
                             </Button>
                           }
@@ -1455,7 +1483,7 @@ export function VocabularyEditor({
                   size="sm"
                   type="button"
                   variant={"outline"}
-                  className="h-8 px-5"
+                  className="h-8 px-5 shadow-sm"
                   onClick={() => navigate(-1)}
                 >
                   Cancel
@@ -1551,6 +1579,7 @@ function ImageSearchPanel({
           onChange={(e) => setImageSearch(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleImageSearch(imageSearch)}
           disabled={isSearching}
+          className="shadow-sm"
         />
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto">
@@ -1592,7 +1621,7 @@ function ImageSearchPanel({
               size="sm"
               onClick={handleLoadMore}
               disabled={isLoadingMore}
-              className="flex gap-2"
+              className="flex gap-2 shadow-sm"
             >
               {isLoadingMore ? (
                 <Loader2Icon className="size-4 animate-spin" />
@@ -1782,7 +1811,7 @@ function WordsPanel({
               type="button"
               variant="secondary"
               size="sm"
-              className="px-1"
+              className="px-1 shadow-sm"
               onClick={autoLablesHandler}
             >
               Auto Label
@@ -1791,7 +1820,7 @@ function WordsPanel({
               type="button"
               variant="secondary"
               size="sm"
-              className="px-1"
+              className="px-1 shadow-sm"
               onClick={onAdd}
             >
               <PlusIcon className="size-5" />
@@ -2073,7 +2102,7 @@ export function VocabularyCanvas({
   }, []);
 
   return (
-    <Card className="w-full">
+    <Card className="w-full shadow-sm">
       <CardContent className="p-2 md:p-4">
         <div
           ref={wrapperRef}
@@ -2358,6 +2387,7 @@ function WordList({ words }: { words: WordItem[] }) {
           size="sm"
           variant={"secondary"}
           onClick={handleFillIn}
+          className="shadow-sm"
         >
           Fill in
         </Button>
@@ -2366,6 +2396,7 @@ function WordList({ words }: { words: WordItem[] }) {
           size="sm"
           variant={"secondary"}
           onClick={handleDictation}
+          className="shadow-sm"
         >
           Dictation
         </Button>

@@ -31,7 +31,7 @@ export default function Page() {
 
   return (
     <div className="flex justify-center items-start h-full">
-      <Card className="w-full">
+      <Card className="w-full shadow-sm">
         <CardHeader>
           <CardTitle>My Profile</CardTitle>
         </CardHeader>

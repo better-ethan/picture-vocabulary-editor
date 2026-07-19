@@ -150,21 +150,27 @@ export default function PublicLayout() {
               {session ? (
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button size="icon">
+                    <Button size="icon" className="shadow-sm">
                       <User2Icon className="size-5" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-80">
                     <div className="flex flex-col gap-6">
-                      <Button asChild variant="outline" size="sm">
-                        <Link to="/admin/user/profile" className="uppercase">
-                          Profile
-                        </Link>
-                      </Button>
+                      <Button
+                        render={
+                          <Link to="/admin/user/profile" className="uppercase">
+                            Profile
+                          </Link>
+                        }
+                        variant="outline"
+                        size="sm"
+                        className="shadow-sm"
+                      ></Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => authClient.signOut()}
+                        className="shadow-sm"
                       >
                         Log out
                       </Button>
@@ -172,11 +178,16 @@ export default function PublicLayout() {
                   </PopoverContent>
                 </Popover>
               ) : (
-                <Button asChild variant="default" size="sm">
-                  <Link to="/signin" className="uppercase">
-                    Log in
-                  </Link>
-                </Button>
+                <Button
+                  render={
+                    <Link to="/signin" className="uppercase">
+                      Log in
+                    </Link>
+                  }
+                  variant="default"
+                  size="sm"
+                  className="shadow-sm"
+                ></Button>
               )}
             </div>
           </div>

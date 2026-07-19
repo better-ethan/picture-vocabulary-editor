@@ -71,7 +71,7 @@ export default function Page() {
           )}
         >
           {data.map((item, index) => (
-            <Card className="w-full" key={index}>
+            <Card className="w-full shadow-sm" key={index}>
               <CardContent className="flex items-center justify-center pb-0">
                 <img className="w-full h-auto" src={item.thumbnail} />
               </CardContent>
@@ -81,22 +81,31 @@ export default function Page() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
-                <Button size={"sm"} asChild>
-                  <Link
-                    to={`/admin/picture-lesson/${item.id}/${item.slug}/edit`}
-                  >
-                    Edit
-                  </Link>
-                </Button>
-                <Button size={"sm"} variant={"secondary"} asChild>
-                  <Link
-                    to={`/picture-lesson/${item.id}/${item.slug}`}
-                    target="_blank"
-                  >
-                    View
-                    <ArrowUpRightIcon className="size-5" />
-                  </Link>
-                </Button>
+                <Button
+                  size={"sm"}
+                  render={
+                    <Link
+                      to={`/admin/picture-lesson/${item.id}/${item.slug}/edit`}
+                    >
+                      Edit
+                    </Link>
+                  }
+                  className="shadow-sm"
+                ></Button>
+                <Button
+                  size={"sm"}
+                  variant={"secondary"}
+                  render={
+                    <Link
+                      to={`/picture-lesson/${item.id}/${item.slug}`}
+                      target="_blank"
+                    >
+                      View
+                      <ArrowUpRightIcon className="size-5" />
+                    </Link>
+                  }
+                  className="shadow-sm"
+                ></Button>
               </CardContent>
             </Card>
           ))}

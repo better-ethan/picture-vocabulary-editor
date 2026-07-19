@@ -83,7 +83,7 @@ export default function Page() {
 
   return (
     <div className="flex h-full items-center justify-center">
-      <Card className="w-full max-w-100">
+      <Card className="w-full max-w-100 shadow-sm">
         <CardHeader>
           {signUpSuccess ? (
             <CardTitle>Account Created!</CardTitle>
@@ -111,6 +111,7 @@ export default function Page() {
                 disabled={isResending || cooldown > 0}
                 variant="secondary"
                 onClick={handleResendVerification}
+                className={"shadow-sm"}
               >
                 {isResending
                   ? "Sending..."
@@ -135,6 +136,7 @@ export default function Page() {
                   required
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="enter your email"
+                  className="shadow-sm"
                 />
               </Field>
               <Field>
@@ -147,6 +149,7 @@ export default function Page() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="enter your password"
+                  className="shadow-sm"
                 />
               </Field>
               <Field>
@@ -159,9 +162,12 @@ export default function Page() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="confirm your password"
+                  className="shadow-sm"
                 />
               </Field>
-              <Button type="submit">Sign Up</Button>
+              <Button type="submit" className="shadow-sm">
+                Sign Up
+              </Button>
             </Form>
           )}
         </CardContent>

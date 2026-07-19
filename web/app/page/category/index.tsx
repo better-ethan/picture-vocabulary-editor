@@ -65,7 +65,7 @@ export default function Page() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
           {lessons.map((item, index) => (
             <Link key={index} to={`/picture-lesson/${item.id}/${item.slug}`}>
-              <Card className="max-w-60">
+              <Card className="max-w-60 shadow-sm">
                 <CardContent className="flex items-center justify-center pb-0">
                   <img className="w-50 h-auto" src={item.thumbnail} />
                 </CardContent>
