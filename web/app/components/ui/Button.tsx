@@ -18,7 +18,7 @@ const buttonVariants = cva(
         default:
           "border-2 border-black bg-primary text-primary-foreground shadow-md transition duration-200 hover:translate-y-1 hover:bg-primary-hover hover:shadow active:translate-x-1 active:translate-y-2 active:shadow-none",
         secondary:
-          "border-2 border-black bg-secondary text-secondary-foreground shadow-md transition duration-200 hover:translate-y-1 hover:bg-secondary-hover hover:shadow active:translate-x-1 active:translate-y-2 active:shadow-none",
+          "border-2 border-black bg-secondary text-secondary-foreground shadow-md shadow-primary transition duration-200 hover:translate-y-1 hover:bg-secondary-hover hover:shadow active:translate-x-1 active:translate-y-2 active:shadow-none",
         destructive:
           "border-2 border-black bg-destructive text-destructive-foreground shadow-md transition duration-200 hover:translate-y-1 hover:bg-destructive/90 hover:shadow active:translate-x-1 active:translate-y-2 active:shadow-none",
         outline:
