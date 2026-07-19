@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/Label";
 import { Text } from "@/components/ui/Text";
 import { Form, Link } from "react-router";
@@ -8,7 +8,7 @@ import type { Route } from "./+types/signup";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { Input as PasswordInput } from "@/components/ui/Input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/Field";
 
 export default function Page() {

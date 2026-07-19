@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import { Field } from "@/components/ui/Field";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const id = params.id;

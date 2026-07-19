@@ -45,7 +45,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Text } from "@/components/ui/Text";
 import {

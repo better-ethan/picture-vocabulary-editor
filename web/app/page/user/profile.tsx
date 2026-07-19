@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { CheckIcon, PencilIcon, XIcon } from "lucide-react";
 import { useState } from "react";
