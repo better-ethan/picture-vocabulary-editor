@@ -22,6 +22,7 @@
     "hooks": "@/hooks"
   },
   "registries": {
-    "@retroui": "https://retroui.dev/r/{name}.json"
+    "@retroui": "https://retroui.dev/r/radix/{name}.json",
+    "@retroui-base": "https://retroui.dev/r/base/{name}.json"
   }
 }
