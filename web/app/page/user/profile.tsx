@@ -1,11 +1,6 @@
-import { Button } from "@/components/retroui/Button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/retroui/Card";
-import { Input } from "@/components/retroui/Input";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import { authClient } from "@/lib/auth-client";
 import { CheckIcon, PencilIcon, XIcon } from "lucide-react";
 import { useState } from "react";

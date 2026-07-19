@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useActionData, useLoaderData, useNavigate } from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/create";
-import { Text } from "@/components/retroui/Text";
+import { Text } from "@/components/ui/Text";
 import { reuploadPixabayImages } from "@/util/image";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {

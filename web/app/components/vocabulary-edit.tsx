@@ -21,7 +21,7 @@ import {
 } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
-import { Button } from "@/components/retroui/Button";
+import { Button } from "@/components/ui/Button";
 import {
   CloudUploadIcon,
   ImageIcon,
@@ -45,16 +45,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
-import { Input } from "@/components/retroui/Input";
-import { Textarea } from "@/components/retroui/Textarea";
-import { Text } from "@/components/retroui/Text";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import { Text } from "@/components/ui/Text";
 import {
   Select,
   SelectTrigger,
   SelectItem,
   SelectValue,
   SelectContent,
-} from "@/components/retroui/Select";
+} from "@/components/ui/Select";
 import { useTRPC } from "@/util";
 import {
   Form,
@@ -65,17 +65,12 @@ import {
   useSubmit,
 } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Field, FieldGroup } from "@/components/retroui/Field";
+import { Field, FieldGroup } from "@/components/ui/Field";
 import { toast } from "sonner";
-import { Loader } from "@/components/retroui/Loader";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/retroui/Card";
+import { Loader } from "@/components/ui/Loader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useKonvaSnapping } from "use-konva-snapping";
-import { Label } from "@/components/retroui/Label";
+import { Label } from "@/components/ui/Label";
 import Cropper, { type Area } from "react-easy-crop";
 import {
   Dialog,
@@ -86,23 +81,23 @@ import {
   DialogFooter,
   DialogClose,
   DialogDescription,
-} from "@/components/retroui/Dialog";
-import { Menu } from "@/components/retroui/Menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/retroui/sheet";
-import { Badge } from "@/components/retroui/Badge";
+} from "@/components/ui/Dialog";
+import { Menu } from "@/components/ui/Menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/Badge";
 
 import nanoid from "@/lib/nanoid";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/retroui/Tooltip";
+} from "@/components/ui/Tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/retroui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 
 interface WordItem {
   number: number;

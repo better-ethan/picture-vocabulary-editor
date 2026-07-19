@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Ghost } from "lucide-react";
 
-import { Text } from "@/components/retroui/Text";
+import { Text } from "@/components/ui/Text";
 import { cn } from "@/lib/utils";
 
 function Empty({ className, ...props }: React.ComponentProps<"div">) {

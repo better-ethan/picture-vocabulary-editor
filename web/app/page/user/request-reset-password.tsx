@@ -1,14 +1,9 @@
-import { Button } from "@/components/retroui/Button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/retroui/Card";
-import { Input } from "@/components/retroui/Input";
-import { Label } from "@/components/retroui/Label";
-import { Text } from "@/components/retroui/Text";
-import { Field } from "@/components/retroui/Field";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Text } from "@/components/ui/Text";
+import { Field } from "@/components/ui/Field";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useState } from "react";

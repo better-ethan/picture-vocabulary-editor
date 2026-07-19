@@ -1,19 +1,14 @@
-import { Button } from "@/components/retroui/Button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/retroui/Card";
-import { Input } from "@/components/retroui/Input";
-import { Label } from "@/components/retroui/Label";
-import { Text } from "@/components/retroui/Text";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Text } from "@/components/ui/Text";
 import { Form, Link } from "react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { Input as PasswordInput } from "@/components/retroui/Input";
-import { Field } from "@/components/retroui/Field";
+import { Input as PasswordInput } from "@/components/ui/Input";
+import { Field } from "@/components/ui/Field";
 
 export default function Page() {
   const [email, setEmail] = useState("");

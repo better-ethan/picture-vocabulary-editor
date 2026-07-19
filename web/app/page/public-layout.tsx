@@ -1,11 +1,11 @@
-import { Button } from "@/components/retroui/Button";
-import { Drawer } from "@/components/retroui/Drawer";
-import { Text } from "@/components/retroui/Text";
+import { Button } from "@/components/ui/Button";
+import { Drawer } from "@/components/ui/Drawer";
+import { Text } from "@/components/ui/Text";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/retroui/Popover";
+} from "@/components/ui/Popover";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { ChevronDownIcon, MenuIcon, User2Icon } from "lucide-react";
@@ -23,7 +23,7 @@ import {
   NavigationMenuContent,
   NavigationMenuTrigger,
   NavigationMenuPositioner,
-} from "@/components/retroui/navigation-menu";
+} from "@/components/ui/navigation-menu";
 import { createTrpcClient } from "@/util";
 import type { Route } from "./+types/public-layout";
 import { useState } from "react";

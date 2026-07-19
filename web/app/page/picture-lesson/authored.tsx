@@ -7,16 +7,11 @@ import {
   useSearchParams,
 } from "react-router";
 import { createTrpcClient } from "@/util";
-import { EmptyContent, EmptyTitle, Empty } from "@/components/retroui/Empty";
+import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/Empty";
 import type { Route } from "./+types/list";
-import { Text } from "@/components/retroui/Text";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/retroui/Card";
-import { Button } from "@/components/retroui/Button";
+import { Text } from "@/components/ui/Text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { ArrowUpRightIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";

@@ -1,14 +1,9 @@
 import { Link, useLoaderData } from "react-router";
 import { createTrpcClient } from "@/util";
-import { EmptyContent, EmptyTitle, Empty } from "@/components/retroui/Empty";
+import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/Empty";
 import type { Route } from "./+types/list";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/retroui/Card";
-import { Text } from "@/components/retroui/Text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Text } from "@/components/ui/Text";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);

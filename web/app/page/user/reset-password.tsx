@@ -1,19 +1,14 @@
-import { Button } from "@/components/retroui/Button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/retroui/Card";
-import { Input } from "@/components/retroui/Input";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { Form, useLoaderData, useNavigate } from "react-router";
 import type { Route } from "./+types/reset-password";
 import { toast } from "sonner";
-import { Input as PasswordInput } from "@/components/retroui/Input";
-import { Label } from "@/components/retroui/Label";
-import { Field } from "@/components/retroui/Field";
+import { Input as PasswordInput } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Field } from "@/components/ui/Field";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);

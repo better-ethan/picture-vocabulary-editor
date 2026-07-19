@@ -10,27 +10,22 @@ import {
   type CanvasContent,
 } from "@/components/vocabulary-edit";
 import { User2Icon, Volume2 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/retroui/Card";
-import { Button } from "@/components/retroui/Button";
-import { Text } from "@/components/retroui/Text";
-import { Badge } from "@/components/retroui/Badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Text } from "@/components/ui/Text";
+import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import { Label } from "@/components/retroui/Label";
+import { Label } from "@/components/ui/Label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/retroui/Select";
-import { Field } from "@/components/retroui/Field";
-import { Input } from "@/components/retroui/Input";
+} from "@/components/ui/Select";
+import { Field } from "@/components/ui/Field";
+import { Input } from "@/components/ui/Input";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const id = params.id;
