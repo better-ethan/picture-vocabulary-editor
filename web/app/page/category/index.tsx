@@ -55,7 +55,7 @@ export default function Page() {
 
       {lessons.length === 0 ? (
         <div className="flex justify-center mt-16">
-          <Empty>
+          <Empty className="shadow-sm">
             <EmptyContent>
               <EmptyTitle>No Picture Lessons Yet</EmptyTitle>
             </EmptyContent>
