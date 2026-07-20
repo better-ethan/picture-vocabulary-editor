@@ -1445,7 +1445,7 @@ export function VocabularyEditor({
                         </Button>
                       }
                     ></DialogTrigger>
-                    <DialogContent className="max-w-lg">
+                    <DialogContent className="max-w-lg shadow-sm">
                       <DialogHeader>
                         <Text as="h5">Confirm Deletion?</Text>
                       </DialogHeader>

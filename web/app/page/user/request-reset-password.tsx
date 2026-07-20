@@ -35,7 +35,7 @@ export default function Page() {
   };
   return (
     <div className="flex h-full items-center justify-center">
-      <Card className="w-full max-w-100">
+      <Card className="w-full max-w-100 shadow-sm">
         <CardHeader>
           <CardTitle>Reset Password</CardTitle>
         </CardHeader>
@@ -76,9 +76,14 @@ export default function Page() {
                   required
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
+                  className="shadow-sm"
                 />
               </Field>
-              <Button type="submit" className="w-full" disabled={isProcessing}>
+              <Button
+                type="submit"
+                className="w-full shadow-sm"
+                disabled={isProcessing}
+              >
                 {isProcessing ? "Sending..." : "Send a Reset Email"}
               </Button>
             </Form>

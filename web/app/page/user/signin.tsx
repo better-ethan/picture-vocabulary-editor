@@ -46,7 +46,7 @@ export default function Page() {
 
   return (
     <div className="flex h-full items-center justify-center">
-      <Card className="w-full max-w-100">
+      <Card className="w-full max-w-100 shadow-sm">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
           <Text>
@@ -72,6 +72,7 @@ export default function Page() {
                 required
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="enter your email"
+                className="shadow-sm"
               />
             </Field>
             <Field>
@@ -83,6 +84,7 @@ export default function Page() {
                 required
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="enter your password"
+                className="shadow-sm"
               />
             </Field>
             <Link
@@ -91,7 +93,9 @@ export default function Page() {
             >
               <Text>Forget password?</Text>
             </Link>
-            <Button type="submit">Sign In</Button>
+            <Button type="submit" className="shadow-sm">
+              Sign In
+            </Button>
           </Form>
         </CardContent>
       </Card>
