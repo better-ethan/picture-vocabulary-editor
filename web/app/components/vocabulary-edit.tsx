@@ -635,9 +635,9 @@ function ThumbnailUploader({
       )}
 
       <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="flex flex-col items-center justify-center overflow-hidden">
+        <DialogContent className="flex flex-col overflow-hidden shadow-sm">
           <DialogHeader>Crop Thumbnail</DialogHeader>
-          <div className="relative w-100 h-100">
+          <div className="relative w-full h-80 overflow-hidden">
             <Cropper
               image={imageSrc ?? undefined}
               crop={crop}
@@ -655,10 +655,15 @@ function ThumbnailUploader({
               variant={"secondary"}
               size={"sm"}
               onClick={() => handleDialogClose(false)}
+              className="shadow-sm"
             >
               Cancel
             </Button>
-            <Button type="button" onClick={handleCropConfirm}>
+            <Button
+              type="button"
+              onClick={handleCropConfirm}
+              className="shadow-sm"
+            >
               Confirm
             </Button>
           </DialogFooter>
