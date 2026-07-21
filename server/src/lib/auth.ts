@@ -44,4 +44,12 @@ export const auth = betterAuth({
   logger: {
     level: "debug",
   },
+  user: {
+    additionalFields: {
+      description: {
+        type: "string",
+        required: false,
+      },
+    },
+  },
 });
