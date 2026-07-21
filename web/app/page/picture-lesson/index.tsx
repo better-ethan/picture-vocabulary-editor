@@ -9,7 +9,15 @@ import {
   WordAudio,
   type CanvasContent,
 } from "@/components/vocabulary-edit";
-import { User2Icon, Volume2 } from "lucide-react";
+import {
+  BlocksIcon,
+  CalendarIcon,
+  ComponentIcon,
+  DatabaseSearchIcon,
+  TagIcon,
+  User2Icon,
+  Volume2,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
@@ -123,13 +131,36 @@ export default function Page() {
 
             <div className="flex flex-col gap-2">
               <h1 className="text-2xl font-bold text-start">{data.title}</h1>
-              <Link
-                to={`/user/${data.userId}/${data.username}`}
-                className="flex items-center gap-2 hover:underline hover:text-blue-600"
-              >
-                <User2Icon className="size-5" />
-                <Text>{data.username}</Text>
-              </Link>
+              <div className="flex flex-col md:flex-row md:items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <User2Icon className="size-5" />
+                  <Link
+                    to={`/user/${data.userId}/${data.username}`}
+                    className="hover:underline hover:text-blue-600"
+                  >
+                    <Text>{data.username}</Text>
+                  </Link>
+                </div>
+                <div className="flex items-center gap-1">
+                  <TagIcon className="size-5" />
+                  <Link
+                    to={`/category/${data.currentCateory?.slug}`}
+                    className="hover:underline hover:text-blue-600"
+                  >
+                    {data.currentCateory?.name}
+                  </Link>
+                </div>
+                <div className="flex items-center gap-1">
+                  <CalendarIcon className="size-5" />
+                  <Text>
+                    {new Date(data.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </Text>
+                </div>
+              </div>
             </div>
             <DescriptionSection description={data.description || ""} />
           </div>

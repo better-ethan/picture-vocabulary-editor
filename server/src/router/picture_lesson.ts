@@ -1,6 +1,6 @@
 import { desc, eq, and, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
-import { db, pictureLesson, user } from "@package/drizzle";
+import { category, db, pictureLesson, user } from "@package/drizzle";
 import { publicProcedure, router } from "../trpc.js";
 import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../lib/auth.js";
@@ -175,9 +175,19 @@ export const pictureLessonRouter = router({
         .from(user)
         .where(eq(user.id, row.userId));
 
+      const [categoryRow] = await db
+        .select({
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+        })
+        .from(category)
+        .where(eq(category.id, row.categoryId));
+
       return {
         ...row,
         username: userRow ? userRow.name : "Anonymous",
+        currentCateory: categoryRow || null,
       };
     }),
 
