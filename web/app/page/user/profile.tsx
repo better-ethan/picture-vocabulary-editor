@@ -3,7 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/Textarea";
 import { authClient } from "@/lib/auth-client";
-import { CheckIcon, PencilIcon, XIcon } from "lucide-react";
+import {
+  CheckIcon,
+  MailIcon,
+  PencilIcon,
+  UserRoundIcon,
+  UserRoundPenIcon,
+  XIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { Route } from "./+types/profile";
@@ -71,12 +78,16 @@ export default function Page() {
         <CardContent>
           <FieldSet>
             <FieldGroup>
-              <Field className="">
-                <FieldLabel>Email</FieldLabel>
+              <Field>
+                <FieldLabel>
+                  <MailIcon className="size-5" /> Email
+                </FieldLabel>
                 <p className="text-gray-400">{currentUser?.email}</p>
               </Field>
               <Field>
-                <FieldLabel>Nickname</FieldLabel>
+                <FieldLabel>
+                  <UserRoundIcon className="size-5" /> Nickname
+                </FieldLabel>
                 {editingNickname ? (
                   <div className="w-full flex flex-col gap-2">
                     <Input
@@ -128,7 +139,9 @@ export default function Page() {
                 )}
               </Field>
               <Field>
-                <FieldLabel>Description</FieldLabel>
+                <FieldLabel>
+                  <UserRoundPenIcon className="size-5" /> Description
+                </FieldLabel>
                 {editingDecription ? (
                   <div className="w-full flex flex-col gap-2">
                     <Textarea
