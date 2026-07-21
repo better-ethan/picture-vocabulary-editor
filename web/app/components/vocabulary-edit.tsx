@@ -2290,7 +2290,7 @@ function WordList({ words }: { words: WordItem[] }) {
             >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="w-12">
+            <SelectContent className="w-12 shadow-sm">
               <SelectItem value="0.5">🐢 0.5x</SelectItem>
               <SelectItem value="0.75">🚶 0.75x</SelectItem>
               <SelectItem value="1">🚴 1x</SelectItem>
@@ -2377,10 +2377,11 @@ function WordList({ words }: { words: WordItem[] }) {
               setMode("view");
               setWordArr(words);
             }}
+            className="shadow-sm"
           >
             Exit
           </Button>
-          <Button size="sm" onClick={handleCheckAnswer}>
+          <Button size="sm" onClick={handleCheckAnswer} className="shadow-sm">
             Check
           </Button>
         </div>
