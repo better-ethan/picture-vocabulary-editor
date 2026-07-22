@@ -62,7 +62,7 @@ export default function AdminLayout() {
       <Drawer open={open} onOpenChange={setOpen} direction="left">
         <Drawer.Trigger asChild className="md:hidden self-start">
           <Button type="button" variant={"link"} size={"icon"}>
-            <MenuIcon />
+            <MenuIcon className="size-6" />
           </Button>
         </Drawer.Trigger>
         <Drawer.Content>
