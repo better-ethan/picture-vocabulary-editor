@@ -38,8 +38,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const description = formData.get("description") as string | null;
 
   const result = await trpc.user.updateProfile.mutate({
-    ...(name ? { name } : {}),
-    ...(description ? { description } : {}),
+    ...(name !== null ? { name } : {}),
+    ...(description !== null ? { description } : {}),
   });
 
   return result;

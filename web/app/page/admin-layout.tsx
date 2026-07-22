@@ -17,7 +17,28 @@ import {
   XIcon,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router";
+import {
+  Link,
+  Outlet,
+  redirect,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from "react-router";
+import type { Route } from "./+types/admin-layout";
+import { createTrpcClient } from "@/util";
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const trpc = createTrpcClient(request);
+
+  const currentUser = await trpc.user.getCurrentUser.query();
+
+  if (!currentUser) {
+    throw redirect("/login");
+  }
+
+  return { currentUser };
+};
 
 const menuSections: MenuSection[] = [
   {
@@ -31,14 +52,7 @@ const menuSections: MenuSection[] = [
 ];
 
 export default function AdminLayout() {
-  const { data: session, isPending } = authClient.useSession();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isPending && !session) {
-      navigate("/signin");
-    }
-  }, [session, isPending]);
+  const { currentUser } = useLoaderData<typeof loader>();
 
   const [open, setOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -63,7 +77,7 @@ export default function AdminLayout() {
           <div className="flex-1">
             <MenuContent
               sections={menuSections}
-              username={session?.user?.name as string}
+              username={currentUser?.name?.trim() || currentUser?.email}
               onItemClick={() => setOpen(false)}
             />
           </div>
@@ -109,7 +123,7 @@ export default function AdminLayout() {
             <div className="flex-1">
               <MenuContent
                 sections={menuSections}
-                username={session?.user?.name as string}
+                username={currentUser?.name?.trim() || currentUser?.email}
                 onItemClick={() => setSidebarCollapsed(false)}
               />
             </div>
@@ -209,11 +223,11 @@ function MenuContent({
           ></Button>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-2">
-            <div className="size-7 rounded-full flex justify-center items-center bg-blue-500 text-white">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="size-7 rounded-full flex justify-center items-center bg-blue-500 text-white shrink-0">
               <User2Icon fill="white" strokeWidth={0} />
             </div>
-            <span>{username}</span>
+            <span className="truncate">{username}</span>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
