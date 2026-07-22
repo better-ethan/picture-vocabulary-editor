@@ -16,6 +16,8 @@ import { ArrowUpRightIcon, HandIcon, UserRoundPenIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { PictureLessonCard } from "@/components/picture-lesson-card";
+import type { PictureLesson } from "@/types";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -43,7 +45,7 @@ export default function Page() {
   const { currentUser, lessons } = useLoaderData<typeof loader>();
 
   return (
-    <div className="max-w-5xl w-full flex flex-col gap-6 overflow-y-auto px-2">
+    <div className="p-4 mx-auto max-w-5xl gap-6 flex flex-col ">
       <div className="flex flex-col gap-2 bg-white shadow-sm p-4 rounded-2xl">
         <Text as={"h2"} className="">
           {currentUser.name.trim() || currentUser.email.trim()}
@@ -63,7 +65,7 @@ export default function Page() {
           </Empty>
         </div>
       ) : (
-        <div>
+        <div className="flex flex-col gap-4">
           <div className="flex justify-end">
             <span>
               {lessons.length} lesson{lessons.length > 1 ? "s" : ""}
@@ -71,28 +73,11 @@ export default function Page() {
           </div>
           <div
             className={cn(
-              "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 p-2",
-              "justify-items-center w-full"
+              "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center"
             )}
           >
             {lessons.map((item, index) => (
-              <Link key={index} to={`/picture-lesson/${item.id}/${item.slug}`}>
-                <Card className="max-w-60 shadow-sm">
-                  <CardContent className="flex items-center justify-center pb-0">
-                    <img className="w-full h-auto" src={item.thumbnail} />
-                  </CardContent>
-                  <CardHeader className="pb-0">
-                    <CardTitle className="text-base font-normal">
-                      {item.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
-                    <Text className="text-muted-foreground">
-                      {item.username}
-                    </Text>
-                  </CardContent>
-                </Card>
-              </Link>
+              <PictureLessonCard key={index} lesson={item as PictureLesson} />
             ))}
           </div>
         </div>

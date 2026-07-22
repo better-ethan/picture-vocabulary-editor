@@ -4,6 +4,8 @@ import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/Empty";
 import type { Route } from "./+types/index";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Text } from "@/components/ui/Text";
+import { PictureLessonCard } from "@/components/picture-lesson-card";
+import type { PictureLesson } from "@/types";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -64,19 +66,7 @@ export default function Page() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
           {lessons.map((item, index) => (
-            <Link key={index} to={`/picture-lesson/${item.id}/${item.slug}`}>
-              <Card className="max-w-60 shadow-sm">
-                <CardContent className="flex items-center justify-center pb-0">
-                  <img className="w-50 h-auto" src={item.thumbnail} />
-                </CardContent>
-                <CardHeader className="pb-0">
-                  <CardTitle className="text-base">{item.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="pb-2 pt-2">
-                  <Text className="text-muted-foreground">{item.username}</Text>
-                </CardContent>
-              </Card>
-            </Link>
+            <PictureLessonCard key={index} lesson={item as PictureLesson} />
           ))}
         </div>
       )}
