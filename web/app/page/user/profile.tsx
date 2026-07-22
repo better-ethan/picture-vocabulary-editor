@@ -11,11 +11,11 @@ import {
   UserRoundPenIcon,
   XIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Route } from "./+types/profile";
 import { createTrpcClient } from "@/util";
-import { redirect, useLoaderData } from "react-router";
+import { redirect, useFetcher, useLoaderData } from "react-router";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/Field";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -30,44 +30,42 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   return { currentUser };
 };
 
+export const action = async ({ request }: Route.ActionArgs) => {
+  const trpc = createTrpcClient(request);
+
+  const formData = await request.formData();
+  const name = formData.get("name") as string | null;
+  const description = formData.get("description") as string | null;
+
+  const result = await trpc.user.updateProfile.mutate({
+    ...(name ? { name } : {}),
+    ...(description ? { description } : {}),
+  });
+
+  return result;
+};
+
 export default function Page() {
   const { currentUser } = useLoaderData<typeof loader>();
-  const { data: session } = authClient.useSession();
 
   const [editingNickname, setEditingNickname] = useState(false);
-  const [nickname, setNickname] = useState(currentUser?.name || "");
-
-  const handleSave = async () => {
-    try {
-      const result = await authClient.updateUser({ name: nickname });
-      setEditingNickname(false);
-      if (!result.error) {
-        toast.success("Profile updated successfully!");
-      }
-    } finally {
-    }
-  };
 
   const [editingDecription, setEditingDescription] = useState(false);
-  const [description, setDescription] = useState(
-    currentUser?.description || ""
-  );
-
-  const handleDescriptionSave = async () => {
-    try {
-      const result = await authClient.updateUser({ description });
-      setEditingDescription(false);
-      if (!result.error) {
-        toast.success("Profile updated successfully!");
-      }
-    } finally {
-    }
-  };
 
   const handleCancel = () => {
     setEditingNickname(false);
     setEditingDescription(false);
   };
+
+  const fetcher = useFetcher();
+
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data?.success) {
+      toast.success("Profile updated successfully!");
+      setEditingNickname(false);
+      setEditingDescription(false);
+    }
+  }, [fetcher.state, fetcher.data]);
 
   return (
     <div className="flex justify-center items-start h-dvh w-full p-2">
@@ -89,28 +87,30 @@ export default function Page() {
                   <UserRoundIcon className="size-5" /> Nickname
                 </FieldLabel>
                 {editingNickname ? (
-                  <div className="w-full flex flex-col gap-2">
+                  <fetcher.Form
+                    className="w-full flex flex-col gap-2"
+                    method="post"
+                  >
                     <Input
+                      name="name"
                       autoFocus
-                      value={nickname}
+                      defaultValue={currentUser?.name || ""}
                       className="w-full shadow-sm"
-                      onChange={(e) => setNickname(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleSave();
-                        } else if (e.key === "Escape") {
+                        if (e.key === "Escape") {
                           handleCancel();
                         }
                       }}
                     />
                     <div className="flex justify-end gap-3">
-                      <Button size="icon" variant="ghost" onClick={handleSave}>
+                      <Button size="icon" variant="ghost" type="submit">
                         <CheckIcon
                           className="size-4 text-green-500"
                           strokeWidth={4}
                         />
                       </Button>
                       <Button
+                        type="button"
                         size="icon"
                         variant="ghost"
                         onClick={handleCancel}
@@ -121,16 +121,17 @@ export default function Page() {
                         />
                       </Button>
                     </div>
-                  </div>
+                  </fetcher.Form>
                 ) : (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-400">{nickname}</span>
+                    <span className="text-gray-400">
+                      {currentUser?.name || "Not Set"}
+                    </span>
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => {
                         setEditingNickname(true);
-                        setNickname(nickname || "");
                       }}
                     >
                       <PencilIcon className="size-4" />
@@ -143,32 +144,30 @@ export default function Page() {
                   <UserRoundPenIcon className="size-5" /> Description
                 </FieldLabel>
                 {editingDecription ? (
-                  <div className="w-full flex flex-col gap-2">
+                  <fetcher.Form
+                    className="w-full flex flex-col gap-2"
+                    method="post"
+                  >
                     <Textarea
+                      name="description"
                       autoFocus
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      defaultValue={currentUser?.description || ""}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleDescriptionSave();
-                        } else if (e.key === "Escape") {
+                        if (e.key === "Escape") {
                           handleCancel();
                         }
                       }}
                       className="w-full resize-none shadow-sm"
                     />
                     <div className="flex justify-end gap-3">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={handleDescriptionSave}
-                      >
+                      <Button type="submit" size="icon" variant="ghost">
                         <CheckIcon
                           className="size-4 text-green-500"
                           strokeWidth={4}
                         />
                       </Button>
                       <Button
+                        type="button"
                         size="icon"
                         variant="ghost"
                         onClick={handleCancel}
@@ -179,18 +178,17 @@ export default function Page() {
                         />
                       </Button>
                     </div>
-                  </div>
+                  </fetcher.Form>
                 ) : (
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400 flex-1 wrap-break-word">
-                      {description || "Not Set"}
+                      {currentUser?.description || "Not Set"}
                     </span>
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => {
                         setEditingDescription(true);
-                        setDescription(currentUser?.description || "");
                       }}
                     >
                       <PencilIcon className="size-4" />

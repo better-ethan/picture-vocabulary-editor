@@ -87,11 +87,15 @@ export default function AdminLayout() {
         ) : (
           <div className="flex flex-col h-full">
             <div className="flex justify-between py-4">
-              <Button asChild variant="link">
-                <Link to="/" className="hover:text-[#3B82F6]">
-                  Easy English
-                </Link>
-              </Button>
+              <Button
+                render={
+                  <Link to="/" className="hover:text-[#3B82F6]">
+                    Easy English
+                  </Link>
+                }
+                nativeButton={false}
+                variant="link"
+              ></Button>
               <Button
                 variant={"link"}
                 size={"icon"}
@@ -156,7 +160,8 @@ function MenuContent({
             {section.items.map((item, index) => {
               return (
                 <Button
-                  asChild
+                  render={<Link to={item.path}>{item.label}</Link>}
+                  nativeButton={false}
                   key={index}
                   onClick={onItemClick}
                   variant="link"
@@ -166,9 +171,7 @@ function MenuContent({
                     isActive(currentPath, item.path) &&
                       "bg-primary shadow-xs border-2"
                   )}
-                >
-                  <Link to={item.path}>{item.label}</Link>
-                </Button>
+                ></Button>
               );
             })}
           </div>
@@ -181,7 +184,8 @@ function MenuContent({
             <span>Settings</span>
           </div>
           <Button
-            asChild
+            render={<Link to="/admin/user/profile">My Profile</Link>}
+            nativeButton={false}
             variant={"link"}
             className={cn(
               "w-full justify-start text-sm font-medium",
@@ -189,11 +193,12 @@ function MenuContent({
               isActive(currentPath, "/admin/user/profile") &&
                 "bg-primary shadow-xs border-2"
             )}
-          >
-            <Link to="/admin/user/profile">My Profile</Link>
-          </Button>
+          ></Button>
           <Button
-            asChild
+            render={
+              <Link to="/admin/user/change-password">Change Password</Link>
+            }
+            nativeButton={false}
             variant={"link"}
             className={cn(
               "w-full justify-start text-sm font-medium",
@@ -201,9 +206,7 @@ function MenuContent({
               isActive(currentPath, "/admin/user/change-password") &&
                 "bg-primary shadow-xs border-2"
             )}
-          >
-            <Link to="/admin/user/change-password">Change Password</Link>
-          </Button>
+          ></Button>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center gap-2">
