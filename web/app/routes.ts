@@ -22,6 +22,8 @@ export default [
     ),
     route("/user/reset-password", "page/user/reset-password.tsx"),
 
+    route("/user/:id/:slug", "page/user/public.user.index.tsx"),
+
     route("*", "page/not-found.tsx"),
   ]),
 
