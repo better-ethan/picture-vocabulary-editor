@@ -9,7 +9,16 @@ export const userRouter = router({
       headers: fromNodeHeaders(ctx.req.headers),
     });
 
-    return session?.user;
+    if (!session?.user) {
+      return null;
+    }
+
+    return {
+      id: session.user.id as string,
+      name: session.user.name as string,
+      email: session.user.email as string,
+      description: session.user.description as string | null,
+    };
   }),
   updateProfile: publicProcedure
     .input(
