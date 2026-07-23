@@ -162,6 +162,7 @@ export default function PublicLayout() {
                             Profile
                           </Link>
                         }
+                        nativeButton={false}
                         variant="outline"
                         size="sm"
                         className="shadow-sm"
@@ -184,6 +185,7 @@ export default function PublicLayout() {
                       Log in
                     </Link>
                   }
+                  nativeButton={false}
                   variant="default"
                   size="sm"
                   className="shadow-sm"
