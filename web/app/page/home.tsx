@@ -72,28 +72,37 @@ export default function Page() {
             {
               icon: "🖼️",
               title: "Pictures make meaning clear",
-              desc: "You don't need to translate into your native language. This helps you think directly in English.",
+              desc:
+                "Pictures connect words directly to meaning. " +
+                "You can understand new words without translating into your native language, " +
+                "helping you think in English naturally.",
               img: "/images/picture-benefit-1.webp",
               alt: "Pictures make meaning clear",
             },
             {
               icon: "🧠",
               title: "Pictures improve memory",
-              desc: "People generally remember information better when it is presented as both words and images.",
+              desc:
+                "Visual information is easier for the brain to remember. " +
+                "Combining pictures with words helps you recall vocabulary faster and longer.",
               img: "/images/picture-benefit-2.webp",
               alt: "Pictures improve memory",
             },
             {
               icon: "🎙️",
-              title: "Audio teaches correct pronunciation",
-              desc: "Audio helps us learn correct pronunciation.",
+              title: "Learn pronunciation naturally",
+              desc:
+                "Listen to native audio and learn how words sound. " +
+                "This helps you pronounce words correctly and speak with confidence.",
               img: "/images/audio-benefit-1.webp",
-              alt: "Audio teaches correct pronunciation",
+              alt: "Listen to native audio and learn how words sound.",
             },
             {
               icon: "👂",
               title: "Audio improves listening skills",
-              desc: "Reading a word doesn't mean you'll recognize it in conversation. Listening repeatedly trains your brain to identify words in natural speech.",
+              desc:
+                "You may know a word when you see it, but not recognize it when you hear it. " +
+                "Repeated listening trains your brain to identify words in natural conversations.",
               img: "/images/audio-benefit-2.webp",
               alt: "Audio improves listening skills",
             },
