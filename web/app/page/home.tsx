@@ -4,12 +4,13 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Text } from "@/components/ui/Text";
 import { cn } from "@/lib/utils";
-import { useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import {
   VocabularyCanvas,
   type CanvasContent,
 } from "@/components/vocabulary-edit";
 import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -176,6 +177,19 @@ export default function Page() {
             </div>
           ))}
         </div>
+        <Text className="text-muted-foreground">
+          No need to adjust images or move labels manually. We'll auto-arrange
+          everything for you.
+        </Text>
+
+        <Button
+          render={
+            <Link to={"/admin/picture-lesson/create"}>
+              Create Your Visual Vocabulary Now
+            </Link>
+          }
+          className="shadow-sm"
+        />
       </div>
     </div>
   );
