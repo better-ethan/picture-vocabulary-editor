@@ -1,7 +1,7 @@
 import { createTrpcClient, trpc } from "@/util";
 import type { Route } from "./+types/home";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text } from "@/components/ui/Text";
 import { cn } from "@/lib/utils";
 import { useLoaderData } from "react-router";
@@ -44,7 +44,7 @@ export default function Page() {
     lesson.content as unknown as CanvasContent;
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4">
+    <div className="flex flex-col items-center gap-8 p-4">
       <Text as={"h2"} className="text-center">
         Learning English through <TextWithHighlight text="Picture" /> and{" "}
         <TextWithHighlight text="Audio" />
@@ -118,6 +118,65 @@ export default function Page() {
           ))}
         </div>
       </div>
+      <div className="flex flex-col items-center w-full max-w-4xl gap-6">
+        <Text as="h2" className="text-center">
+          How to Create a Visual Vocabulary in{" "}
+          <TextWithHighlight text="3 Simple Steps" />
+        </Text>
+        <Text className="text-muted-foreground">
+          It's designed to make creating visual vocabulary super easy
+        </Text>
+
+        <div className="flex flex-col md:flex-row md:items-stretch gap-4 w-full">
+          {[
+            {
+              step: "01",
+              title: "Add Pictures",
+              desc: "Add pictures. We'll arrange them into a neat grid automatically.",
+              img: "/images/how-to-add-pictures-edited.webp",
+              alt: "Add pictures. We'll arrange them into a neat grid automatically.",
+            },
+            {
+              step: "02",
+              title: "Add Words",
+              desc: "Add words. We'll generate the audio and place the number labels.",
+              img: "/images/how-to-add-words-edited.webp",
+              alt: "Add words. We'll generate the audio and place the number labels.",
+            },
+            {
+              step: "03",
+              title: "Fill Form and Save",
+              desc: "Fill in the details and save.",
+              img: "/images/how-to-fill-form-save-edited.webp",
+              alt: "Fill in the details and save.",
+            },
+          ].map((item, index, arr) => (
+            <div
+              key={item.title}
+              className="flex md:flex-col flex-row md:w-1/3 w-full items-start gap-4"
+            >
+              <Card className="shadow-sm w-full h-full">
+                <CardContent>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-3xl font-bold text-primary">
+                      {item.step}
+                    </span>
+                    <Text as="h4">{item.title}</Text>
+                  </div>
+                  <div className="overflow-hidden rounded-md mb-3">
+                    <ZoomableImage
+                      src={item.img}
+                      alt={item.alt}
+                      className="w-full h-40 md:h-56 object-contain mx-auto transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                  <Text className="text-muted-foreground">{item.desc}</Text>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -133,5 +192,50 @@ function TextWithHighlight({ text }: { text: string }) {
       ></span>
       <span className="relative">{text}</span>
     </span>
+  );
+}
+
+interface ZoomableImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+}
+
+function ZoomableImage({ src, alt, className }: ZoomableImageProps) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <img
+        src={src}
+        alt={alt}
+        className={cn("cursor-zoom-in", className)}
+        onClick={() => setOpen(true)}
+      />
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="relative max-w-3xl w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute -top-10 right-0 text-white text-3xl leading-none hover:text-gray-300"
+              onClick={() => setOpen(false)}
+            >
+              ✕
+            </button>
+            <img
+              src={src}
+              alt={alt}
+              className="w-full h-auto max-h-[85dvh] object-contain rounded-lg shadow-xl"
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
