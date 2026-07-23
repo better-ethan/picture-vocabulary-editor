@@ -18,22 +18,10 @@ import {
   User2Icon,
   Volume2,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
-import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import { Label } from "@/components/ui/Label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
-import { Field } from "@/components/ui/Field";
-import { Input } from "@/components/ui/input";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const id = params.id;
@@ -62,53 +50,11 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   return result;
 };
 
-type Mode = "view" | "fillIn" | "dictation";
-
 export default function Page() {
   const data = useLoaderData<typeof loader>();
 
   const { images, labels, lines, words } =
     data.content as unknown as CanvasContent;
-
-  const [rate, setRate] = useState(1);
-
-  const [mode, setMode] = useState<Mode>("view");
-
-  const [wordArr, setWordArr] = useState(words);
-
-  const [userAnswers, setUserAnswers] = useState<string[]>([]);
-  const [userAnswerResults, setUserAnswerResults] = useState<boolean[]>([]);
-
-  const [hasCheckedAnswer, setHasCheckedAnswer] = useState(false);
-
-  const handleFillIn = () => {
-    setMode("fillIn");
-    setUserAnswers(Array(words.length).fill(""));
-    setUserAnswerResults(Array(words.length).fill(false));
-
-    setHasCheckedAnswer(false);
-  };
-
-  const handleDictation = () => {
-    setMode("dictation");
-    setUserAnswers(Array(words.length).fill(""));
-    setUserAnswerResults(Array(words.length).fill(false));
-
-    setHasCheckedAnswer(false);
-
-    // because Array.sort() will change the original array, we need to create a new array first
-    const dictationWordArr = [...wordArr].sort(() => Math.random() - 0.5);
-    setWordArr(dictationWordArr);
-  };
-
-  const handleCheckAnswer = () => {
-    const results = wordArr.map((word, index) => {
-      const userAnswer = userAnswers[index] || "";
-      return userAnswer.trim().toLowerCase() === word.word.trim().toLowerCase();
-    });
-    setUserAnswerResults(results);
-    setHasCheckedAnswer(true);
-  };
 
   return (
     <div className="flex gap-2 w-full">
