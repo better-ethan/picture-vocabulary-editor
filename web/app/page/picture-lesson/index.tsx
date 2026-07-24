@@ -76,7 +76,9 @@ export default function Page() {
             />
 
             <div className="flex flex-col gap-2">
-              <h1 className="text-2xl font-bold text-start">{data.title}</h1>
+              <h1 className="text-2xl font-bold text-start">
+                {data.title.charAt(0).toUpperCase() + data.title.slice(1)}
+              </h1>
               <div className="flex flex-col md:flex-row md:items-center gap-3">
                 <div className="flex items-center gap-1">
                   <User2Icon className="size-5" />

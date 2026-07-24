@@ -11,7 +11,9 @@ export const PictureLessonCard = ({ lesson }: { lesson: PictureLesson }) => {
           <img className="w-50 h-auto" src={lesson.thumbnail} />
         </CardContent>
         <CardHeader className="pb-0">
-          <CardTitle className="text-base">{lesson.title}</CardTitle>
+          <CardTitle className="text-base">
+            {lesson.title.charAt(0).toUpperCase() + lesson.title.slice(1)}
+          </CardTitle>
         </CardHeader>
         <CardContent className="pb-2 pt-2">
           <Text className="text-muted-foreground">{lesson.username}</Text>
