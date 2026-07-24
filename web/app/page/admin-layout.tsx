@@ -103,8 +103,9 @@ export default function AdminLayout() {
             <div className="flex justify-between py-4">
               <Button
                 render={
-                  <Link to="/" className="hover:text-[#3B82F6]">
-                    Easy English
+                  <Link to="/" className="flex items-center">
+                    <img src="/images/logo.webp" className="h-5 w-auto" />
+                    VISUAL VOCAB
                   </Link>
                 }
                 nativeButton={false}

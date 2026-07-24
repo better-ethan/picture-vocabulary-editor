@@ -57,8 +57,9 @@ export default function PublicLayout() {
       <nav className="relative sticky top-0 z-50 border-b-2 border-black bg-white px-4 py-2 md:px-8">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between">
           <Link className="flex cursor-pointer items-center gap-2" to="/">
+            <img src="/images/logo.webp" className="h-8 w-auto" />
             <Text className="text-2xl text-black font-display font-black uppercase">
-              EASY ENGLISH
+              VISUAL VOCAB
             </Text>
           </Link>
           <div className="hidden items-center gap-8 md:flex">
