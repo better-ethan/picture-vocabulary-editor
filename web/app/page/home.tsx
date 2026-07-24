@@ -45,27 +45,36 @@ export default function Page() {
     lesson.content as unknown as CanvasContent;
 
   return (
-    <div className="flex flex-col items-center gap-8 p-4">
-      <Text as={"h2"} className="text-center">
-        Learning English through <TextWithHighlight text="Picture" /> and{" "}
-        <TextWithHighlight text="Audio" />
-      </Text>
-      <div className="w-full max-w-160">
-        <VocabularyCanvas
-          mode="view"
-          images={images}
-          labels={labels}
-          lines={lines}
-          words={words}
-        />
+    <div className="flex flex-col items-center gap-12 p-4 max-w-5xl mx-auto">
+      <div className="flex flex-col items-center gap-4 w-full">
+        <div className="flex flex-col items-center gap-4 w-full">
+          <Text as={"h2"} className="text-center">
+            Learning English through <TextWithHighlight text="Picture" /> and{" "}
+            <TextWithHighlight text="Audio" />
+          </Text>
+          <Text className="text-center text-muted-foreground">
+            A more effective way to learn English vocabulary
+          </Text>
+        </div>
+        <div className="w-full max-w-160">
+          <VocabularyCanvas
+            mode="view"
+            images={images}
+            labels={labels}
+            lines={lines}
+            words={words}
+          />
+        </div>
       </div>
-      <div className="flex flex-col items-center w-full max-w-4xl">
-        <Text as="h2" className="text-center">
-          Why we need picture and audio?
-        </Text>
-        <p className="text-muted-foreground text-center mt-2 mb-8">
-          Learning with visuals and sound accelerates your English journey
-        </p>
+      <div className="flex flex-col items-center w-full gap-8">
+        <div className="flex flex-col items-center gap-4">
+          <Text as="h2" className="text-center">
+            The Power of Pictures and Audio
+          </Text>
+          <p className="text-muted-foreground text-center">
+            See the meaning. Hear the sound. Remember the word.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
           {[
@@ -128,14 +137,16 @@ export default function Page() {
           ))}
         </div>
       </div>
-      <div className="flex flex-col items-center w-full max-w-4xl gap-6">
-        <Text as="h2" className="text-center">
-          How to Create a Visual Vocabulary in{" "}
-          <TextWithHighlight text="3 Simple Steps" />
-        </Text>
-        <Text className="text-muted-foreground">
-          It's designed to make creating visual vocabulary super easy
-        </Text>
+      <div className="flex flex-col items-center w-full gap-8">
+        <div className="flex flex-col items-center gap-4">
+          <Text as="h2" className="text-center">
+            How to Create a Visual Vocabulary in{" "}
+            <TextWithHighlight text="3 Simple Steps" />
+          </Text>
+          <Text className="text-muted-foreground">
+            It's designed to make creating visual vocabulary super easy
+          </Text>
+        </div>
 
         <div className="flex flex-col md:flex-row md:items-stretch gap-4 w-full">
           {[
@@ -199,6 +210,17 @@ export default function Page() {
           }
           className="shadow-sm"
         />
+      </div>
+
+      <div className="flex flex-col items-center w-full gap-8">
+        <div className="flex flex-col items-center gap-4">
+          <Text as="h2">Bring Your English to Life</Text>
+          <Text className="text-muted-foreground text-center">
+            Language isn't just something you read. It's something you see,
+            hear, and experience. Visual vocabulary combines pictures and native
+            audio to make every word easier to understand, remember, and use.
+          </Text>
+        </div>
       </div>
     </div>
   );
