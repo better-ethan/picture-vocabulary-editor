@@ -34,7 +34,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const currentUser = await trpc.user.getCurrentUser.query();
 
   if (!currentUser) {
-    throw redirect("/login");
+    throw redirect("/signin");
   }
 
   return { currentUser };
