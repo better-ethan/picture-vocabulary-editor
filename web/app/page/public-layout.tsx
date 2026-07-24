@@ -82,11 +82,12 @@ export default function PublicLayout() {
                     How it works
                   </NavigationMenuLink>
                 </NavigationMenuItem>
+
                 <NavigationMenuItem>
                   <NavigationMenuTrigger
                     className={cn("font-bold text-black [&_svg]:size-4")}
                   >
-                    Lessons
+                    Vocabulary
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="grid w-150 grid-cols-[1fr_1.5fr] gap-0">
@@ -137,12 +138,21 @@ export default function PublicLayout() {
                   <NavigationMenuLink
                     render={
                       <Link
-                        to="/pricing"
+                        to="/membership"
                         className={cn("font-bold text-black")}
                       />
                     }
                   >
-                    Pricing
+                    Membership
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    render={
+                      <Link to="/blog" className={cn("font-bold text-black")} />
+                    }
+                  >
+                    Blog
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -254,11 +264,18 @@ export default function PublicLayout() {
                     )}
                   </div>
                   <Link
-                    to="/pricing"
+                    to="/membership"
                     className={cn(baseDrawerLinkClasses)}
                     onClick={() => setDrawerOpened(false)}
                   >
-                    Pricing
+                    Membership
+                  </Link>
+                  <Link
+                    to="/blog"
+                    className={cn(baseDrawerLinkClasses)}
+                    onClick={() => setDrawerOpened(false)}
+                  >
+                    Blog
                   </Link>
                   {session ? (
                     <>
