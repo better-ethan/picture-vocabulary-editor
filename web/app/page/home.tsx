@@ -65,6 +65,10 @@ export default function Page() {
             words={words}
           />
         </div>
+        <Button
+          className="shadow-sm mt-6"
+          render={<Link to={"/category/all"}>Explore Visual Vocabulary</Link>}
+        />
       </div>
       <div className="flex flex-col items-center w-full gap-8">
         <div className="flex flex-col items-center gap-4">
