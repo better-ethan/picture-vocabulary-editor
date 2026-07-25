@@ -53,13 +53,13 @@ export default function PublicLayout() {
   const [lessonsOpened, setLessonsOpened] = useState(false);
 
   return (
-    <div className={cn("flex flex-col h-screen overflow-hidden")}>
+    <div className={cn("flex flex-col h-screen overflow-x-hidden")}>
       <nav className="relative sticky top-0 z-50 border-b-2 border-black bg-white px-4 py-2 md:px-8">
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between">
           <Link className="flex cursor-pointer items-center gap-2" to="/">
             <img src="/images/logo.webp" className="h-8 w-auto" />
-            <Text className="text-2xl text-black font-display font-black uppercase">
-              VISUAL VOCAB
+            <Text className="text-2xl text-black font-display font-black">
+              Visual Vocab
             </Text>
           </Link>
           <div className="hidden items-center gap-8 md:flex">
@@ -312,9 +312,27 @@ export default function PublicLayout() {
           </div>
         </div>
       </nav>
-      <main className="flex-1 overflow-y-auto px-4 pt-4 pb-8 max-w-screen-2xl mx-auto w-full">
+      <main className="flex-1 px-4 pt-4 pb-8 max-w-screen-2xl mx-auto w-full">
         <Outlet />
       </main>
+      <footer className="flex flex-col md:flex-row md:justify-between gap-4 my-8 max-w-5xl mx-auto w-full">
+        <div>
+          <Link to="/" className="flex cursor-pointer items-center gap-2">
+            <img src="/images/logo.webp" className="h-8 w-auto" />
+            <Text className="text-2xl text-black font-display font-black">
+              Visual Vocab
+            </Text>
+          </Link>
+        </div>
+        <div>
+          <Link
+            to="/contact-us"
+            className="hover:underline hover:text-blue-600"
+          >
+            Contact Us
+          </Link>
+        </div>
+      </footer>
     </div>
   );
 }
