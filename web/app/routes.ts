@@ -24,6 +24,8 @@ export default [
 
     route("/user/:id/:slug", "page/user/public.user.index.tsx"),
 
+    route("/contact-us", "page/contact-us.tsx"),
+
     route("*", "page/not-found.tsx"),
   ]),
 
