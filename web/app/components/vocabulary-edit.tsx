@@ -2115,7 +2115,7 @@ export function VocabularyCanvas({
             "overflow-hidden flex flex-col gap-2 justify-center items-center"
           )}
         >
-          <div className="flex flex-col gap-2" style={{ maxWidth: stageWidth }}>
+          <div className="flex flex-col" style={{ maxWidth: stageWidth }}>
             <div
               className="bg-white border border-gray-400 border-dashed overflow-hidden"
               style={{ width: stageWidth, height: stageHeight }}
