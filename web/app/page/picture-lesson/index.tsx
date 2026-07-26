@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useLocation, useParams } from "react-router";
 import type { Route } from "./+types/index";
 import { createTrpcClient } from "@/util";
 import {
@@ -14,6 +14,7 @@ import {
   CalendarIcon,
   ComponentIcon,
   DatabaseSearchIcon,
+  Share2Icon,
   TagIcon,
   User2Icon,
   Volume2,
@@ -22,6 +23,7 @@ import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const id = params.id;
@@ -75,6 +77,9 @@ export default function Page() {
               words={words}
             />
 
+            <div className="flex justify-end">
+              <ShareButton />
+            </div>
             <div className="flex flex-col gap-2">
               <h1 className="text-2xl font-bold text-start">
                 {data.title.charAt(0).toUpperCase() + data.title.slice(1)}
@@ -115,6 +120,153 @@ export default function Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+function ShareButton() {
+  const location = useLocation();
+  const params = useParams();
+  const [activeTab, setActiveTab] = useState<"share" | "embed">("share");
+  const [copied, setCopied] = useState(false);
+  const [embedCopied, setEmbedCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+      setShareUrl(window.location.origin + location.pathname + location.search);
+    }
+  }, [location.pathname, location.search]);
+
+  const embedUrl = `${origin}/embed/vocab/${params.id}/${params.slug}`;
+
+  const embedCode = `<iframe src="${embedUrl}" width="400" height="300" frameborder="0" allowfullscreen></iframe>`;
+
+  const handleCopy = (text: string, setCopiedState: (v: boolean) => void) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedState(true);
+      setTimeout(() => setCopiedState(false), 2000);
+    });
+  };
+
+  const socialLinks = [
+    {
+      label: "Facebook",
+      logoSrc: "/images/facebook-logo.png",
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}`,
+    },
+    {
+      label: "Twitter",
+      logoSrc: "/images/x-logo.png",
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+        shareUrl
+      )}`,
+    },
+  ];
+
+  return (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button className={"flex items-center gap-2"} variant="ghost">
+            <Share2Icon className="size-5" />
+            <span>Share</span>
+          </Button>
+        }
+      ></DialogTrigger>
+      <DialogContent className="sm:max-w-md shadow-sm p-6">
+        <h2 className="text-lg font-bold">Share this visual vocabulary</h2>
+
+        <div className="flex border-b border-gray-200">
+          <button
+            className={`px-4 py-2 text-sm font-medium ${
+              activeTab === "share"
+                ? "border-b-2 border-primary text-black"
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("share")}
+          >
+            Share
+          </button>
+          <button
+            className={`px-4 py-2 text-sm font-medium ${
+              activeTab === "embed"
+                ? "border-b-2 border-primary text-black"
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("embed")}
+          >
+            Embed
+          </button>
+        </div>
+
+        {activeTab === "share" && (
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-3 justify-around">
+              {socialLinks.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 transition"
+                >
+                  <img src={s.logoSrc} className="h-8 w-auto" />
+                  <span className="text-xs text-gray-600">{s.label}</span>
+                </a>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <p className="text-sm text-gray-500">Page link</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={shareUrl}
+                  className="flex-1 p-2 text-sm border border-gray-300 rounded bg-gray-50"
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => handleCopy(shareUrl, setCopied)}
+                  className="shadow-sm"
+                >
+                  {copied ? "✓ Copied" : "Copy"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "embed" && (
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-gray-500">
+              Paste this code into your website's HTML:
+            </p>
+            <textarea
+              readOnly
+              value={embedCode}
+              rows={4}
+              className="w-full p-2 text-sm border border-gray-300 rounded bg-gray-50 resize-none font-mono"
+              onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => handleCopy(embedCode, setEmbedCopied)}
+              className="shadow-sm"
+            >
+              {embedCopied ? "✓ Copied!" : "Copy embed code"}
+            </Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
