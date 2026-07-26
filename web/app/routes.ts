@@ -47,6 +47,9 @@ export default [
     route("/admin/*", "page/not-found.tsx", { id: "admin-not-found" }),
   ]),
 
+  // embed
+  route("/embed/vocab/:id/:slug", "page/picture-lesson/embed.tsx"),
+
   // api
   route("/api/auth/*", "api/auth.tsx"),
 ] satisfies RouteConfig;
