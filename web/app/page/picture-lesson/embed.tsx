@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useParams } from "react-router";
 import type { Route } from "./+types/index";
 import { createTrpcClient } from "@/util";
 import {
@@ -56,8 +56,18 @@ export default function Page() {
   const { images, labels, lines, words } =
     data.content as unknown as CanvasContent;
 
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
+  const params = useParams();
+
   return (
-    <div className="w-full max-w-lg bg-white">
+    <div className="w-full bg-white overflow-y-auto">
       <VocabularyCanvas
         mode="view"
         images={images}
@@ -68,8 +78,12 @@ export default function Page() {
       <div className="flex items-center justify-center gap-2 mt-2">
         <img src="/images/logo.webp" className="h-5 w-auto" />
         <Text>
-          Power By{" "}
-          <Link to={"http://localhost:3000"} className="text-blue-600">
+          View on{" "}
+          <Link
+            to={`${origin}/picture-lesson/${params.id}/${params.slug}`}
+            className="text-blue-600"
+            target="_blank"
+          >
             Visual Vocab
           </Link>
         </Text>

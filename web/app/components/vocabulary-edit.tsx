@@ -2293,7 +2293,7 @@ function WordList({ words }: { words: WordItem[] }) {
         <div className="overflow-y-auto max-h-40 lg:max-h-50">
           <div
             className={cn(
-              "columns-1 lg:columns-3 py-2",
+              "columns-1 sm:columns-2 lg:columns-3 py-2",
               mode === "dictation" && "pl-2"
             )}
           >

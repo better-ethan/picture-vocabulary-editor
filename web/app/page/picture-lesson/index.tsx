@@ -141,7 +141,12 @@ function ShareButton() {
 
   const embedUrl = `${origin}/embed/vocab/${params.id}/${params.slug}`;
 
-  const embedCode = `<iframe src="${embedUrl}" width="400" height="300" frameborder="0" allowfullscreen></iframe>`;
+  const embedCode =
+    `<style>` +
+    `.vv-iframe{max-width:520px;width:100%;height:auto;aspect-ratio:52/68;}` +
+    `@media(max-width:480px){.vv-iframe{aspect-ratio:300/485;}}` +
+    `</style>` +
+    `<iframe class="vv-iframe" src="${embedUrl}" width="520" height="680" allowfullscreen></iframe>`;
 
   const handleCopy = (text: string, setCopiedState: (v: boolean) => void) => {
     navigator.clipboard.writeText(text).then(() => {
