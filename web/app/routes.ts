@@ -26,6 +26,9 @@ export default [
 
     route("/contact-us", "page/contact-us.tsx"),
 
+    route("/blog", "page/blog/list.tsx", { index: true }),
+    route("/blog/:slug", "page/blog/index.tsx"),
+
     route("*", "page/not-found.tsx"),
   ]),
 
