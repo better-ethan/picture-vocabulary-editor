@@ -1141,7 +1141,7 @@ export function VocabularyEditor({
       )}
       <div className="flex flex-col lg:flex-row w-full overflow-hidden py-1 bg-inherit gap-6 flex-1 min-h-0 px-1">
         {mode === "edit" && (
-          <Card className="w-full lg:w-auto h-auto lg:h-full order-last lg:order-first shadow-sm">
+          <Card className="w-full lg:w-auto h-auto lg:h-full order-last lg:order-first shadow-sm py-0">
             <CardContent className="flex flex-col-reverse lg:flex-row p-0 relative h-full">
               <div
                 className={cn(
@@ -1205,7 +1205,7 @@ export function VocabularyEditor({
                 variant="secondary"
                 onClick={togglePanel}
                 className={cn(
-                  "absolute top-1/2 -translate-y-1/2 -right-3 shadow-sm",
+                  "absolute top-1/2 -translate-y-1/2 -right-3 shadow-none",
                   "h-12 w-6 p-0 text-gray-300",
                   "hidden lg:flex items-center justify-center",
                   "border-none rounded-full",
@@ -1214,7 +1214,7 @@ export function VocabularyEditor({
                   isPanelOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                 )}
               >
-                <ChevronLeftIcon className="w-5 h-5" />
+                <ChevronLeftIcon className="size-10" />
               </Button>
             </CardContent>
           </Card>
