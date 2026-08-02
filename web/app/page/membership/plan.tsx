@@ -86,10 +86,11 @@ export default function Page() {
     <div className="flex flex-col items-center px-4 py-12 gap-12">
       <div className="flex flex-col items-center gap-4">
         <Text as="h2" className="text-center text-3xl font-bold">
-          Visual Vocab Makes English Easier
+          Unlock Unlimited Visual Vocabulary
         </Text>
         <Text className="text-muted-foreground text-center">
-          Pictures and audio make vocabulary learning more effective
+          Upgrade to create unlimited visual vocabulary and learn more
+          effectively
         </Text>
       </div>
       <div className="flex flex-col items-center gap-6">
