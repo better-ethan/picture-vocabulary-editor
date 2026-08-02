@@ -1,3 +1,9 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import {
@@ -12,6 +18,7 @@ import {
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/Text";
 import { cn } from "@/lib/utils";
+import { ShieldCheckIcon } from "lucide-react";
 
 interface PlanItem {
   name: string;
@@ -51,46 +58,80 @@ const plans: PlanItem[] = [
 
 type BillingCycle = "monthly" | "annual";
 
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+const faqs: FaqItem[] = [
+  {
+    question: "Can I cancel my subscription?",
+    answer:
+      "Yes, you can cancel your subscription at any time. There are no hidden fees.",
+  },
+  {
+    question: "Can I try for free?",
+    answer:
+      "Absolutely, we do have a free plan that you can use to get started. Free plan has all the features of the pro plan, but with some limitations.",
+  },
+  {
+    question: "What payment methods are accepted?",
+    answer:
+      "We accept all major credit cards, including Visa, MasterCard, and American Express.",
+  },
+];
+
 export default function Page() {
   return (
-    <div className="flex flex-col items-center px-4 py-12 gap-6">
+    <div className="flex flex-col items-center px-4 py-12 gap-12">
       <div className="flex flex-col items-center gap-4">
         <Text as="h2" className="text-center text-3xl font-bold">
           Visual Vocab Makes English Easier
         </Text>
         <Text className="text-muted-foreground text-center">
-          Pictures and audio will help you learn more vocabulary
+          Pictures and audio make vocabulary learning more effective
         </Text>
       </div>
-      <Tabs defaultValue="annual" className="w-full max-w-2xl">
-        <TabsList className="mb-6 mx-auto shadow-sm flex gap-2">
-          <TabsTrigger
-            value="annual"
-            className="shadow-none data-active:shadow-sm"
-          >
-            Annual
-          </TabsTrigger>
-          <TabsTrigger value="monthly" className="shadow-none">
-            Monthly
-          </TabsTrigger>
-        </TabsList>
-        {(["annual", "monthly"] as BillingCycle[]).map((billing) => (
-          <TabsContent
-            key={billing}
-            value={billing}
-            className={"flex flex-col gap-4 md:flex-row"}
-          >
-            {plans.map((plan) => (
-              <PlanCard key={plan.name} plan={plan} billing={billing} />
-            ))}
-          </TabsContent>
-        ))}
-      </Tabs>
-      <div className="">
+      <div className="flex flex-col items-center gap-6">
+        <Tabs defaultValue="annual" className="w-full max-w-2xl">
+          <TabsList className="mb-6 mx-auto shadow-sm flex gap-2">
+            <TabsTrigger
+              value="annual"
+              className="shadow-none data-active:shadow-sm"
+            >
+              Annual
+            </TabsTrigger>
+            <TabsTrigger value="monthly" className="shadow-none">
+              Monthly
+            </TabsTrigger>
+          </TabsList>
+          {(["annual", "monthly"] as BillingCycle[]).map((billing) => (
+            <TabsContent
+              key={billing}
+              value={billing}
+              className={"flex flex-col gap-4 md:flex-row"}
+            >
+              {plans.map((plan) => (
+                <PlanCard key={plan.name} plan={plan} billing={billing} />
+              ))}
+            </TabsContent>
+          ))}
+        </Tabs>
+
         <Text className="text-muted-foreground">
           Cancel anytime. No hidden fees. No credit card required for free plan.
         </Text>
+        <div className="flex gap-1 text-green-600">
+          <span>
+            <ShieldCheckIcon />
+          </span>
+          <Text>
+            We use Stripe to process payments. Your payment information is never
+            stored on our servers.
+          </Text>
+        </div>
       </div>
+      <Faq questionsAndAnswers={faqs} />
     </div>
   );
 }
@@ -146,11 +187,35 @@ function PlanCard({
         <Button
           type="button"
           variant={plan.highlight ? "default" : "outline"}
-          className="w-full shadow-sm mt-4"
+          className="w-full shadow-sm"
         >
           {plan.cta}
         </Button>
       </CardFooter>
     </Card>
+  );
+}
+
+function Faq({ questionsAndAnswers = [] }: { questionsAndAnswers: FaqItem[] }) {
+  return (
+    <div className="max-w-lg mx-auto w-full">
+      <Text as="h3" className="text-3xl font-bold mb-8">
+        Frequently Asked Questions
+      </Text>
+      <div>
+        <Accordion>
+          {questionsAndAnswers.map((faq, index) => (
+            <AccordionItem
+              key={index}
+              value={`item-${index}`}
+              className="shadow-sm"
+            >
+              <AccordionTrigger>{faq.question}</AccordionTrigger>
+              <AccordionContent>{faq.answer}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </div>
   );
 }
