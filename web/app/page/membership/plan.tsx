@@ -19,10 +19,36 @@ import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/Text";
 import { cn } from "@/lib/utils";
 import { ShieldCheckIcon } from "lucide-react";
+import { Form, redirect } from "react-router";
+import type { Route } from "./+types/plan";
+import { createTrpcClient } from "@/util";
+
+export const action = async ({ request }: Route.ActionArgs) => {
+  const formData = await request.formData();
+
+  const trpc = createTrpcClient(request);
+
+  const plan = formData.get("plan") as string;
+  const interval = formData.get("interval") as Interval;
+  const success_url = formData.get("success_url") as string;
+  const cancel_url = formData.get("cancel_url") as string;
+
+  const result = await trpc.stripe.createCheckoutSession.mutate({
+    plan,
+    interval,
+    success_url,
+    cancel_url,
+  });
+
+  return redirect(result.checkoutUrl as string);
+};
 
 interface PlanItem {
   name: string;
-  price: { monthly: string; annual: string };
+  price: {
+    monthly: { lookup_key: string; value: string };
+    annual: { lookup_key: string; value: string };
+  };
   description: string;
   features: string[];
   cta: string;
@@ -32,7 +58,10 @@ interface PlanItem {
 const plans: PlanItem[] = [
   {
     name: "free",
-    price: { monthly: "$0", annual: "$0" },
+    price: {
+      monthly: { lookup_key: "free_monthly", value: "$0" },
+      annual: { lookup_key: "free_yearly", value: "$0" },
+    },
     description: "Perfect for getting started",
     features: [
       "Basic editor",
@@ -44,7 +73,10 @@ const plans: PlanItem[] = [
   },
   {
     name: "pro",
-    price: { monthly: "$9.9", annual: "$99" },
+    price: {
+      monthly: { lookup_key: "pro_monthly", value: "$9.9" },
+      annual: { lookup_key: "pro_yearly", value: "$99" },
+    },
     description: "Pro plan with more features and benefits",
     features: [
       "Everything in Free",
@@ -56,7 +88,7 @@ const plans: PlanItem[] = [
   },
 ];
 
-type BillingCycle = "monthly" | "annual";
+type Interval = "monthly" | "annual";
 
 interface FaqItem {
   question: string;
@@ -106,14 +138,14 @@ export default function Page() {
               Monthly
             </TabsTrigger>
           </TabsList>
-          {(["annual", "monthly"] as BillingCycle[]).map((billing) => (
+          {(["annual", "monthly"] as Interval[]).map((interval) => (
             <TabsContent
-              key={billing}
-              value={billing}
+              key={interval}
+              value={interval}
               className={"flex flex-col gap-4 md:flex-row"}
             >
               {plans.map((plan) => (
-                <PlanCard key={plan.name} plan={plan} billing={billing} />
+                <PlanCard key={plan.name} plan={plan} interval={interval} />
               ))}
             </TabsContent>
           ))}
@@ -139,10 +171,12 @@ export default function Page() {
 
 function PlanCard({
   plan,
-  billing,
+  interval,
+  clickHandler,
 }: {
   plan: PlanItem;
-  billing: BillingCycle;
+  interval: Interval;
+  clickHandler?: () => void;
 }) {
   return (
     <Card
@@ -163,12 +197,14 @@ function PlanCard({
           </CardAction>
         </div>
         <div className="flex items-end gap-2 mt-4">
-          <Text className="text-3xl font-bold">{plan.price[billing]}</Text>
+          <Text className="text-3xl font-bold">
+            {plan.price[interval].value}
+          </Text>
           <span className="text-muted-foreground mb-1">
-            {billing === "annual" ? "/per year" : "/per month"}
+            {interval === "annual" ? "/per year" : "/per month"}
           </span>
         </div>
-        {billing === "annual" && plan.highlight && (
+        {interval === "annual" && plan.highlight && (
           <span className="text-sm text-accent-foreground bg-primary px-2 py-1 w-fit rounded">
             Save ~22% with annual
           </span>
@@ -185,13 +221,25 @@ function PlanCard({
         </ul>
       </CardContent>
       <CardFooter className="bg-inherit border-none">
-        <Button
-          type="button"
-          variant={plan.highlight ? "default" : "outline"}
-          className="w-full shadow-sm"
-        >
-          {plan.cta}
-        </Button>
+        <Form method="POST">
+          <input type="hidden" name="plan" value={plan.name} />
+          <input
+            type="hidden"
+            name="lookup_key"
+            value={plan.price[interval].lookup_key}
+          />
+          <input type="hidden" name="interval" value={interval} />
+          <input type="hidden" name="success_url" value="/membership/success" />
+          <input type="hidden" name="cancel_url" value="/membership/cancel" />
+          <Button
+            type="submit"
+            variant={plan.highlight ? "default" : "outline"}
+            className="w-full shadow-sm"
+            // onClick={clickHandler}
+          >
+            {plan.cta}
+          </Button>
+        </Form>
       </CardFooter>
     </Card>
   );

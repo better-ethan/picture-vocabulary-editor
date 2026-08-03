@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  index,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -8,6 +15,8 @@ export const user = pgTable("user", {
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   description: text("description"),
+  stripeCustomerId: text("stripe_customer_id"),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -73,6 +82,26 @@ export const verification = pgTable(
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
+
+export const subscription = pgTable("subscription", {
+  id: text("id").primaryKey(),
+  plan: text("plan").notNull(),
+  referenceId: text("reference_id").notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  status: text("status").notNull(),
+  periodStart: timestamp("period_start", { precision: 6, withTimezone: true }),
+  periodEnd: timestamp("period_end", { precision: 6, withTimezone: true }),
+  cancelAtPeriodEnd: boolean("cancel_at_period_end"),
+  cancelAt: timestamp("cancel_at", { precision: 6, withTimezone: true }),
+  canceledAt: timestamp("canceled_at", { precision: 6, withTimezone: true }),
+  endedAt: timestamp("ended_at", { precision: 6, withTimezone: true }),
+  seats: integer("seats"),
+  trialStart: timestamp("trial_start", { precision: 6, withTimezone: true }),
+  trialEnd: timestamp("trial_end", { precision: 6, withTimezone: true }),
+  billingInterval: text("billing_interval"),
+  stripeScheduleId: text("stripe_schedule_id"),
+});
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),

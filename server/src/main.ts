@@ -5,6 +5,7 @@ import { userRouter } from "./router/user.js";
 import { audioRouter } from "./router/audio.js";
 import { categoryRouter } from "./router/category.js";
 import { blogRouter } from "./router/blog.js";
+import { stripeRouter } from "./router/stripe.js";
 
 export const appRouter = router({
   pictureLesson: pictureLessonRouter,
@@ -13,6 +14,7 @@ export const appRouter = router({
   user: userRouter,
   category: categoryRouter,
   blog: blogRouter,
+  stripe: stripeRouter,
 });
 
 export type AppRouter = typeof appRouter;

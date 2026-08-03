@@ -18,6 +18,7 @@
     "@aws-sdk/client-s3": "^3.1035.0",
     "@aws-sdk/client-sesv2": "^3.1041.0",
     "@aws-sdk/s3-request-presigner": "^3.1035.0",
+    "@better-auth/stripe": "^1.6.25",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.2.0",
     "@package/drizzle": "workspace:*",
@@ -32,6 +33,7 @@
     "gray-matter": "^4.0.3",
     "nodemailer": "^8.0.7",
     "pg": "^8.20.0",
+    "stripe": "^22.4.0",
     "superjson": "^2.2.6",
     "zod": "^4.3.6"
   },

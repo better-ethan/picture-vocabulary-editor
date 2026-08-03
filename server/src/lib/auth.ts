@@ -1,13 +1,22 @@
 import { betterAuth } from "better-auth";
+import { stripe } from "@better-auth/stripe";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db, user, session, account, verification } from "@package/drizzle";
+import {
+  db,
+  user,
+  session,
+  account,
+  verification,
+  subscription,
+} from "@package/drizzle";
 import { sendMail } from "~/lib/email.js";
+import { stripe as stripeClient } from "~/lib/stripe.js";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     debugLogs: true,
-    schema: { user, session, account, verification },
+    schema: { user, session, account, verification, subscription },
   }),
   emailAndPassword: {
     enabled: true,
@@ -52,4 +61,18 @@ export const auth = betterAuth({
       },
     },
   },
+  plugins: [
+    stripe({
+      stripeClient,
+      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+      createCustomerOnSignUp: true,
+      subscription: {
+        enabled: true,
+        plans: [
+          { name: "pro", lookupKey: "pro_monthly" },
+          { name: "pro", lookupKey: "pro_yearly" },
+        ],
+      },
+    }),
+  ],
 });
