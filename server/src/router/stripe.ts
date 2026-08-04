@@ -3,6 +3,7 @@ import { publicProcedure, router } from "../trpc.js";
 import { stripe } from "../lib/stripe.js";
 import { auth } from "~/lib/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
+import type Stripe from "stripe";
 
 export const stripeRouter = router({
   createCheckoutSession: publicProcedure
@@ -40,6 +41,41 @@ export const stripeRouter = router({
 
       return {
         checkoutUrl: stripeSession.url,
+      };
+    }),
+  retrieveCheckoutSession: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const session = await auth.api.getSession({
+        headers: fromNodeHeaders(ctx.req.headers),
+      });
+
+      const userId = session?.user?.id;
+      if (!userId) {
+        throw new Error("Unauthorized");
+      }
+
+      const checkoutSession = await stripe.checkout.sessions.retrieve(
+        input.sessionId,
+        {
+          expand: ["line_items.data.price.product", "subscription"],
+        }
+      );
+
+      if (!checkoutSession) {
+        throw new Error("Invalid session ID");
+      }
+
+      const lineItem = checkoutSession.line_items?.data[0];
+      const product = lineItem?.price?.product as Stripe.Product;
+      const interval = lineItem?.price?.recurring?.interval;
+      const amount = checkoutSession.amount_total;
+
+      return {
+        plan: product?.name,
+        interval,
+        amount,
+        paymentStatus: checkoutSession.payment_status,
       };
     }),
 });

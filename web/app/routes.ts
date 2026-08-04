@@ -25,6 +25,8 @@ export default [
     route("/user/:id/:slug", "page/user/public.user.index.tsx"),
 
     route("/membership/plan", "page/membership/plan.tsx"),
+    route("/membership/success", "page/membership/success.tsx"),
+    route("/membership/cancel", "page/membership/cancel.tsx"),
 
     route("/contact-us", "page/contact-us.tsx"),
 

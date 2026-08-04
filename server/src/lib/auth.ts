@@ -69,8 +69,11 @@ export const auth = betterAuth({
       subscription: {
         enabled: true,
         plans: [
-          { name: "pro", lookupKey: "pro_monthly" },
-          { name: "pro", lookupKey: "pro_yearly" },
+          {
+            name: "pro",
+            lookupKey: "pro_monthly",
+            annualDiscountLookupKey: "pro_yearly",
+          },
         ],
       },
     }),
