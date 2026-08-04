@@ -8,8 +8,9 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import { Link, useLoaderData } from "react-router";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, CheckIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
@@ -37,9 +38,18 @@ export default function Page() {
     <div className="flex items-center justify-center">
       <Card className="w-full max-w-md shadow-sm">
         <CardHeader className="text-center pb-2">
-          <div className="flex justify-center mb-4">
-            <CheckCircle className="h-16 w-16 text-green-500" />
-          </div>
+          {isPaid && (
+            <div className="flex justify-center mb-4">
+              <div
+                className={cn(
+                  "w-24 h-24 bg-green-500 rounded-full",
+                  "flex justify-center items-center"
+                )}
+              >
+                <CheckIcon className="size-12 text-white" />
+              </div>
+            </div>
+          )}
           <CardTitle className="text-2xl font-bold">
             {isPaid ? "Payment Successful!" : "Processing Payment..."}
           </CardTitle>
