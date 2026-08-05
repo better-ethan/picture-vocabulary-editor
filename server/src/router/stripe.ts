@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../trpc.js";
+import { loggedInProcedure, router } from "../trpc.js";
 import { stripe } from "../lib/stripe.js";
 import { auth } from "~/lib/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
@@ -8,7 +8,7 @@ import { db, subscription } from "@package/drizzle";
 import { eq } from "drizzle-orm";
 
 export const stripeRouter = router({
-  createCheckoutSession: publicProcedure
+  createCheckoutSession: loggedInProcedure
     .input(
       z.object({
         plan: z.string(),
@@ -18,15 +18,6 @@ export const stripeRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const session = await auth.api.getSession({
-        headers: fromNodeHeaders(ctx.req.headers),
-      });
-
-      const userId = session?.user?.id;
-      if (!userId) {
-        throw new Error("Unauthorized");
-      }
-
       const frontendDomain =
         process.env.VITE_FRONTEND_BASE_URL ?? "http://localhost:3000";
 
@@ -45,18 +36,9 @@ export const stripeRouter = router({
         checkoutUrl: stripeSession.url,
       };
     }),
-  retrieveCheckoutSession: publicProcedure
+  retrieveCheckoutSession: loggedInProcedure
     .input(z.object({ sessionId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const session = await auth.api.getSession({
-        headers: fromNodeHeaders(ctx.req.headers),
-      });
-
-      const userId = session?.user?.id;
-      if (!userId) {
-        throw new Error("Unauthorized");
-      }
-
       const checkoutSession = await stripe.checkout.sessions.retrieve(
         input.sessionId,
         {
@@ -80,7 +62,7 @@ export const stripeRouter = router({
         paymentStatus: checkoutSession.payment_status,
       };
     }),
-  createPortalSession: publicProcedure
+  createPortalSession: loggedInProcedure
     .input(
       z.object({
         returnUrl: z.string(),
@@ -98,16 +80,7 @@ export const stripeRouter = router({
         portalUrl: portalSession.url,
       };
     }),
-  getSubscriptionStatus: publicProcedure.query(async ({ ctx }) => {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(ctx.req.headers),
-    });
-
-    const userId = session?.user?.id;
-    if (!userId) {
-      throw new Error("Unauthorized");
-    }
-
+  getSubscriptionStatus: loggedInProcedure.query(async ({ ctx }) => {
     const subscriptionRecord = await db
       .select()
       .from(subscription)

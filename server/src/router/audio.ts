@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
-import { publicProcedure, router } from "../trpc.js";
+import { loggedInProcedure, publicProcedure, router } from "../trpc.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "~/lib/s3.js";
 import {
@@ -12,7 +12,7 @@ import {
 import { db, textSpeech } from "@package/drizzle";
 
 export const audioRouter = router({
-  getUploadUrl: publicProcedure
+  getUploadUrl: loggedInProcedure
     .input(
       z.object({
         text: z.string().min(1).max(255),

@@ -3,23 +3,15 @@ import { fromNodeHeaders } from "better-auth/node";
 import { eq } from "drizzle-orm";
 import z from "zod";
 import { auth } from "~/lib/auth.js";
-import { publicProcedure, router } from "~/trpc.js";
+import { loggedInProcedure, publicProcedure, router } from "~/trpc.js";
 
 export const userRouter = router({
-  getCurrentUser: publicProcedure.query(async ({ ctx }) => {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(ctx.req.headers),
-    });
-
-    if (!session?.user) {
-      return null;
-    }
-
+  getCurrentUser: loggedInProcedure.query(async ({ ctx }) => {
     return {
-      id: session.user.id as string,
-      name: session.user.name as string,
-      email: session.user.email as string,
-      description: session.user.description as string | null,
+      id: ctx.user.id as string,
+      name: ctx.user.name as string,
+      email: ctx.user.email as string,
+      description: ctx.user.description as string | null,
     };
   }),
   getUserById: publicProcedure
@@ -46,7 +38,7 @@ export const userRouter = router({
         description: userRow.description,
       };
     }),
-  updateProfile: publicProcedure
+  updateProfile: loggedInProcedure
     .input(
       z.object({
         name: z.string().optional(),

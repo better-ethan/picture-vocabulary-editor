@@ -1,7 +1,7 @@
 import { desc, eq, and, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { category, db, pictureLesson, user } from "@package/drizzle";
-import { publicProcedure, router } from "../trpc.js";
+import { loggedInProcedure, publicProcedure, router } from "../trpc.js";
 import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../lib/auth.js";
 
@@ -51,7 +51,7 @@ export const pictureLessonRouter = router({
       }));
     }),
 
-  create: publicProcedure
+  create: loggedInProcedure
     .input(
       z.object({
         id: z.string().length(16),
@@ -66,20 +66,11 @@ export const pictureLessonRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const session = await auth.api.getSession({
-        headers: fromNodeHeaders(ctx.req.headers),
-      });
-
-      const userId = session?.user?.id;
-      if (!userId) {
-        throw new Error("Unauthorized");
-      }
-
       const [row] = await db
         .insert(pictureLesson)
         .values({
           id: input.id,
-          userId,
+          userId: ctx.user.id,
           title: input.title,
           slug: input.slug,
           description: input.description,
@@ -94,7 +85,7 @@ export const pictureLessonRouter = router({
       return row;
     }),
 
-  toggle: publicProcedure
+  toggle: loggedInProcedure
     .input(
       z.object({
         id: z.string(),
@@ -128,7 +119,7 @@ export const pictureLessonRouter = router({
       return row;
     }),
 
-  remove: publicProcedure
+  remove: loggedInProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
       await db
@@ -191,24 +182,15 @@ export const pictureLessonRouter = router({
       };
     }),
 
-  authored: publicProcedure
+  authored: loggedInProcedure
     .input(z.object({ status: z.enum(["draft", "published"]).optional() }))
     .query(async ({ input, ctx }) => {
-      const session = await auth.api.getSession({
-        headers: fromNodeHeaders(ctx.req.headers),
-      });
-
-      const userId = session?.user?.id;
-      if (!userId) {
-        throw new Error("Unauthorized");
-      }
-
       const rows = await db
         .select()
         .from(pictureLesson)
         .where(
           and(
-            eq(pictureLesson.userId, userId),
+            eq(pictureLesson.userId, ctx.user.id),
             isNull(pictureLesson.deletedAt),
             input.status ? eq(pictureLesson.status, input.status) : undefined
           )
@@ -218,18 +200,9 @@ export const pictureLessonRouter = router({
       return rows;
     }),
 
-  preview: publicProcedure
+  preview: loggedInProcedure
     .input(z.object({ id: z.string(), slug: z.string() }))
     .query(async ({ input, ctx }) => {
-      const session = await auth.api.getSession({
-        headers: fromNodeHeaders(ctx.req.headers),
-      });
-
-      const userId = session?.user?.id;
-      if (!userId) {
-        throw new Error("Unauthorized");
-      }
-
       const [row] = await db
         .select()
         .from(pictureLesson)
@@ -238,7 +211,7 @@ export const pictureLessonRouter = router({
             isNull(pictureLesson.deletedAt),
             eq(pictureLesson.id, input.id),
             eq(pictureLesson.slug, input.slug),
-            eq(pictureLesson.userId, userId)
+            eq(pictureLesson.userId, ctx.user.id)
           )
         );
 
