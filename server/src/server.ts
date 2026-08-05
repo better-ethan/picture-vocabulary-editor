@@ -76,6 +76,8 @@ server.listen(
   }
 );
 
+type BodyInit = string | Buffer | Uint8Array | null;
+
 async function handleAuthRequest(
   request: FastifyRequest,
   reply: FastifyReply,
