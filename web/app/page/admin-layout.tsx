@@ -10,6 +10,7 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import {
   BookAIcon,
+  Loader2,
   LogOutIcon,
   MenuIcon,
   SettingsIcon,
@@ -27,6 +28,17 @@ import {
 } from "react-router";
 import type { Route } from "./+types/admin-layout";
 import { createTrpcClient } from "@/util";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -159,6 +171,16 @@ function MenuContent({
   const currentPath = location.pathname + location.search;
   const isActive = (currentPath: string, itemPath: string) =>
     currentPath === itemPath;
+
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    setIsSigningOut(true);
+    await authClient.signOut();
+    setIsSigningOut(false);
+    navigate("/signin");
+  };
   return (
     <nav className="flex flex-col justify-between h-full p-2">
       <div>
@@ -241,18 +263,44 @@ function MenuContent({
             </div>
             <span className="truncate">{username}</span>
           </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant={"link"}
-                size={"icon"}
-                onClick={() => authClient.signOut()}
-              >
-                <LogOutIcon />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent variant="solid">Log Out</TooltipContent>
-          </Tooltip>
+          <AlertDialog>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertDialogTrigger
+                  render={
+                    <Button variant={"link"} size={"icon"}>
+                      <LogOutIcon />
+                    </Button>
+                  }
+                ></AlertDialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent variant="solid">Log Out</TooltipContent>
+            </Tooltip>
+            <AlertDialogContent className="shadow-sm">
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Are you sure you want to log out?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  You will log out from the current account and return to the
+                  sign-in page. Do you want to continue?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="shadow-sm">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleLogout}
+                  disabled={isSigningOut}
+                  className="shadow-sm"
+                >
+                  Confirm{" "}
+                  {isSigningOut && <Loader2 className="size-4 animate-spin" />}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </nav>
