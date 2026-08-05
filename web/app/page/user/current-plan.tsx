@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { CircleAlertIcon } from "lucide-react";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -105,7 +106,9 @@ export default function Page() {
                   </div>
                 )}
               </div>
-              <p className="text-muted-foreground">Auto-renew is off.</p>
+              <div className="flex items-center gap-2 text-red-600">
+                <CircleAlertIcon /> <span>Auto-renew is off.</span>
+              </div>
             </>
           )}
 
