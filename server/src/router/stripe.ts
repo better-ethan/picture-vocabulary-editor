@@ -4,6 +4,8 @@ import { stripe } from "../lib/stripe.js";
 import { auth } from "~/lib/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
 import type Stripe from "stripe";
+import { db, subscription } from "@package/drizzle";
+import { eq } from "drizzle-orm";
 
 export const stripeRouter = router({
   createCheckoutSession: publicProcedure
@@ -78,4 +80,40 @@ export const stripeRouter = router({
         paymentStatus: checkoutSession.payment_status,
       };
     }),
+  createPortalSession: publicProcedure
+    .input(
+      z.object({
+        returnUrl: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const portalSession = await auth.api.createBillingPortal({
+        headers: fromNodeHeaders(ctx.req.headers),
+        body: {
+          returnUrl: input.returnUrl,
+        },
+      });
+
+      return {
+        portalUrl: portalSession.url,
+      };
+    }),
+  getSubscriptionStatus: publicProcedure.query(async ({ ctx }) => {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(ctx.req.headers),
+    });
+
+    const userId = session?.user?.id;
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const subscriptionRecord = await db
+      .select()
+      .from(subscription)
+      .where(eq(subscription.referenceId, userId))
+      .limit(1);
+
+    return subscriptionRecord.length > 0 ? subscriptionRecord[0] : null;
+  }),
 });

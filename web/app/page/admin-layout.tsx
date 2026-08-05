@@ -199,6 +199,17 @@ function MenuContent({
             <span>Settings</span>
           </div>
           <Button
+            render={<Link to="/admin/user/current-plan">My Plan</Link>}
+            nativeButton={false}
+            variant={"link"}
+            className={cn(
+              "w-full justify-start text-sm font-medium",
+              "hover:bg-primary/20 hover:no-underline",
+              isActive(currentPath, "/admin/user/current-plan") &&
+                "bg-primary shadow-xs border-2"
+            )}
+          ></Button>
+          <Button
             render={<Link to="/admin/user/profile">My Profile</Link>}
             nativeButton={false}
             variant={"link"}
