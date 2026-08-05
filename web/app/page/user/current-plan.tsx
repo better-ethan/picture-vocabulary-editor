@@ -34,19 +34,11 @@ export default function Page() {
 
   const isActive = subscriptionRecord?.status === "active";
   const isExpired = subscriptionRecord?.status === "expired";
-  const isCanceled = isActive && subscriptionRecord?.cancelAtPeriodEnd === true;
+  const isCanceled = !!isActive && subscriptionRecord?.canceledAt;
   const isPro = isActive;
   const isAnnualPlan = subscriptionRecord?.billingInterval === "year";
 
   const formattedDate = subscriptionRecord?.periodEnd
-    ? new Date(subscriptionRecord.periodEnd).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-    : null;
-
-  const expiredDate = subscriptionRecord?.periodEnd
     ? new Date(subscriptionRecord.periodEnd).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -113,9 +105,7 @@ export default function Page() {
                   </div>
                 )}
               </div>
-              <p className="text-muted-foreground text-sm">
-                Auto-renew is off.
-              </p>
+              <p className="text-muted-foreground">Auto-renew is off.</p>
             </>
           )}
 
@@ -123,7 +113,7 @@ export default function Page() {
           {isExpired && (
             <>
               <p className="text-muted-foreground">
-                Your Pro subscription expired on {expiredDate}.
+                Your Pro subscription expired on {formattedDate}.
               </p>
             </>
           )}
@@ -147,7 +137,17 @@ export default function Page() {
               </Button>
             </Form>
           )}
-          {isPro && isCanceled && <Button>Resume Subscription</Button>}
+          {isPro && isCanceled && (
+            <Form method="post" className="w-full">
+              <Button
+                type="submit"
+                variant="secondary"
+                className={"w-full shadow-sm"}
+              >
+                Resume Subscription
+              </Button>
+            </Form>
+          )}
         </CardFooter>
       </Card>
     </div>
