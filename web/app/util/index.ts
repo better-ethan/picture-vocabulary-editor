@@ -54,6 +54,15 @@ export const fetchUtil = async ({
       "X-Forwarded-For": request?.headers.get("X-Forwarded-For") ?? "",
       "X-Forwarded-Host": request?.headers.get("X-Forwarded-Host") ?? "",
 
+      // stripe webhook
+      ...(request?.headers.get("stripe-signature")
+        ? {
+            "stripe-signature": request.headers.get(
+              "stripe-signature"
+            ) as string,
+          }
+        : {}),
+
       cookie: request?.headers.get("Cookie") as string,
       ...headers,
     },
