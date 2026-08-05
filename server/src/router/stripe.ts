@@ -84,7 +84,7 @@ export const stripeRouter = router({
     const subscriptionRecord = await db
       .select()
       .from(subscription)
-      .where(eq(subscription.referenceId, userId))
+      .where(eq(subscription.referenceId, ctx.user.id))
       .limit(1);
 
     return subscriptionRecord.length > 0 ? subscriptionRecord[0] : null;
