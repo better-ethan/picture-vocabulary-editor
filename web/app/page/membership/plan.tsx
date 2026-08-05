@@ -221,7 +221,7 @@ function PlanCard({
         </ul>
       </CardContent>
       <CardFooter className="bg-inherit border-none">
-        <Form method="POST">
+        <Form method="POST" className="w-full">
           <input type="hidden" name="plan" value={plan.name} />
           <input
             type="hidden"
