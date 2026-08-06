@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/Label";
 import { Text } from "@/components/ui/Text";
-import { Form, Link } from "react-router";
+import { Form, Link, useSearchParams } from "react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -14,13 +14,16 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/admin/user/profile";
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { data, error } = await authClient.signIn.email(
       {
         email,
         password,
-        callbackURL: "/admin/user/profile",
+        callbackURL: redirectTo,
       },
       {
         onRequest: (ctx) => {

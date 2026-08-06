@@ -23,6 +23,18 @@ import { Form, Link, redirect, useLoaderData } from "react-router";
 import type { Route } from "./+types/plan";
 import { createTrpcClient } from "@/util";
 import { authClient } from "@/lib/auth-client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -211,12 +223,10 @@ export default function Page() {
 function PlanCard({
   plan,
   interval,
-  clickHandler,
   currentPlan,
 }: {
   plan: PlanItem;
   interval: Interval;
-  clickHandler?: () => void;
   currentPlan?: CurrentPlan;
 }) {
   const { data: session } = authClient.useSession();
@@ -278,51 +288,116 @@ function PlanCard({
             <span>Your current plan</span>
           </div>
         )}
-        {!isFreePlan && currentPlan?.name !== "free" ? (
-          <Button
-            type="button"
-            variant="secondary"
-            className={"w-full shadow-sm"}
-            render={
-              <Link to="/admin/user/current-plan">Manage Subscription</Link>
-            }
-          ></Button>
-        ) : isFreePlan ? (
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full shadow-sm"
-            disabled={isLoggedIn}
-          >
-            {plan.cta}
-          </Button>
-        ) : (
-          <Form method="POST" className="w-full">
-            <input type="hidden" name="plan" value={plan.name} />
-            <input
-              type="hidden"
-              name="lookup_key"
-              value={plan.price[interval].lookup_key}
-            />
-            <input type="hidden" name="interval" value={interval} />
-            <input
-              type="hidden"
-              name="success_url"
-              value="/membership/success"
-            />
-            <input type="hidden" name="cancel_url" value="/membership/cancel" />
+        <PlanCardAction
+          plan={plan}
+          interval={interval}
+          isLoggedIn={isLoggedIn}
+          currentPlan={currentPlan}
+        />
+      </CardFooter>
+    </Card>
+  );
+}
+
+function PlanCardAction({
+  plan,
+  interval,
+  isLoggedIn,
+  currentPlan,
+}: {
+  plan: PlanItem;
+  interval: Interval;
+  isLoggedIn: boolean;
+  currentPlan?: CurrentPlan;
+}) {
+  const isFreePlan = plan.name === "free";
+  const isActivePaidSubscriber =
+    !isFreePlan && currentPlan && currentPlan.name !== "free";
+
+  // free plan
+  if (isFreePlan) {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full shadow-sm"
+        disabled={isLoggedIn}
+        render={<Link to="/signup?redirect=/membership/plan" />}
+      >
+        {plan.cta}
+      </Button>
+    );
+  }
+
+  // pro plan
+  if (isActivePaidSubscriber) {
+    return (
+      <Button
+        type="button"
+        variant="secondary"
+        className="w-full shadow-sm"
+        render={<Link to="/admin/user/current-plan">Manage Subscription</Link>}
+      />
+    );
+  }
+
+  // not logged in, show login dialog
+  if (!isLoggedIn) {
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger
+          render={
             <Button
-              type="submit"
+              type="button"
               variant={plan.highlight ? "default" : "outline"}
               className="w-full shadow-sm"
-              // onClick={clickHandler}
             >
               {plan.cta}
             </Button>
-          </Form>
-        )}
-      </CardFooter>
-    </Card>
+          }
+        ></AlertDialogTrigger>
+        <AlertDialogContent className="shadow-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Please log in to continue</AlertDialogTitle>
+            <AlertDialogDescription>
+              Log in to purchase a subscription. If you don't have an account,
+              sign up first.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="shadow-sm">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="shadow-sm"
+              render={
+                <Link to="/signin?redirect=/membership/plan">Log in</Link>
+              }
+            />
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+
+  // logged in and not a paid subscriber, show checkout form
+  return (
+    <Form method="POST" className="w-full">
+      <input type="hidden" name="plan" value={plan.name} />
+      <input
+        type="hidden"
+        name="lookup_key"
+        value={plan.price[interval].lookup_key}
+      />
+      <input type="hidden" name="interval" value={interval} />
+      <input type="hidden" name="success_url" value="/membership/success" />
+      <input type="hidden" name="cancel_url" value="/membership/cancel" />
+      <Button
+        type="submit"
+        variant={plan.highlight ? "default" : "outline"}
+        className="w-full shadow-sm"
+      >
+        {plan.cta}
+      </Button>
+    </Form>
   );
 }
 
