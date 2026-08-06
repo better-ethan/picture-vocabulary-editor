@@ -18,10 +18,25 @@ import {
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Text } from "@/components/ui/Text";
 import { cn } from "@/lib/utils";
-import { ShieldCheckIcon } from "lucide-react";
-import { Form, redirect } from "react-router";
+import { BadgeInfoIcon, ShieldCheckIcon } from "lucide-react";
+import { Form, Link, redirect, useLoaderData } from "react-router";
 import type { Route } from "./+types/plan";
 import { createTrpcClient } from "@/util";
+import { authClient } from "@/lib/auth-client";
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const trpc = createTrpcClient(request);
+
+  const currentUser = await trpc.user.getCurrentUser.query();
+
+  if (!currentUser) {
+    return { subscriptionStatus: null };
+  }
+
+  const subscriptionStatus = await trpc.stripe.getSubscriptionStatus.query();
+
+  return { subscriptionStatus };
+};
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
@@ -113,7 +128,26 @@ const faqs: FaqItem[] = [
   },
 ];
 
+interface CurrentPlan {
+  name: string;
+  interval?: Interval;
+  status?: string;
+}
+
 export default function Page() {
+  const { subscriptionStatus } = useLoaderData<typeof loader>();
+
+  const currentPlan: CurrentPlan = {
+    name: "free",
+  };
+
+  if (subscriptionStatus?.status === "active") {
+    currentPlan.name = subscriptionStatus.plan;
+    currentPlan.interval =
+      subscriptionStatus.billingInterval === "year" ? "annual" : "monthly";
+    currentPlan.status = subscriptionStatus.status;
+  }
+
   return (
     <div className="flex flex-col items-center px-4 py-12 gap-12">
       <div className="flex flex-col items-center gap-4">
@@ -145,7 +179,12 @@ export default function Page() {
               className={"flex flex-col gap-4 md:flex-row"}
             >
               {plans.map((plan) => (
-                <PlanCard key={plan.name} plan={plan} interval={interval} />
+                <PlanCard
+                  key={plan.name}
+                  plan={plan}
+                  interval={interval}
+                  currentPlan={currentPlan}
+                />
               ))}
             </TabsContent>
           ))}
@@ -173,11 +212,23 @@ function PlanCard({
   plan,
   interval,
   clickHandler,
+  currentPlan,
 }: {
   plan: PlanItem;
   interval: Interval;
   clickHandler?: () => void;
+  currentPlan?: CurrentPlan;
 }) {
+  const { data: session } = authClient.useSession();
+
+  const isLoggedIn = !!session?.user;
+
+  let isFreePlan = plan.name === "free";
+
+  const isCurrentPlan = isFreePlan
+    ? currentPlan?.name === "free"
+    : currentPlan?.name === plan.name && currentPlan?.interval === interval;
+
   return (
     <Card
       className={cn(
@@ -220,26 +271,56 @@ function PlanCard({
           ))}
         </ul>
       </CardContent>
-      <CardFooter className="bg-inherit border-none">
-        <Form method="POST" className="w-full">
-          <input type="hidden" name="plan" value={plan.name} />
-          <input
-            type="hidden"
-            name="lookup_key"
-            value={plan.price[interval].lookup_key}
-          />
-          <input type="hidden" name="interval" value={interval} />
-          <input type="hidden" name="success_url" value="/membership/success" />
-          <input type="hidden" name="cancel_url" value="/membership/cancel" />
+      <CardFooter className="bg-inherit border-none flex flex-col items-center gap-2">
+        {isLoggedIn && isCurrentPlan && (
+          <div className="flex items-center justify-center gap-1.5 text-base text-muted-foreground w-full">
+            <BadgeInfoIcon className="size-5" />
+            <span>Your current plan</span>
+          </div>
+        )}
+        {!isFreePlan && currentPlan?.name !== "free" ? (
           <Button
-            type="submit"
-            variant={plan.highlight ? "default" : "outline"}
+            type="button"
+            variant="secondary"
+            className={"w-full shadow-sm"}
+            render={
+              <Link to="/admin/user/current-plan">Manage Subscription</Link>
+            }
+          ></Button>
+        ) : isFreePlan ? (
+          <Button
+            type="button"
+            variant="outline"
             className="w-full shadow-sm"
-            // onClick={clickHandler}
+            disabled={isLoggedIn}
           >
             {plan.cta}
           </Button>
-        </Form>
+        ) : (
+          <Form method="POST" className="w-full">
+            <input type="hidden" name="plan" value={plan.name} />
+            <input
+              type="hidden"
+              name="lookup_key"
+              value={plan.price[interval].lookup_key}
+            />
+            <input type="hidden" name="interval" value={interval} />
+            <input
+              type="hidden"
+              name="success_url"
+              value="/membership/success"
+            />
+            <input type="hidden" name="cancel_url" value="/membership/cancel" />
+            <Button
+              type="submit"
+              variant={plan.highlight ? "default" : "outline"}
+              className="w-full shadow-sm"
+              // onClick={clickHandler}
+            >
+              {plan.cta}
+            </Button>
+          </Form>
+        )}
       </CardFooter>
     </Card>
   );

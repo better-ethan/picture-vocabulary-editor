@@ -6,12 +6,20 @@ import { auth } from "~/lib/auth.js";
 import { loggedInProcedure, publicProcedure, router } from "~/trpc.js";
 
 export const userRouter = router({
-  getCurrentUser: loggedInProcedure.query(async ({ ctx }) => {
+  getCurrentUser: publicProcedure.query(async ({ ctx }) => {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(ctx.req.headers),
+    });
+
+    if (!session?.user) {
+      return null;
+    }
+
     return {
-      id: ctx.user.id as string,
-      name: ctx.user.name as string,
-      email: ctx.user.email as string,
-      description: ctx.user.description as string | null,
+      id: session.user.id as string,
+      name: session.user.name as string,
+      email: session.user.email as string,
+      description: session.user.description as string | null,
     };
   }),
   getUserById: publicProcedure
