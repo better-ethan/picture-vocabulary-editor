@@ -7,12 +7,19 @@ import {
   useSearchParams,
 } from "react-router";
 import { createTrpcClient } from "@/util";
-import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/Empty";
+import {
+  EmptyContent,
+  EmptyTitle,
+  Empty,
+  EmptyHeader,
+  EmptyDescription,
+  EmptyMedia,
+} from "@/components/ui/Empty";
 import type { Route } from "./+types/list";
 import { Text } from "@/components/ui/Text";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { ArrowUpRightIcon } from "lucide-react";
+import { ArrowUpRightIcon, CloudAlertIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -57,9 +64,24 @@ export default function Page() {
 
       {data.length === 0 ? (
         <div className="flex justify-center mt-16">
-          <Empty>
+          <Empty className="w-full max-w-md shadow-sm">
+            <EmptyHeader>
+              <EmptyMedia variant="icon" className="bg-inherit">
+                <CloudAlertIcon className="size-10" />
+              </EmptyMedia>
+              <EmptyTitle className="text-xl">
+                No Visual Vocabulary Yet
+              </EmptyTitle>
+              <EmptyDescription className="">
+                You haven't created any visual vocabulary yet. Create your first
+                one and share your knowledge with others!
+              </EmptyDescription>
+            </EmptyHeader>
             <EmptyContent>
-              <EmptyTitle>No Picture Lessons Yet</EmptyTitle>
+              <Button
+                className="shadow-sm"
+                render={<Link to="/admin/picture-lesson/create">Create</Link>}
+              ></Button>
             </EmptyContent>
           </Empty>
         </div>
