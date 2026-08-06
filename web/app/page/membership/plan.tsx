@@ -190,9 +190,9 @@ function PlanCard({
           <CardTitle className="uppercase">{plan.name}</CardTitle>
           <CardAction>
             {plan.highlight && (
-              <Badge className="bg-primary text-accent-foreground">
+              <span className="bg-primary text-accent-foreground px-2 py-1 rounded">
                 Recommended
-              </Badge>
+              </span>
             )}
           </CardAction>
         </div>
