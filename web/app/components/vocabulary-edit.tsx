@@ -2308,15 +2308,7 @@ function WordList({ words }: { words: WordItem[] }) {
                 {(mode === "view" ||
                   mode === "fillIn" ||
                   (mode === "dictation" && hasCheckedAnswer)) && (
-                  <Badge
-                    variant="default"
-                    className={cn(
-                      "w-6 h-6 flex items-center justify-center shrink-0 rounded-full p-0",
-                      "bg-white"
-                    )}
-                  >
-                    {number}.
-                  </Badge>
+                  <span>{number}.</span>
                 )}
                 {(mode === "fillIn" || mode === "dictation") && (
                   <Input
