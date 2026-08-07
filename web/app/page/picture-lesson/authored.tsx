@@ -57,8 +57,14 @@ export default function Page() {
       toast.success("Deleted successfully!");
       // Remove the deleted query parameter from the URL
       navigate(location.pathname, { replace: true });
+    } else if (searchParams.get("limit_reached") === "true") {
+      toast.error(
+        `You've reached the free plan limit (${total} / ${FREE_LIMIT} vocabs). Upgrade to Pro to create more vocabs.`
+      );
+      // Remove the limit_reached query parameter from the URL
+      navigate(location.pathname, { replace: true });
     }
-  }, []);
+  }, [location.search, state]);
 
   const isPro = subscriptionStatus && subscriptionStatus.status === "active";
   const isAtLimit = !isPro && data.length >= FREE_LIMIT;
@@ -104,14 +110,14 @@ export default function Page() {
               className={cn(
                 "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-2 rounded-lg mb-4 text-sm",
                 isAtLimit
-                  ? "bg-amber-50 border border-amber-300 text-amber-800"
+                  ? "bg-amber-50 border border-amber-400 text-amber-800"
                   : "bg-blue-50 border border-blue-200 text-blue-700"
               )}
             >
               <span>
                 {isAtLimit
-                  ? `🔒 You've reached the free plan limit (${FREE_LIMIT} lessons).`
-                  : `Free plan: ${total} / ${FREE_LIMIT} lessons used.`}
+                  ? `🔒 You've reached the free plan limit (${total} / ${FREE_LIMIT} vocabs).`
+                  : `Free plan: ${total} / ${FREE_LIMIT} vocabs used.`}
               </span>
               <Button
                 variant="secondary"

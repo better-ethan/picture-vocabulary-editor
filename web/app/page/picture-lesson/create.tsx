@@ -4,7 +4,12 @@ import {
   type CanvasContent,
 } from "@/components/vocabulary-edit";
 import { toast } from "sonner";
-import { useActionData, useLoaderData, useNavigate } from "react-router";
+import {
+  redirect,
+  useActionData,
+  useLoaderData,
+  useNavigate,
+} from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/create";
 import { Text } from "@/components/ui/Text";
@@ -14,6 +19,16 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
 
   const category = await trpc.category.list.query();
+
+  const subscriptionStatus = await trpc.stripe.getSubscriptionStatus.query();
+
+  const { total } = await trpc.pictureLesson.authored.query({});
+
+  const isPro = subscriptionStatus && subscriptionStatus.status === "active";
+
+  if (!isPro && total >= 3) {
+    return redirect("/admin/picture-lesson/authored?limit_reached=true");
+  }
 
   return {
     category,
