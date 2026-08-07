@@ -24,16 +24,25 @@ import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
+const FREE_LIMIT = 3;
+
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
 
-  const result = await trpc.pictureLesson.authored.query({});
+  const vocab = await trpc.pictureLesson.authored.query({});
 
-  return result;
+  const subscriptionStatus = await trpc.stripe.getSubscriptionStatus.query();
+
+  return {
+    vocab,
+    subscriptionStatus,
+  };
 };
 
 export default function Page() {
-  const data = useLoaderData<typeof loader>();
+  const { vocab, subscriptionStatus } = useLoaderData<typeof loader>();
+
+  const { data, page, limit, total } = vocab;
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,6 +59,9 @@ export default function Page() {
       navigate(location.pathname, { replace: true });
     }
   }, []);
+
+  const isPro = subscriptionStatus && subscriptionStatus.status === "active";
+  const isAtLimit = !isPro && data.length >= FREE_LIMIT;
 
   return (
     <div className="max-w-5xl w-full h-full flex flex-col">
@@ -86,51 +98,74 @@ export default function Page() {
           </Empty>
         </div>
       ) : (
-        <div
-          className={cn(
-            "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 overflow-y-auto p-2",
-            "justify-items-center w-full"
+        <div>
+          {!isPro && (
+            <div
+              className={cn(
+                "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-2 rounded-lg mb-4 text-sm",
+                isAtLimit
+                  ? "bg-amber-50 border border-amber-300 text-amber-800"
+                  : "bg-blue-50 border border-blue-200 text-blue-700"
+              )}
+            >
+              <span>
+                {isAtLimit
+                  ? `🔒 You've reached the free plan limit (${FREE_LIMIT} lessons).`
+                  : `Free plan: ${total} / ${FREE_LIMIT} lessons used.`}
+              </span>
+              <Button
+                variant="secondary"
+                className="shadow-sm text-sm"
+                render={<Link to="/membership/plan">✨ Upgrade to Pro</Link>}
+              />
+            </div>
           )}
-        >
-          {data.map((item, index) => (
-            <Card className="w-full shadow-sm" key={index}>
-              <CardContent className="flex items-center justify-center pb-0">
-                <img className="w-full h-auto" src={item.thumbnail} />
-              </CardContent>
-              <CardHeader className="pb-0">
-                <CardTitle className="text-base font-normal">
-                  {item.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
-                <Button
-                  size={"sm"}
-                  render={
-                    <Link
-                      to={`/admin/picture-lesson/${item.id}/${item.slug}/edit`}
-                    >
-                      Edit
-                    </Link>
-                  }
-                  className="shadow-sm"
-                ></Button>
-                <Button
-                  size={"sm"}
-                  variant={"secondary"}
-                  render={
-                    <Link
-                      to={`/picture-lesson/${item.id}/${item.slug}`}
-                      target="_blank"
-                    >
-                      View
-                      <ArrowUpRightIcon className="size-5" />
-                    </Link>
-                  }
-                  className="shadow-sm"
-                ></Button>
-              </CardContent>
-            </Card>
-          ))}
+          <div
+            className={cn(
+              "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 overflow-y-auto p-2",
+              "justify-items-center w-full"
+            )}
+          >
+            {data.map((item, index) => (
+              <Card className="w-full shadow-sm" key={index}>
+                <CardContent className="flex items-center justify-center pb-0">
+                  <img className="w-full h-auto" src={item.thumbnail} />
+                </CardContent>
+                <CardHeader className="pb-0">
+                  <CardTitle className="text-base font-normal">
+                    {item.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
+                  <Button
+                    size={"sm"}
+                    render={
+                      <Link
+                        to={`/admin/picture-lesson/${item.id}/${item.slug}/edit`}
+                      >
+                        Edit
+                      </Link>
+                    }
+                    className="shadow-sm"
+                  ></Button>
+                  <Button
+                    size={"sm"}
+                    variant={"secondary"}
+                    render={
+                      <Link
+                        to={`/picture-lesson/${item.id}/${item.slug}`}
+                        target="_blank"
+                      >
+                        View
+                        <ArrowUpRightIcon className="size-5" />
+                      </Link>
+                    }
+                    className="shadow-sm"
+                  ></Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       )}
     </div>

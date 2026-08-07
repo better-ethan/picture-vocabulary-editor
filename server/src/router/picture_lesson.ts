@@ -1,4 +1,4 @@
-import { desc, eq, and, inArray, isNull } from "drizzle-orm";
+import { desc, eq, and, inArray, isNull, count } from "drizzle-orm";
 import { z } from "zod";
 import { category, db, pictureLesson, user } from "@package/drizzle";
 import { loggedInProcedure, publicProcedure, router } from "../trpc.js";
@@ -183,21 +183,42 @@ export const pictureLessonRouter = router({
     }),
 
   authored: loggedInProcedure
-    .input(z.object({ status: z.enum(["draft", "published"]).optional() }))
+    .input(
+      z.object({
+        status: z.enum(["draft", "published"]).optional(),
+        page: z.number().int().min(1).default(1),
+        limit: z.number().int().min(1).max(48).default(12),
+      })
+    )
     .query(async ({ input, ctx }) => {
+      const { page, limit, status } = input;
+      const offset = (page - 1) * limit;
+
+      const whereCondition = and(
+        eq(pictureLesson.userId, ctx.user.id),
+        isNull(pictureLesson.deletedAt),
+        input.status ? eq(pictureLesson.status, input.status) : undefined
+      );
+
       const rows = await db
         .select()
         .from(pictureLesson)
-        .where(
-          and(
-            eq(pictureLesson.userId, ctx.user.id),
-            isNull(pictureLesson.deletedAt),
-            input.status ? eq(pictureLesson.status, input.status) : undefined
-          )
-        )
-        .orderBy(desc(pictureLesson.createdAt));
+        .where(whereCondition)
+        .orderBy(desc(pictureLesson.createdAt))
+        .limit(limit)
+        .offset(offset);
 
-      return rows;
+      const [{ total }] = await db
+        .select({ total: count() })
+        .from(pictureLesson)
+        .where(whereCondition);
+
+      return {
+        data: rows,
+        total: Number(total),
+        page,
+        limit,
+      };
     }),
 
   preview: loggedInProcedure
