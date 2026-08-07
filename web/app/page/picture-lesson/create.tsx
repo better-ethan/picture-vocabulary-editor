@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import type { Route } from "./+types/create";
 import { Text } from "@/components/ui/Text";
 import { reuploadPixabayImages } from "@/util/image";
+import { FREE_LIMIT } from "@package/shared";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -26,7 +27,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
   const isPro = subscriptionStatus && subscriptionStatus.status === "active";
 
-  if (!isPro && total >= 3) {
+  if (!isPro && total >= FREE_LIMIT) {
     return redirect("/admin/picture-lesson/authored?limit_reached=true");
   }
 

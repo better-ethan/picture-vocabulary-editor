@@ -23,8 +23,7 @@ import { ArrowUpRightIcon, CloudAlertIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
-
-const FREE_LIMIT = 3;
+import { FREE_LIMIT } from "@package/shared";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
