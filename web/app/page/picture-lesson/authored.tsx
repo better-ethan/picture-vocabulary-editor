@@ -132,8 +132,18 @@ export default function Page() {
             )}
           >
             {data.map((item, index) => (
-              <Card className="w-full shadow-sm" key={index}>
-                <CardContent className="flex items-center justify-center pb-0">
+              <Card className="w-full shadow-sm pt-2" key={index}>
+                <CardContent className="flex flex-col gap-1 justify-center items-center pb-0">
+                  <span
+                    className={cn(
+                      "text-xs w-fit px-2 py-0.5 rounded-full font-medium self-end",
+                      item.status === "published"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-200 text-muted-foreground"
+                    )}
+                  >
+                    {item.status === "published" ? "🌍 Published" : "📝 Draft"}
+                  </span>
                   <img className="w-full h-auto" src={item.thumbnail} />
                 </CardContent>
                 <CardHeader className="pb-0">
