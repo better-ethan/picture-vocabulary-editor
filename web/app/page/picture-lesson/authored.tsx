@@ -66,7 +66,7 @@ export default function Page() {
         <div className="flex justify-center mt-16">
           <Empty className="w-full max-w-md shadow-sm">
             <EmptyHeader>
-              <EmptyMedia variant="icon" className="bg-inherit">
+              <EmptyMedia variant="default" className="bg-inherit">
                 <CloudAlertIcon className="size-10" />
               </EmptyMedia>
               <EmptyTitle className="text-xl">
