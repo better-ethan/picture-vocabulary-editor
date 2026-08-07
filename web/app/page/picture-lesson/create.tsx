@@ -50,10 +50,21 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   const categoryIdString = formData.get("categoryId") as string;
 
+  const trpc = createTrpcClient(request);
+
+  // Check if free users have reached the limit
+  const subscriptionStatus = await trpc.stripe.getSubscriptionStatus.query();
+  const { total } = await trpc.pictureLesson.authored.query({});
+
+  const isPro = subscriptionStatus && subscriptionStatus.status === "active";
+
+  if (!isPro && total >= FREE_LIMIT) {
+    return redirect("/admin/picture-lesson/authored?limit_reached=true");
+  }
+
   // download and re-upload images to our R2, then replace the src in content
   const updatedContent = await reuploadPixabayImages(JSON.parse(content));
 
-  const trpc = createTrpcClient(request);
   const result = await trpc.pictureLesson.create.mutate({
     id,
     title,

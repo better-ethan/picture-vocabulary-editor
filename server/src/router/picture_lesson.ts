@@ -1,9 +1,17 @@
 import { desc, eq, and, inArray, isNull, count } from "drizzle-orm";
 import { z } from "zod";
-import { category, db, pictureLesson, user } from "@package/drizzle";
+import {
+  category,
+  db,
+  pictureLesson,
+  subscription,
+  user,
+} from "@package/drizzle";
 import { loggedInProcedure, publicProcedure, router } from "../trpc.js";
 import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../lib/auth.js";
+import { FREE_LIMIT } from "@package/shared";
+import { TRPCError } from "@trpc/server";
 
 export const pictureLessonRouter = router({
   list: publicProcedure
@@ -66,6 +74,35 @@ export const pictureLessonRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const [subscriptionStatus] = await db
+        .select()
+        .from(subscription)
+        .where(eq(subscription.referenceId, ctx.user.id))
+        .limit(1);
+
+      const isPro =
+        subscriptionStatus && subscriptionStatus.status === "active";
+
+      if (!isPro) {
+        const [{ total }] = await db
+          .select({ total: count() })
+          .from(pictureLesson)
+          .where(
+            and(
+              eq(pictureLesson.userId, ctx.user.id),
+              isNull(pictureLesson.deletedAt)
+            )
+          );
+
+        if (Number(total) >= FREE_LIMIT) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You've reached the free plan limit. Upgrade to Pro to create more vocabs.",
+          });
+        }
+      }
+
       const [row] = await db
         .insert(pictureLesson)
         .values({
