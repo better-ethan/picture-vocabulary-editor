@@ -69,7 +69,7 @@ export default function Page() {
   const isAtLimit = !isPro && data.length >= FREE_LIMIT;
 
   return (
-    <div className="max-w-5xl w-full h-full flex flex-col">
+    <div className="max-w-5xl w-full h-full overflow-y-auto flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <Text as={"h2"} className="mb-4 text-start">
           My Authored
@@ -128,7 +128,7 @@ export default function Page() {
           <div
             className={cn(
               "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 overflow-y-auto p-2",
-              "justify-items-center w-full"
+              "justify-items-center w-full "
             )}
           >
             {data.map((item, index) => (
