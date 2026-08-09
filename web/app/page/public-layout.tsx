@@ -375,7 +375,13 @@ export default function PublicLayout() {
             </Text>
           </Link>
         </div>
-        <div>
+        <div className="flex flex-col md:flex-row gap-4">
+          <Link
+            to="/privacy-policy"
+            className="hover:underline hover:text-blue-600"
+          >
+            Privacy Policy
+          </Link>
           <Link
             to="/contact-us"
             className="hover:underline hover:text-blue-600"

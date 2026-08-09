@@ -29,6 +29,7 @@ export default [
     route("/membership/cancel", "page/membership/cancel.tsx"),
 
     route("/contact-us", "page/contact-us.tsx"),
+    route("/privacy-policy", "page/privacy-policy.tsx"),
 
     route("/blog", "page/blog/list.tsx", { index: true }),
     route("/blog/:slug", "page/blog/index.tsx"),
