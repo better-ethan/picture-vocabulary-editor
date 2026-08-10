@@ -3,12 +3,10 @@ import { Text } from "@/components/ui/Text";
 export default function Page() {
   return (
     <div className="flex flex-col items-start gap-8 max-w-3xl mx-auto px-4 py-12">
-      {/* Header */}
       <div className="w-full border-b pb-4">
         <Text as="h2">About</Text>
       </div>
 
-      {/* Sections */}
       <section className="flex flex-col gap-3">
         <Text as="h3">📖 Learn English with Pictures and Audio</Text>
         <div className="text-muted-foreground leading-relaxed flex flex-col gap-3">
@@ -51,7 +49,6 @@ export default function Page() {
         </div>
       </section>
 
-      {/* CTA Block */}
       <section className="flex flex-col gap-3">
         <Text as="h3">🚀 Start Learning</Text>
         <div className="text-muted-foreground leading-relaxed flex flex-col gap-3">
