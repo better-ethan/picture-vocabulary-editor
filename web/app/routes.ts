@@ -31,6 +31,7 @@ export default [
     route("/contact-us", "page/contact-us.tsx"),
     route("/privacy-policy", "page/privacy-policy.tsx"),
     route("/terms-of-use", "page/terms-of-use.tsx"),
+    route("/about", "page/about.tsx"),
 
     route("/blog", "page/blog/list.tsx", { index: true }),
     route("/blog/:slug", "page/blog/index.tsx"),

@@ -383,6 +383,12 @@ export default function PublicLayout() {
         </div>
         <div className="flex flex-col items-center md:flex-row md:w-fit gap-6">
           <Link
+            to="/about"
+            className="px-4 py-1 hover:underline hover:text-blue-600 transition-colors duration-200"
+          >
+            About
+          </Link>
+          <Link
             to="/terms-of-use"
             className="px-4 py-1 hover:underline hover:text-blue-600 transition-colors duration-200"
           >
