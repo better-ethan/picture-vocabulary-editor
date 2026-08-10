@@ -262,7 +262,7 @@ export default function PublicLayout() {
               onOpenChange={setDrawerOpened}
             >
               <Drawer.Trigger asChild>
-                <Button size="icon">
+                <Button size="icon" className="shadow-sm">
                   <MenuIcon className="size-4" />
                 </Button>
               </Drawer.Trigger>
@@ -338,12 +338,13 @@ export default function PublicLayout() {
                         Profile
                       </Link>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
                         onClick={() => {
                           authClient.signOut();
                           setDrawerOpened(false);
                         }}
+                        className="shadow-sm"
                       >
                         Log out
                       </Button>
@@ -366,7 +367,12 @@ export default function PublicLayout() {
       <main className="flex-1 px-4 pt-4 pb-8 max-w-screen-2xl mx-auto w-full">
         <Outlet />
       </main>
-      <footer className="flex flex-col md:flex-row md:justify-between gap-4 my-8 max-w-5xl mx-auto w-full">
+      <footer
+        className={cn(
+          "flex flex-col items-center md:flex-row md:justify-between gap-8",
+          "my-8 max-w-5xl mx-auto w-full px-4"
+        )}
+      >
         <div>
           <Link to="/" className="flex cursor-pointer items-center gap-2">
             <img src="/images/logo.webp" className="h-8 w-auto" />
@@ -375,22 +381,22 @@ export default function PublicLayout() {
             </Text>
           </Link>
         </div>
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col items-center md:flex-row md:w-fit gap-6">
           <Link
             to="/terms-of-use"
-            className="hover:underline hover:text-blue-600"
+            className="px-4 py-1 hover:underline hover:text-blue-600 transition-colors duration-200"
           >
             Terms of Use
           </Link>
           <Link
             to="/privacy-policy"
-            className="hover:underline hover:text-blue-600"
+            className="px-4 py-1 hover:underline hover:text-blue-600 transition-colors duration-200"
           >
             Privacy Policy
           </Link>
           <Link
             to="/contact-us"
-            className="hover:underline hover:text-blue-600"
+            className="px-4 py-1 hover:underline hover:text-blue-600 transition-colors duration-200"
           >
             Contact Us
           </Link>
