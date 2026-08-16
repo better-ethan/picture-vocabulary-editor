@@ -12,7 +12,7 @@ import {
 } from "react-router";
 import { useEffect } from "react";
 import type { Route } from "./+types/create";
-import { Text } from "@/components/ui/Text";
+import { Text } from "@/components/ui/text";
 import { reuploadPixabayImages } from "@/util/image";
 import { FREE_LIMIT } from "@package/shared";
 

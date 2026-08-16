@@ -14,11 +14,11 @@ import {
   EmptyHeader,
   EmptyDescription,
   EmptyMedia,
-} from "@/components/ui/Empty";
+} from "@/components/ui/empty";
 import type { Route } from "./+types/list";
-import { Text } from "@/components/ui/Text";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Text } from "@/components/ui/text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ArrowUpRightIcon, CloudAlertIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";

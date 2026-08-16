@@ -18,8 +18,8 @@ import {
   User2Icon,
   Volume2,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Text } from "@/components/ui/Text";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 

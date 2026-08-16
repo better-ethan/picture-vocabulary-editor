@@ -21,7 +21,7 @@ import {
 } from "react-konva";
 import Konva from "konva";
 import useImage from "use-image";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
   CloudUploadIcon,
   ImageIcon,
@@ -46,15 +46,15 @@ import {
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/Textarea";
-import { Text } from "@/components/ui/Text";
+import { Textarea } from "@/components/ui/textarea";
+import { Text } from "@/components/ui/text";
 import {
   Select,
   SelectTrigger,
   SelectItem,
   SelectValue,
   SelectContent,
-} from "@/components/ui/Select";
+} from "@/components/ui/select";
 import { useTRPC } from "@/util";
 import {
   Form,
@@ -65,12 +65,12 @@ import {
   useSubmit,
 } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Field, FieldGroup } from "@/components/ui/Field";
+import { Field, FieldGroup } from "@/components/ui/field";
 import { toast } from "sonner";
-import { Loader } from "@/components/ui/Loader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Loader } from "@/components/ui/loader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useKonvaSnapping } from "use-konva-snapping";
-import { Label } from "@/components/ui/Label";
+import { Label } from "@/components/ui/label";
 import Cropper, { type Area } from "react-easy-crop";
 import {
   Dialog,
@@ -81,17 +81,17 @@ import {
   DialogFooter,
   DialogClose,
   DialogDescription,
-} from "@/components/ui/Dialog";
-import { Menu } from "@/components/ui/Menu";
+} from "@/components/ui/dialog";
+import { Menu } from "@/components/ui/menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 
 import nanoid from "@/lib/nanoid";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/Tooltip";
+} from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,

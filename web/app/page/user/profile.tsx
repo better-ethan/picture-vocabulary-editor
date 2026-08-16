@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/Textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
 import {
   CheckIcon,
@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import type { Route } from "./+types/profile";
 import { createTrpcClient } from "@/util";
 import { redirect, useFetcher, useLoaderData } from "react-router";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/Field";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);

@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/Label";
-import { Text } from "@/components/ui/Text";
+import { Label } from "@/components/ui/label";
+import { Text } from "@/components/ui/text";
 import { Form, Link } from "react-router";
 import type { Route } from "./+types/signup";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Field } from "@/components/ui/Field";
+import { Field } from "@/components/ui/field";
 
 export default function Page() {
   const [email, setEmail] = useState("");

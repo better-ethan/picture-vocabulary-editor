@@ -10,15 +10,15 @@ import {
 
 import type { Route } from "./+types/root";
 import "@/main.css";
-import { Toaster } from "@/components/ui/Sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { TRPCProvider, trpc } from "@/util";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { Drawer } from "@/components/ui/Drawer";
+import { Text } from "@/components/ui/text";
+import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
 import { HamburgerIcon, MenuIcon } from "lucide-react";
-import { TooltipProvider } from "@/components/ui/Tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

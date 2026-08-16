@@ -1,7 +1,7 @@
 import type { Route } from "./+types/list";
 import { createTrpcClient } from "@/util";
 import { Link, useLoaderData } from "react-router";
-import { Text } from "@/components/ui/Text";
+import { Text } from "@/components/ui/text";
 import {
   Card,
   CardContent,
@@ -9,8 +9,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);

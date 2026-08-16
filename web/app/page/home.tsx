@@ -2,15 +2,15 @@ import { createTrpcClient, trpc } from "@/util";
 import type { Route } from "./+types/home";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import { Text } from "@/components/ui/Text";
+import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { Link, useLoaderData } from "react-router";
 import {
   VocabularyCanvas,
   type CanvasContent,
 } from "@/components/vocabulary-edit";
-import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export function meta({}: Route.MetaArgs) {
   return [

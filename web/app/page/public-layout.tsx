@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/Button";
-import { Drawer } from "@/components/ui/Drawer";
-import { Text } from "@/components/ui/Text";
+import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
+import { Text } from "@/components/ui/text";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/Popover";
+} from "@/components/ui/popover";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { ChevronDownIcon, Loader2, MenuIcon, User2Icon } from "lucide-react";

@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/Button";
-import { Drawer } from "@/components/ui/Drawer";
+import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/Tooltip";
+} from "@/components/ui/tooltip";
 
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";

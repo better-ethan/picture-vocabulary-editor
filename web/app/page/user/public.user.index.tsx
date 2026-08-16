@@ -7,11 +7,11 @@ import {
   useSearchParams,
 } from "react-router";
 import { createTrpcClient } from "@/util";
-import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/Empty";
+import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/empty";
 import type { Route } from "./+types/public.user.index";
-import { Text } from "@/components/ui/Text";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Text } from "@/components/ui/text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ArrowUpRightIcon, HandIcon, UserRoundPenIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";

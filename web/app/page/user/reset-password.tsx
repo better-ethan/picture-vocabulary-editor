@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
@@ -7,8 +7,8 @@ import { Form, useLoaderData, useNavigate } from "react-router";
 import type { Route } from "./+types/reset-password";
 import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Label } from "@/components/ui/Label";
-import { Field } from "@/components/ui/Field";
+import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);

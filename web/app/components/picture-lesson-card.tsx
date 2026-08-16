@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Text } from "@/components/ui/Text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
 import type { PictureLesson } from "@/types";
 import { Link } from "react-router";
 

@@ -1,6 +1,6 @@
 import { createTrpcClient } from "@/util";
 import { useLoaderData } from "react-router";
-import { Text } from "@/components/ui/Text";
+import { Text } from "@/components/ui/text";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import privacyPolicyContent from "@/content/legal/privacy-policy.md?raw";

@@ -1,9 +1,9 @@
 import { Link, useLoaderData } from "react-router";
 import { createTrpcClient } from "@/util";
-import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/Empty";
+import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/empty";
 import type { Route } from "./+types/index";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Text } from "@/components/ui/Text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
 import { PictureLessonCard } from "@/components/picture-lesson-card";
 import type { PictureLesson } from "@/types";
 

@@ -19,11 +19,11 @@ import {
   User2Icon,
   Volume2,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Text } from "@/components/ui/Text";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const id = params.id;
