@@ -86,10 +86,10 @@ export default function Page() {
       <Card className="w-full max-w-100 shadow-sm">
         <CardHeader>
           {signUpSuccess ? (
-            <CardTitle>Account Created!</CardTitle>
+            <CardTitle className="text-2xl">Account Created!</CardTitle>
           ) : (
             <>
-              <CardTitle>Create your Account</CardTitle>
+              <CardTitle className="text-2xl">Create your Account</CardTitle>
               <Text>
                 Already have an account?{" "}
                 <Link

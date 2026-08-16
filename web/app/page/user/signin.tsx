@@ -51,7 +51,7 @@ export default function Page() {
     <div className="flex h-full items-center justify-center">
       <Card className="w-full max-w-100 shadow-sm">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+          <CardTitle className="text-2xl">Sign In</CardTitle>
           <Text>
             Don't have an account?{" "}
             <Link to="/signup" className="ml-2 text-blue-600 hover:underline">
