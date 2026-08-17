@@ -3,7 +3,7 @@ import { createTRPCContext } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "@app/server";
 import { redirect } from "react-router";
 
-const TRPC_URL = import.meta.env.SERVER_URL || "http://127.0.0.1:4000/trpc";
+const TRPC_URL = process.env.SERVER_URL || "http://127.0.0.1:4000/trpc";
 export const createTrpcClient = (request?: Request) =>
   createTRPCClient<AppRouter>({
     links: [

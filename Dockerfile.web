@@ -9,6 +9,7 @@ RUN corepack enable
   COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
   COPY web/package.json ./web/
   COPY package/drizzle/package.json ./package/drizzle/
+  COPY package/shared/package.json ./package/shared/
   COPY server/package.json ./server/
   
   RUN pnpm install --frozen-lockfile
@@ -16,11 +17,13 @@ RUN corepack enable
   # build stage
   FROM deps AS builder
   WORKDIR /app
+  COPY package/shared ./package/shared
   COPY package/drizzle ./package/drizzle
   COPY web ./web
   COPY tsconfig.json ./
   COPY server ./server
   
+  RUN pnpm --filter @package/shared run build
   RUN pnpm --filter @package/drizzle run build
   RUN pnpm --filter @app/web run build
   
@@ -35,9 +38,11 @@ RUN corepack enable
   COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
   COPY web/package.json ./web/
   COPY package/drizzle/package.json ./package/drizzle/
+  COPY package/shared/package.json ./package/shared/
   
   RUN pnpm install --frozen-lockfile --prod
   
+  COPY --from=builder /app/package/shared/dist ./package/shared/dist
   COPY --from=builder /app/web/build ./web/build
   COPY --from=builder /app/web/server.js ./web/server.js
   

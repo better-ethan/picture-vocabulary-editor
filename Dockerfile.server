@@ -11,17 +11,20 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY server/package.json ./server/
 COPY package/drizzle/package.json ./package/drizzle/
+COPY package/shared/package.json ./package/shared/
 
 RUN pnpm install --frozen-lockfile
 
 # build stage
 FROM deps AS builder
 WORKDIR /app
+COPY package/shared ./package/shared
 COPY package/drizzle ./package/drizzle
 COPY drizzle ./drizzle
 COPY server ./server
 COPY tsconfig.json ./
 
+RUN pnpm --filter @package/shared run build
 RUN pnpm --filter @package/drizzle run build
 RUN pnpm --filter @app/server run build
 
@@ -36,12 +39,14 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY server/package.json ./server/
 COPY package/drizzle/package.json ./package/drizzle/
+COPY package/shared/package.json ./package/shared/
 
 # install only production dependencies
 RUN pnpm install --frozen-lockfile --prod
 
 # copy build output
 COPY --from=builder /app/server/dist ./server/dist
+COPY --from=builder /app/package/shared/dist ./package/shared/dist
 COPY --from=builder /app/package/drizzle/dist ./package/drizzle/dist
 COPY --from=builder /app/drizzle ./drizzle
 

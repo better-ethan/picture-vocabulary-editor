@@ -1,7 +1,7 @@
 import { initTRPC } from "@trpc/server";
 import { ZodError } from "zod";
 import { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
-import { auth } from "~/lib/auth.js";
+import { auth } from "./lib/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
 
 export const createContext = ({ req, res }: CreateFastifyContextOptions) => {

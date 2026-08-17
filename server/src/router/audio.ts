@@ -2,13 +2,13 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { loggedInProcedure, publicProcedure, router } from "../trpc.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { s3 } from "~/lib/s3.js";
+import { s3 } from "../lib/s3.js";
 import {
   generateHash,
   generateSsmlText,
   text2Speech,
   voiceConfig,
-} from "~/lib/polly.js";
+} from "../lib/polly.js";
 import { db, textSpeech } from "@package/drizzle";
 
 export const audioRouter = router({

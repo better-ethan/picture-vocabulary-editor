@@ -9,8 +9,8 @@ import {
   verification,
   subscription,
 } from "@package/drizzle";
-import { sendMail } from "~/lib/email.js";
-import { stripe as stripeClient } from "~/lib/stripe.js";
+import { sendMail } from "./email.js";
+import { stripe as stripeClient } from "./stripe.js";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

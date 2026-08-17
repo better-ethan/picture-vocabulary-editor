@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { loggedInProcedure, router } from "../trpc.js";
 import { stripe } from "../lib/stripe.js";
-import { auth } from "~/lib/auth.js";
+import { auth } from "../lib/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
 import type Stripe from "stripe";
 import { db, subscription } from "@package/drizzle";

@@ -109,7 +109,7 @@ async function handleAuthRequest(
 
     return reply.send(response.body ? await response.text() : null);
   } catch (err) {
-    server.log.error("Authentication Error: ", err);
+    server.log.error(err, "Authentication Error");
     return reply
       .status(500)
       .send({ error: "Internal Server Error", code: "AUTH_FAILURE" });

@@ -2,8 +2,8 @@ import { db, user } from "@package/drizzle";
 import { fromNodeHeaders } from "better-auth/node";
 import { eq } from "drizzle-orm";
 import z from "zod";
-import { auth } from "~/lib/auth.js";
-import { loggedInProcedure, publicProcedure, router } from "~/trpc.js";
+import { auth } from "../lib/auth.js";
+import { loggedInProcedure, publicProcedure, router } from "../trpc.js";
 
 export const userRouter = router({
   getCurrentUser: publicProcedure.query(async ({ ctx }) => {
