@@ -53,4 +53,4 @@ COPY --from=builder /app/drizzle ./drizzle
 EXPOSE 4000
 
 # migrate & start the server
-CMD ["sh", "-c", "node package/drizzle/dist/migrate.js && node server/dist/server.js"]
+CMD ["sh", "-c", "node package/drizzle/dist/migrate.js && node package/drizzle/dist/src/seed/index.js && node server/dist/server.js"]
