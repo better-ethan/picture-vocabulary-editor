@@ -32,17 +32,13 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     id,
   });
 
-  if (!lesson) {
-    throw new Response("Not Found", { status: 404 });
-  }
-
   return { lesson };
 };
 
 export default function Page() {
   const { lesson } = useLoaderData<typeof loader>();
   const { images, labels, lines, words } =
-    lesson.content as unknown as CanvasContent;
+    (lesson?.content as unknown as CanvasContent) ?? {};
 
   return (
     <div className="flex flex-col items-center gap-12 p-4 max-w-5xl mx-auto">
@@ -57,13 +53,15 @@ export default function Page() {
           </Text>
         </div>
         <div className="w-full max-w-160">
-          <VocabularyCanvas
-            mode="view"
-            images={images}
-            labels={labels}
-            lines={lines}
-            words={words}
-          />
+          {lesson && (
+            <VocabularyCanvas
+              mode="view"
+              images={images}
+              labels={labels}
+              lines={lines}
+              words={words}
+            />
+          )}
         </div>
         <Button
           className="shadow-sm mt-6"
