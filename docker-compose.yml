@@ -53,12 +53,12 @@ services:
         - VITE_FRONTEND_BASE_URL=${VITE_FRONTEND_BASE_URL}
         - VITE_PIXABAY_API_KEY=${VITE_PIXABAY_API_KEY}
         - VITE_CLOUDFLARE_PUBLIC_URL=${VITE_CLOUDFLARE_PUBLIC_URL}
+        - VITE_API_BASE_URL=http://server:4000
+        - VITE_TRPC_SERVER_URL=http://server:4000/trpc
     restart: unless-stopped
     environment:
       NODE_ENV: production
       PORT: 3000
-      API_BASE_URL: http://server:4000
-      SERVER_URL: http://server:4000/trpc
       HOME_PAGE_VOCAB_ID: ${HOME_PAGE_VOCAB_ID}
     ports:
       - "3000:3000"

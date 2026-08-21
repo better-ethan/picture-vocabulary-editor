@@ -3,7 +3,8 @@ import { createTRPCContext } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "@app/server";
 import { redirect } from "react-router";
 
-const TRPC_URL = import.meta.env.SERVER_URL || "http://127.0.0.1:4000/trpc";
+const TRPC_URL =
+  import.meta.env.VITE_TRPC_SERVER_URL || "http://localhost:4000/trpc";
 export const createTrpcClient = (request?: Request) =>
   createTRPCClient<AppRouter>({
     links: [
@@ -27,7 +28,8 @@ export const trpc = createTrpcClient();
 export const { TRPCProvider, useTRPC, useTRPCClient } =
   createTRPCContext<AppRouter>();
 
-const API_BASE_URL = import.meta.env.API_BASE_URL ?? "http://localhost:4000";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
 export const fetchUtil = async ({
   host = API_BASE_URL,
