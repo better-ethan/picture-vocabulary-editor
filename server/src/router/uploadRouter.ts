@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../trpc.js";
+import { loggedInProcedure, router } from "../trpc.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "../lib/s3.js";
@@ -7,7 +7,7 @@ import { db, uploadImage, user } from "@package/drizzle";
 import { desc } from "drizzle-orm";
 
 export const uploadRouter = router({
-  getUploadUrl: publicProcedure
+  getUploadUrl: loggedInProcedure
     .input(
       z.object({
         fileName: z.string().min(1).max(255),
@@ -23,6 +23,8 @@ export const uploadRouter = router({
         key = `uploads/thumbnail/${input.fileName}`;
       } else if (input.source === "preview") {
         key = `uploads/preview/${input.fileName}`;
+      } else if (input.source === "audio") {
+        key = `uploads/audios/${input.fileName}`;
       }
 
       const command = new PutObjectCommand({
@@ -39,7 +41,7 @@ export const uploadRouter = router({
       };
     }),
 
-  create: publicProcedure
+  create: loggedInProcedure
     .input(z.object({ url: z.string().min(1).max(255) }))
     .mutation(async ({ input }) => {
       const [row] = await db
@@ -50,7 +52,7 @@ export const uploadRouter = router({
       return row;
     }),
 
-  list: publicProcedure.query(async () => {
+  list: loggedInProcedure.query(async () => {
     const rows = await db
       .select()
       .from(uploadImage)

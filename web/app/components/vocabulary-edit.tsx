@@ -42,6 +42,7 @@ import {
   MoveUpIcon,
   MoveDownIcon,
   ChevronDownIcon,
+  FileVolumeIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchImagesFromPixabay } from "@/lib/image-api";
@@ -1774,7 +1775,9 @@ function WordsPanel({
   autoLablesHandler: () => void;
 }) {
   const trpc = useTRPC();
-  const uploadMutation = useMutation(trpc.audio.getUploadUrl.mutationOptions());
+  const audioUploadMutation = useMutation(
+    trpc.audio.getUploadUrl.mutationOptions()
+  );
 
   const [loadingItem, setLoadingItem] = useState<number | null>(null);
 
@@ -1784,7 +1787,7 @@ function WordsPanel({
     setLoadingItem(item);
 
     try {
-      const { url } = await uploadMutation.mutateAsync({
+      const { url } = await audioUploadMutation.mutateAsync({
         text: wordMap[item].word,
       });
 
@@ -1792,6 +1795,46 @@ function WordsPanel({
     } catch (err) {
     } finally {
       setLoadingItem(null);
+    }
+  };
+
+  const uploadMutation = useMutation(
+    trpc.upload.getUploadUrl.mutationOptions()
+  );
+
+  const audioInputRef = useRef<HTMLInputElement>(null);
+  const [uploadTargetItem, setUploadTargetItem] = useState<number | null>(null);
+
+  const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || uploadTargetItem === null) return;
+
+    try {
+      const filename = `${wordMap[uploadTargetItem].word}-${Date.now()}.mp3`;
+      const { url, key } = await uploadMutation.mutateAsync({
+        fileName: filename,
+        fileType: file.type,
+        source: "audio",
+      });
+
+      await fetch(url, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      const publicUrl = `${import.meta.env.VITE_CLOUDFLARE_PUBLIC_URL}/${key}`;
+      onWordChange(uploadTargetItem, {
+        ...wordMap[uploadTargetItem],
+        audio: publicUrl,
+      });
+
+      toast.success("Audio uploaded successfully!");
+    } catch (err) {
+      toast.error("Audio upload failed.");
+    } finally {
+      e.target.value = "";
+      setUploadTargetItem(null);
     }
   };
 
@@ -1905,6 +1948,15 @@ function WordsPanel({
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
+                          setUploadTargetItem(item);
+                          audioInputRef.current?.click();
+                        }}
+                      >
+                        <FileVolumeIcon />
+                        Upload Audio
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
                           handleMoveUp(item);
                           triggerHighlight(item - 1);
                         }}
@@ -1959,6 +2011,16 @@ function WordsPanel({
                         ButtonIcon={RotateCwIcon}
                         text="Create Audio"
                       />
+
+                      <MenuItemButton
+                        ButtonIcon={FileVolumeIcon}
+                        text="Upload Audio"
+                        onClick={() => {
+                          setUploadTargetItem(item);
+                          audioInputRef.current?.click();
+                          setMenuSheetOpenedItem(null);
+                        }}
+                      />
                       <MenuItemButton
                         ButtonIcon={MoveUpIcon}
                         text="Move Up"
@@ -1993,6 +2055,13 @@ function WordsPanel({
               )}
             </div>
           ))}
+          <input
+            ref={audioInputRef}
+            type="file"
+            accept="audio/*"
+            hidden
+            onChange={handleAudioUpload}
+          />
         </div>
       </div>
     </div>
