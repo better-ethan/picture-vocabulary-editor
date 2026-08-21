@@ -3,13 +3,32 @@ import { createTRPCContext } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "@app/server";
 import { redirect } from "react-router";
 
-const TRPC_URL =
-  import.meta.env.VITE_TRPC_SERVER_URL || "http://localhost:4000/trpc";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
+
+const TRPC_SERVER_URL =
+  import.meta.env.VITE_TRPC_SERVER_URL ?? "http://localhost:4000/trpc";
+
+const getTrpcUrl = () => {
+  if (typeof window !== "undefined") {
+    const trpcServerDomain = new URL(TRPC_SERVER_URL).hostname;
+    // in the docker environment, the trpc client on the browser cannot access the trpc server on the docker network,
+    // so we need to replace the domain with the current hostname
+    if (trpcServerDomain !== window.location.hostname) {
+      return TRPC_SERVER_URL.replace(
+        trpcServerDomain,
+        window.location.hostname
+      );
+    }
+  }
+
+  return TRPC_SERVER_URL;
+};
 export const createTrpcClient = (request?: Request) =>
   createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: TRPC_URL,
+        url: getTrpcUrl(),
         headers: request
           ? { cookie: request.headers.get("cookie") ?? "" }
           : undefined,
@@ -27,9 +46,6 @@ export const trpc = createTrpcClient();
 
 export const { TRPCProvider, useTRPC, useTRPCClient } =
   createTRPCContext<AppRouter>();
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
 export const fetchUtil = async ({
   host = API_BASE_URL,
