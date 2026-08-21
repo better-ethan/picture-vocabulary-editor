@@ -6,7 +6,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
   const trpc = createTrpcClient(request);
 
   await trpc.pictureLesson.remove.mutate({
-    id: parseInt(params.id),
+    id: params.id,
   });
   return redirect("/admin/picture-lesson/authored?deleted=true");
 };
