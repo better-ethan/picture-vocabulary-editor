@@ -49,13 +49,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.web
+      args:
+        - VITE_FRONTEND_BASE_URL=${VITE_FRONTEND_BASE_URL}
+        - VITE_PIXABAY_API_KEY=${VITE_PIXABAY_API_KEY}
+        - VITE_CLOUDFLARE_PUBLIC_URL=${VITE_CLOUDFLARE_PUBLIC_URL}
     restart: unless-stopped
     environment:
       NODE_ENV: production
       PORT: 3000
+      API_BASE_URL: http://server:4000
       SERVER_URL: http://server:4000/trpc
-      VITE_FRONTEND_BASE_URL: ${VITE_FRONTEND_BASE_URL}
-      VITE_PIXABAY_API_KEY: ${VITE_PIXABAY_API_KEY}
+      HOME_PAGE_VOCAB_ID: ${HOME_PAGE_VOCAB_ID}
     ports:
       - "3000:3000"
     depends_on:

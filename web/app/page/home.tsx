@@ -23,8 +23,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
-  //FIXME: hardcode for now, should be dynamic
-  const id = "8uIOXvr4aY-3e5tu";
+  const id = process.env.HOME_PAGE_VOCAB_ID as string;
 
   const trpc = createTrpcClient(request);
 
