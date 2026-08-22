@@ -1,29 +1,55 @@
 "use client";
 
+import { ErrorIcon, SuccessIcon } from "@/components/partial";
+import {
+  CircleCheckIcon,
+  InfoIcon,
+  Loader2Icon,
+  OctagonXIcon,
+  TriangleAlertIcon,
+} from "lucide-react";
+import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
-function Toaster({ ...props }: ToasterProps) {
+const Toaster = ({ ...props }: ToasterProps) => {
+  const { theme = "system" } = useTheme();
+
   return (
     <Sonner
+      theme={theme as ToasterProps["theme"]}
+      className="toaster group"
+      icons={{
+        success: <SuccessIcon />,
+        info: <InfoIcon className="size-8" />,
+        warning: <TriangleAlertIcon className="size-8" />,
+        error: <ErrorIcon />,
+        loading: <Loader2Icon className="size-8 animate-spin" />,
+      }}
       toastOptions={{
+        // Fully unstyled so the neobrutalist recipe below owns every surface:
+        // hard offset shadow, 2px border, square corners, press-down buttons.
+        unstyled: true,
         classNames: {
           toast:
-            "h-auto w-full p-4 bg-background border group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border flex items-center relative",
-          description:
-            "group-[.toast]:text-muted-foreground ml-2 text-sm font-sans",
+            "group/toast relative flex w-(--width) items-center gap-3 rounded border-2 border-border bg-popover p-4 font-sans text-popover-foreground shadow-sm",
+          content: "flex min-w-0 flex-col gap-0.5",
+          title: "font-head text-sm font-medium",
+          description: "text-sm text-muted-foreground",
+          icon: "shrink-0",
           actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground py-1 px-2 bg-background border-border shadow hover:shadow-xs hover:translate-[2px] duration-200 transition-all focus:shadow-none border-2 ml-auto h-fit min-w-fit",
+            "ms-auto h-fit min-w-fit shrink-0 rounded border-2 border-border bg-primary px-2 py-1 text-xs font-medium text-primary-foreground shadow-sm transition-all duration-200 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none",
           cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-foreground py-1 px-2 text-sm bg-background border-border shadow hover:shadow-xs hover:translate-[2px] duration-200 transition-all focus:shadow-none border-2 ml-auto h-fit min-w-fit",
-          title: "ml-2 font-sans",
+            "ms-auto h-fit min-w-fit shrink-0 rounded border-2 border-border bg-muted px-2 py-1 text-xs font-medium text-foreground shadow-sm transition-all duration-200 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none",
           closeButton:
-            "absolute bg-background -top-1 -left-1 rounded-full p-0.5",
+            "absolute -top-2 -start-2 rounded-full border-2 border-border bg-background p-0.5 transition-colors hover:bg-muted",
+          success: "[&_[data-icon]]:text-chart-2",
+          warning: "[&_[data-icon]]:text-chart-1",
+          error: "[&_[data-icon]]:text-destructive text-destructive",
         },
-        unstyled: true,
       }}
       {...props}
     />
   );
-}
+};
 
 export { Toaster };
