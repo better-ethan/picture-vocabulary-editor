@@ -322,7 +322,7 @@ function PlanCardAction({
         variant="outline"
         className="w-full shadow-sm"
         disabled={isLoggedIn}
-        render={<Link to="/signup?redirect=/membership/plan" />}
+        render={<Link to="/signup?redirect=/pricing/plan" />}
       >
         {plan.cta}
       </Button>
@@ -368,9 +368,7 @@ function PlanCardAction({
             <AlertDialogCancel className="shadow-sm">Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="shadow-sm"
-              render={
-                <Link to="/signin?redirect=/membership/plan">Log in</Link>
-              }
+              render={<Link to="/signin?redirect=/pricing/plan">Log in</Link>}
             />
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -388,8 +386,8 @@ function PlanCardAction({
         value={plan.price[interval].lookup_key}
       />
       <input type="hidden" name="interval" value={interval} />
-      <input type="hidden" name="success_url" value="/membership/success" />
-      <input type="hidden" name="cancel_url" value="/membership/cancel" />
+      <input type="hidden" name="success_url" value="/pricing/success" />
+      <input type="hidden" name="cancel_url" value="/pricing/cancel" />
       <Button
         type="submit"
         variant={plan.highlight ? "default" : "outline"}

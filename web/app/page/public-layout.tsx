@@ -157,12 +157,12 @@ export default function PublicLayout() {
                   <NavigationMenuLink
                     render={
                       <Link
-                        to="/membership/plan"
+                        to="/pricing/plan"
                         className={cn("font-bold text-black")}
                       />
                     }
                   >
-                    Membership
+                    Pricing
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
@@ -315,11 +315,11 @@ export default function PublicLayout() {
                     )}
                   </div>
                   <Link
-                    to="/membership"
+                    to="/pricing"
                     className={cn(baseDrawerLinkClasses)}
                     onClick={() => setDrawerOpened(false)}
                   >
-                    Membership
+                    Pricing
                   </Link>
                   <Link
                     to="/blog"

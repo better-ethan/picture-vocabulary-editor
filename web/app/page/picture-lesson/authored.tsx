@@ -121,7 +121,7 @@ export default function Page() {
               <Button
                 variant="secondary"
                 className="shadow-sm text-sm"
-                render={<Link to="/membership/plan">✨ Upgrade to Pro</Link>}
+                render={<Link to="/pricing/plan">✨ Upgrade to Pro</Link>}
               />
             </div>
           )}
