@@ -39,6 +39,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { MainLogo } from "@/components/partial";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -113,16 +114,9 @@ export default function AdminLayout() {
         ) : (
           <div className="flex flex-col h-full">
             <div className="flex justify-between py-4">
-              <Button
-                render={
-                  <Link to="/" className="flex items-center">
-                    <img src="/images/logo.webp" className="h-5 w-auto" />
-                    VISUAL VOCAB
-                  </Link>
-                }
-                nativeButton={false}
-                variant="link"
-              ></Button>
+              <Link to="/" className="flex items-center">
+                <MainLogo className="h-8" />
+              </Link>
               <Button
                 variant={"link"}
                 size={"icon"}
