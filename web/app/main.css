@@ -51,23 +51,23 @@ body {
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.625rem;
   --background: #fff;
   --foreground: #000;
   --card: #fff;
-  --card-foreground: #000;
-  --primary: #ffdb33;
-  --primary-hover: #ffcc00;
+  --card-foreground: #252525;
+  --primary: #ff7a59;
+  --primary-hover: #f05a3c;
   --primary-foreground: #000;
-  --secondary: #000;
+  --secondary: #252525;
   --secondary-foreground: #fff;
-  --muted: #aeaeae;
-  --muted-foreground: #5a5a5a;
-  --accent: #fae583;
-  --accent-foreground: #000;
+  --muted: #a3a3a3;
+  --muted-foreground: #666;
+  --accent: #ffdb33;
+  --accent-foreground: #252525;
   --destructive: #e63946;
   --destructive-foreground: #fff;
-  --border: #000;
+  --border: #252525;
   --popover: #fff;
 }
 
