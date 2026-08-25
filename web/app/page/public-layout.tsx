@@ -62,7 +62,7 @@ export default function PublicLayout() {
   );
 
   const [drawerOpened, setDrawerOpened] = useState(false);
-  const [lessonsOpened, setLessonsOpened] = useState(false);
+  const [vocabsOpened, setvocabsOpened] = useState(false);
 
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -280,17 +280,17 @@ export default function PublicLayout() {
                         "flex items-center justify-between w-full text-left",
                         "hover:no-underline"
                       )}
-                      onClick={() => setLessonsOpened((v) => !v)}
+                      onClick={() => setvocabsOpened((v) => !v)}
                     >
                       Vocab
                       <ChevronDownIcon
                         className={cn(
                           "size-4 transition-transform duration-200",
-                          lessonsOpened && "rotate-180"
+                          vocabsOpened && "rotate-180"
                         )}
                       />
                     </button>
-                    {lessonsOpened && (
+                    {vocabsOpened && (
                       <div className="flex flex-col gap-2 pl-2 text-gray-800">
                         {category.map((cat) => (
                           <Link

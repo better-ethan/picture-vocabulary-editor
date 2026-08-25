@@ -27,17 +27,17 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
   const trpc = createTrpcClient(request);
 
-  const lesson = await trpc.pictureVocab.getById.query({
+  const vocab = await trpc.pictureVocab.getById.query({
     id,
   });
 
-  return { lesson };
+  return { vocab };
 };
 
 export default function Page() {
-  const { lesson } = useLoaderData<typeof loader>();
+  const { vocab } = useLoaderData<typeof loader>();
   const { images, labels, lines, words } =
-    (lesson?.content as unknown as CanvasContent) ?? {};
+    (vocab?.content as unknown as CanvasContent) ?? {};
 
   return (
     <div className="flex flex-col items-center gap-12 p-4 max-w-5xl mx-auto">
@@ -52,7 +52,7 @@ export default function Page() {
           </Text>
         </div>
         <div className="w-full max-w-160">
-          {lesson && (
+          {vocab && (
             <VocabularyCanvas
               mode="view"
               images={images}

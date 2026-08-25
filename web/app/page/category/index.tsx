@@ -13,13 +13,13 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const slug = params.slug;
 
   if (slug === "all") {
-    const lessons = await trpc.pictureVocab.list.query({
+    const vocabs = await trpc.pictureVocab.list.query({
       status: "published",
     });
 
     return {
       currentCategory: { name: "All Vocabs" },
-      lessons,
+      vocabs,
     };
   }
 
@@ -34,19 +34,19 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     });
   }
 
-  const lessons = await trpc.pictureVocab.list.query({
+  const vocabs = await trpc.pictureVocab.list.query({
     status: "published",
     categoryId: currentCategory.id,
   });
 
   return {
     currentCategory: { name: currentCategory.name },
-    lessons,
+    vocabs,
   };
 };
 
 export default function Page() {
-  const { currentCategory, lessons } = useLoaderData<typeof loader>();
+  const { currentCategory, vocabs } = useLoaderData<typeof loader>();
 
   return (
     <div className="p-4 container mx-auto max-w-4xl">
@@ -55,7 +55,7 @@ export default function Page() {
         Choose a vocab to start learning
       </p>
 
-      {lessons.length === 0 ? (
+      {vocabs.length === 0 ? (
         <div className="flex justify-center mt-16">
           <Empty className="shadow-sm">
             <EmptyContent>
@@ -65,8 +65,8 @@ export default function Page() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-          {lessons.map((item, index) => (
-            <PictureVocabCard key={index} lesson={item as PictureVocab} />
+          {vocabs.map((item, index) => (
+            <PictureVocabCard key={index} vocab={item as PictureVocab} />
           ))}
         </div>
       )}

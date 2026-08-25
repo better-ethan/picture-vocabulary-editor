@@ -37,12 +37,12 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
 
   return {
     currentUser,
-    lessons: result,
+    vocabs: result,
   };
 };
 
 export default function Page() {
-  const { currentUser, lessons } = useLoaderData<typeof loader>();
+  const { currentUser, vocabs } = useLoaderData<typeof loader>();
 
   return (
     <div className="p-4 mx-auto max-w-5xl gap-6 flex flex-col ">
@@ -56,7 +56,7 @@ export default function Page() {
         </div>
       </div>
 
-      {lessons.length === 0 ? (
+      {vocabs.length === 0 ? (
         <div className="flex justify-center mt-16">
           <Empty>
             <EmptyContent>
@@ -68,7 +68,7 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <div className="flex justify-end">
             <span>
-              {lessons.length} vocab{lessons.length > 1 ? "s" : ""}
+              {vocabs.length} vocab{vocabs.length > 1 ? "s" : ""}
             </span>
           </div>
           <div
@@ -76,8 +76,8 @@ export default function Page() {
               "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center"
             )}
           >
-            {lessons.map((item, index) => (
-              <PictureVocabCard key={index} lesson={item as PictureVocab} />
+            {vocabs.map((item, index) => (
+              <PictureVocabCard key={index} vocab={item as PictureVocab} />
             ))}
           </div>
         </div>
