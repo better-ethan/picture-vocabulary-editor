@@ -21,7 +21,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
 
   const trpc = createTrpcClient(request);
 
-  const result = await trpc.pictureLesson.getByIdAndSlug.query({
+  const result = await trpc.pictureVocab.getByIdAndSlug.query({
     id,
     slug,
   });
@@ -54,7 +54,7 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
 
   const updatedContent = await reuploadPixabayImages(JSON.parse(content));
 
-  const result = await trpc.pictureLesson.toggle.mutate({
+  const result = await trpc.pictureVocab.toggle.mutate({
     id,
     title,
     slug,

@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   category,
   db,
-  pictureLesson,
+  pictureVocab,
   subscription,
   user,
 } from "@package/drizzle";
@@ -13,7 +13,7 @@ import { auth } from "../lib/auth.js";
 import { FREE_LIMIT } from "@package/shared";
 import { TRPCError } from "@trpc/server";
 
-export const pictureLessonRouter = router({
+export const pictureVocabRouter = router({
   list: publicProcedure
     .input(
       z.object({
@@ -25,22 +25,22 @@ export const pictureLessonRouter = router({
     .query(async ({ input }) => {
       const rows = await db
         .select()
-        .from(pictureLesson)
+        .from(pictureVocab)
         .where(
           and(
-            isNull(pictureLesson.deletedAt),
+            isNull(pictureVocab.deletedAt),
             input.status !== undefined
-              ? eq(pictureLesson.status, input.status)
+              ? eq(pictureVocab.status, input.status)
               : undefined,
             input.userId !== undefined
-              ? eq(pictureLesson.userId, input.userId)
+              ? eq(pictureVocab.userId, input.userId)
               : undefined,
             input.categoryId !== undefined
-              ? eq(pictureLesson.categoryId, input.categoryId)
+              ? eq(pictureVocab.categoryId, input.categoryId)
               : undefined
           )
         )
-        .orderBy(desc(pictureLesson.createdAt));
+        .orderBy(desc(pictureVocab.createdAt));
 
       const userIds = [
         ...new Set(rows.map((row) => row.userId).filter(Boolean)),
@@ -86,11 +86,11 @@ export const pictureLessonRouter = router({
       if (!isPro) {
         const [{ total }] = await db
           .select({ total: count() })
-          .from(pictureLesson)
+          .from(pictureVocab)
           .where(
             and(
-              eq(pictureLesson.userId, ctx.user.id),
-              isNull(pictureLesson.deletedAt)
+              eq(pictureVocab.userId, ctx.user.id),
+              isNull(pictureVocab.deletedAt)
             )
           );
 
@@ -104,7 +104,7 @@ export const pictureLessonRouter = router({
       }
 
       const [row] = await db
-        .insert(pictureLesson)
+        .insert(pictureVocab)
         .values({
           id: input.id,
           userId: ctx.user.id,
@@ -138,7 +138,7 @@ export const pictureLessonRouter = router({
     )
     .mutation(async ({ input }) => {
       const [row] = await db
-        .update(pictureLesson)
+        .update(pictureVocab)
         .set({
           title: input.title,
           slug: input.slug,
@@ -150,7 +150,7 @@ export const pictureLessonRouter = router({
           content: input.content,
           updatedAt: new Date(),
         })
-        .where(eq(pictureLesson.id, input.id))
+        .where(eq(pictureVocab.id, input.id))
         .returning();
 
       return row;
@@ -160,11 +160,11 @@ export const pictureLessonRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
       await db
-        .update(pictureLesson)
+        .update(pictureVocab)
         .set({
           deletedAt: new Date(),
         })
-        .where(eq(pictureLesson.id, input.id));
+        .where(eq(pictureVocab.id, input.id));
     }),
 
   getById: publicProcedure
@@ -172,9 +172,9 @@ export const pictureLessonRouter = router({
     .query(async ({ input }) => {
       const [row] = await db
         .select()
-        .from(pictureLesson)
+        .from(pictureVocab)
         .where(
-          and(isNull(pictureLesson.deletedAt), eq(pictureLesson.id, input.id))
+          and(isNull(pictureVocab.deletedAt), eq(pictureVocab.id, input.id))
         );
 
       return row;
@@ -185,12 +185,12 @@ export const pictureLessonRouter = router({
     .query(async ({ input }) => {
       const [row] = await db
         .select()
-        .from(pictureLesson)
+        .from(pictureVocab)
         .where(
           and(
-            isNull(pictureLesson.deletedAt),
-            eq(pictureLesson.id, input.id),
-            eq(pictureLesson.slug, input.slug)
+            isNull(pictureVocab.deletedAt),
+            eq(pictureVocab.id, input.id),
+            eq(pictureVocab.slug, input.slug)
           )
         );
 
@@ -232,22 +232,22 @@ export const pictureLessonRouter = router({
       const offset = (page - 1) * limit;
 
       const whereCondition = and(
-        eq(pictureLesson.userId, ctx.user.id),
-        isNull(pictureLesson.deletedAt),
-        input.status ? eq(pictureLesson.status, input.status) : undefined
+        eq(pictureVocab.userId, ctx.user.id),
+        isNull(pictureVocab.deletedAt),
+        input.status ? eq(pictureVocab.status, input.status) : undefined
       );
 
       const rows = await db
         .select()
-        .from(pictureLesson)
+        .from(pictureVocab)
         .where(whereCondition)
-        .orderBy(desc(pictureLesson.createdAt))
+        .orderBy(desc(pictureVocab.createdAt))
         .limit(limit)
         .offset(offset);
 
       const [{ total }] = await db
         .select({ total: count() })
-        .from(pictureLesson)
+        .from(pictureVocab)
         .where(whereCondition);
 
       return {
@@ -263,13 +263,13 @@ export const pictureLessonRouter = router({
     .query(async ({ input, ctx }) => {
       const [row] = await db
         .select()
-        .from(pictureLesson)
+        .from(pictureVocab)
         .where(
           and(
-            isNull(pictureLesson.deletedAt),
-            eq(pictureLesson.id, input.id),
-            eq(pictureLesson.slug, input.slug),
-            eq(pictureLesson.userId, ctx.user.id)
+            isNull(pictureVocab.deletedAt),
+            eq(pictureVocab.id, input.id),
+            eq(pictureVocab.slug, input.slug),
+            eq(pictureVocab.userId, ctx.user.id)
           )
         );
 

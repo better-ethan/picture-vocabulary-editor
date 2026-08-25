@@ -1,5 +1,5 @@
 import { router } from "./trpc.js";
-import { pictureLessonRouter } from "./router/picture_lesson.js";
+import { pictureVocabRouter } from "./router/picture_vocab.js";
 import { uploadRouter } from "./router/uploadRouter.js";
 import { userRouter } from "./router/user.js";
 import { audioRouter } from "./router/audio.js";
@@ -8,7 +8,7 @@ import { blogRouter } from "./router/blog.js";
 import { stripeRouter } from "./router/stripe.js";
 
 export const appRouter = router({
-  pictureLesson: pictureLessonRouter,
+  pictureVocab: pictureVocabRouter,
   upload: uploadRouter,
   audio: audioRouter,
   user: userRouter,

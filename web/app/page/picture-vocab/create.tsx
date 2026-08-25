@@ -23,7 +23,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
   const subscriptionStatus = await trpc.stripe.getSubscriptionStatus.query();
 
-  const { total } = await trpc.pictureLesson.authored.query({});
+  const { total } = await trpc.pictureVocab.authored.query({});
 
   const isPro = subscriptionStatus && subscriptionStatus.status === "active";
 
@@ -54,7 +54,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   // Check if free users have reached the limit
   const subscriptionStatus = await trpc.stripe.getSubscriptionStatus.query();
-  const { total } = await trpc.pictureLesson.authored.query({});
+  const { total } = await trpc.pictureVocab.authored.query({});
 
   const isPro = subscriptionStatus && subscriptionStatus.status === "active";
 
@@ -65,7 +65,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
   // download and re-upload images to our R2, then replace the src in content
   const updatedContent = await reuploadPixabayImages(JSON.parse(content));
 
-  const result = await trpc.pictureLesson.create.mutate({
+  const result = await trpc.pictureVocab.create.mutate({
     id,
     title,
     slug,

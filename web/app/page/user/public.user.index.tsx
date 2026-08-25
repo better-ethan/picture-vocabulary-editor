@@ -30,7 +30,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
-  const result = await trpc.pictureLesson.list.query({
+  const result = await trpc.pictureVocab.list.query({
     userId: params.id,
     status: "published",
   });

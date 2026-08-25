@@ -32,7 +32,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
 
   const trpc = createTrpcClient(request);
 
-  const result = await trpc.pictureLesson.getByIdAndSlug.query({
+  const result = await trpc.pictureVocab.getByIdAndSlug.query({
     id,
     slug,
   });

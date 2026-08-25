@@ -5,7 +5,7 @@ import type { Route } from "./+types/delete";
 export const action = async ({ params, request }: Route.ActionArgs) => {
   const trpc = createTrpcClient(request);
 
-  await trpc.pictureLesson.remove.mutate({
+  await trpc.pictureVocab.remove.mutate({
     id: params.id,
   });
   return redirect("/admin/picture-vocab/authored?deleted=true");

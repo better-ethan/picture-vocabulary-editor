@@ -28,7 +28,7 @@ import { FREE_LIMIT } from "@package/shared";
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
 
-  const vocab = await trpc.pictureLesson.authored.query({});
+  const vocab = await trpc.pictureVocab.authored.query({});
 
   const subscriptionStatus = await trpc.stripe.getSubscriptionStatus.query();
 

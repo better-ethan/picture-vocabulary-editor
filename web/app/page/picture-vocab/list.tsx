@@ -8,7 +8,7 @@ import { Text } from "@/components/ui/text";
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
 
-  const result = await trpc.pictureLesson.list.query({ status: "published" });
+  const result = await trpc.pictureVocab.list.query({ status: "published" });
 
   return result;
 };

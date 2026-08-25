@@ -13,7 +13,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const slug = params.slug;
 
   if (slug === "all") {
-    const lessons = await trpc.pictureLesson.list.query({
+    const lessons = await trpc.pictureVocab.list.query({
       status: "published",
     });
 
@@ -34,7 +34,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     });
   }
 
-  const lessons = await trpc.pictureLesson.list.query({
+  const lessons = await trpc.pictureVocab.list.query({
     status: "published",
     categoryId: currentCategory.id,
   });

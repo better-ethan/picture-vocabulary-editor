@@ -2,7 +2,7 @@ import { z } from "zod";
 import { eq, and, isNull } from "drizzle-orm";
 import { publicProcedure, router } from "../trpc.js";
 
-import { db, category, pictureLesson } from "@package/drizzle";
+import { db, category } from "@package/drizzle";
 
 export const categoryRouter = router({
   list: publicProcedure.query(async () => {
