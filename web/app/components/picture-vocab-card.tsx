@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
-import type { PictureLesson } from "@/types";
+import type { PictureVocab } from "@/types";
 import { Link } from "react-router";
 
-export const PictureLessonCard = ({ lesson }: { lesson: PictureLesson }) => {
+export const PictureVocabCard = ({ lesson }: { lesson: PictureVocab }) => {
   return (
-    <Link to={`/picture-lesson/${lesson.id}/${lesson.slug}`}>
+    <Link to={`/picture-vocab/${lesson.id}/${lesson.slug}`}>
       <Card className="max-w-60 shadow-sm">
         <CardContent className="flex items-center justify-center pb-0">
           <img className="w-50 h-auto" src={lesson.thumbnail} />

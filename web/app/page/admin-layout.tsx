@@ -55,11 +55,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
 const menuSections: MenuSection[] = [
   {
-    title: "Picture Lesson",
+    title: "Picture Vocab",
     icon: BookAIcon,
     items: [
-      { label: "Create", path: "/admin/picture-lesson/create" },
-      { label: "Authored", path: "/admin/picture-lesson/authored" },
+      { label: "Create", path: "/admin/picture-vocab/create" },
+      { label: "Authored", path: "/admin/picture-vocab/authored" },
     ],
   },
 ];

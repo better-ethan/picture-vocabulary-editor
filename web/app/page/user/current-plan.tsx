@@ -69,7 +69,7 @@ export default function Page() {
           {/* Free - never subscribed */}
           {!subscriptionRecord && (
             <>
-              <p className="text-muted-foreground">Create up to 3 lessons.</p>
+              <p className="text-muted-foreground">Create up to 3 vocabs.</p>
             </>
           )}
 

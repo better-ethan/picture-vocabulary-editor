@@ -9,9 +9,9 @@ export default [
   layout("page/public-layout.tsx", [
     route("/", "page/home.tsx"),
 
-    route("/picture-lesson/list", "page/picture-lesson/list.tsx"),
+    route("/picture-vocab/list", "page/picture-vocab/list.tsx"),
     route("/category/:slug", "page/category/index.tsx"),
-    route("/picture-lesson/:id/:slug", "page/picture-lesson/index.tsx"),
+    route("/picture-vocab/:id/:slug", "page/picture-vocab/index.tsx"),
 
     // user
     route("/signup", "page/user/signup.tsx"),
@@ -40,17 +40,14 @@ export default [
   ]),
 
   layout("page/admin-layout.tsx", [
-    route("/admin/picture-lesson/create", "page/picture-lesson/create.tsx"),
+    route("/admin/picture-vocab/create", "page/picture-vocab/create.tsx"),
+    route("/admin/picture-vocab/:id/:slug/edit", "page/picture-vocab/edit.tsx"),
     route(
-      "/admin/picture-lesson/:id/:slug/edit",
-      "page/picture-lesson/edit.tsx"
-    ),
-    route(
-      "/admin/picture-lesson/:id/:slug/delete",
-      "page/picture-lesson/delete.tsx"
+      "/admin/picture-vocab/:id/:slug/delete",
+      "page/picture-vocab/delete.tsx"
     ),
 
-    route("/admin/picture-lesson/authored", "page/picture-lesson/authored.tsx"),
+    route("/admin/picture-vocab/authored", "page/picture-vocab/authored.tsx"),
 
     route("/admin/user/profile", "page/user/profile.tsx"),
     route("/admin/user/change-password", "page/user/change-password.tsx"),
@@ -61,7 +58,7 @@ export default [
   ]),
 
   // embed
-  route("/embed/vocab/:id/:slug", "page/picture-lesson/embed.tsx"),
+  route("/embed/vocab/:id/:slug", "page/picture-vocab/embed.tsx"),
 
   // api
   route("/api/auth/*", "api/auth.tsx"),

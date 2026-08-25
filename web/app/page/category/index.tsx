@@ -4,8 +4,8 @@ import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/empty";
 import type { Route } from "./+types/index";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
-import { PictureLessonCard } from "@/components/picture-lesson-card";
-import type { PictureLesson } from "@/types";
+import { PictureVocabCard } from "@/components/picture-vocab-card";
+import type { PictureVocab } from "@/types";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -18,7 +18,7 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     });
 
     return {
-      currentCategory: { name: "All Lessons" },
+      currentCategory: { name: "All Vocabs" },
       lessons,
     };
   }
@@ -52,21 +52,21 @@ export default function Page() {
     <div className="p-4 container mx-auto max-w-4xl">
       <Text as="h3">{currentCategory.name}</Text>
       <p className="text-muted-foreground mt-4 mb-6">
-        Choose a lesson to start learning
+        Choose a vocab to start learning
       </p>
 
       {lessons.length === 0 ? (
         <div className="flex justify-center mt-16">
           <Empty className="shadow-sm">
             <EmptyContent>
-              <EmptyTitle>No Picture Lessons Yet</EmptyTitle>
+              <EmptyTitle>No Picture Vocab Yet</EmptyTitle>
             </EmptyContent>
           </Empty>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
           {lessons.map((item, index) => (
-            <PictureLessonCard key={index} lesson={item as PictureLesson} />
+            <PictureVocabCard key={index} lesson={item as PictureVocab} />
           ))}
         </div>
       )}

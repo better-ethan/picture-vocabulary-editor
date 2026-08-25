@@ -205,7 +205,7 @@ export default function Page() {
 
         <Button
           render={
-            <Link to={"/admin/picture-lesson/create"}>
+            <Link to={"/admin/picture-vocab/create"}>
               Create Your Visual Vocabulary Now
             </Link>
           }

@@ -1,4 +1,4 @@
-export interface PictureLesson {
+export interface PictureVocab {
   id: string;
   title: string;
   slug: string;

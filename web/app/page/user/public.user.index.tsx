@@ -16,8 +16,8 @@ import { ArrowUpRightIcon, HandIcon, UserRoundPenIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { PictureLessonCard } from "@/components/picture-lesson-card";
-import type { PictureLesson } from "@/types";
+import { PictureVocabCard } from "@/components/picture-vocab-card";
+import type { PictureVocab } from "@/types";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -60,7 +60,7 @@ export default function Page() {
         <div className="flex justify-center mt-16">
           <Empty>
             <EmptyContent>
-              <EmptyTitle>She/He has not any picture lessons yet</EmptyTitle>
+              <EmptyTitle>She/He has not any picture vocab yet</EmptyTitle>
             </EmptyContent>
           </Empty>
         </div>
@@ -68,7 +68,7 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <div className="flex justify-end">
             <span>
-              {lessons.length} lesson{lessons.length > 1 ? "s" : ""}
+              {lessons.length} vocab{lessons.length > 1 ? "s" : ""}
             </span>
           </div>
           <div
@@ -77,7 +77,7 @@ export default function Page() {
             )}
           >
             {lessons.map((item, index) => (
-              <PictureLessonCard key={index} lesson={item as PictureLesson} />
+              <PictureVocabCard key={index} lesson={item as PictureVocab} />
             ))}
           </div>
         </div>

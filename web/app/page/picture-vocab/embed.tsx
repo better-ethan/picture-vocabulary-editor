@@ -80,7 +80,7 @@ export default function Page() {
         <Text>
           View on{" "}
           <Link
-            to={`${origin}/picture-lesson/${params.id}/${params.slug}`}
+            to={`${origin}/picture-vocab/${params.id}/${params.slug}`}
             className="text-blue-600"
             target="_blank"
           >

@@ -75,7 +75,7 @@ export default function Page() {
           My Authored
         </Text>
         <span>
-          {data.length} lesson{data.length > 1 ? "s" : ""}
+          {data.length} vocab{data.length > 1 ? "s" : ""}
         </span>
       </div>
 
@@ -97,7 +97,7 @@ export default function Page() {
             <EmptyContent>
               <Button
                 className="shadow-sm"
-                render={<Link to="/admin/picture-lesson/create">Create</Link>}
+                render={<Link to="/admin/picture-vocab/create">Create</Link>}
               ></Button>
             </EmptyContent>
           </Empty>
@@ -156,7 +156,7 @@ export default function Page() {
                     size={"sm"}
                     render={
                       <Link
-                        to={`/admin/picture-lesson/${item.id}/${item.slug}/edit`}
+                        to={`/admin/picture-vocab/${item.id}/${item.slug}/edit`}
                       >
                         Edit
                       </Link>
@@ -168,7 +168,7 @@ export default function Page() {
                     variant={"secondary"}
                     render={
                       <Link
-                        to={`/picture-lesson/${item.id}/${item.slug}`}
+                        to={`/picture-vocab/${item.id}/${item.slug}`}
                         target="_blank"
                       >
                         View

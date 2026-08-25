@@ -64,7 +64,7 @@ export default function Page() {
       <div className="flex flex-col gap-4 min-w-0 overflow-hidden flex-1">
         {data.status === "draft" && (
           <div className="p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center mt-3">
-            Draft lesson is only visible to author
+            Draft vocab is only visible to author
           </div>
         )}
         <div className="mt-8 flex flex-col justify-start gap-3 px-2">

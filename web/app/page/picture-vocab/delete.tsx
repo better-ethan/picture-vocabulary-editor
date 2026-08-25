@@ -8,5 +8,5 @@ export const action = async ({ params, request }: Route.ActionArgs) => {
   await trpc.pictureLesson.remove.mutate({
     id: params.id,
   });
-  return redirect("/admin/picture-lesson/authored?deleted=true");
+  return redirect("/admin/picture-vocab/authored?deleted=true");
 };

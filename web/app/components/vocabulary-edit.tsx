@@ -961,7 +961,7 @@ export function VocabularyEditor({
       const result = await uploadFileToR2({
         file: croppedImage,
         source: "thumbnail",
-        defaultFileName: `lesson/${id}/${slug}.webp`,
+        defaultFileName: `vocab/${id}/${slug}.webp`,
       });
 
       newThumbnail = result;
@@ -980,7 +980,7 @@ export function VocabularyEditor({
         const previewUrl = await uploadFileToR2({
           file: previewBlob,
           source: "preview",
-          defaultFileName: `lesson/${id}/${slug}.webp`,
+          defaultFileName: `vocab/${id}/${slug}.webp`,
         });
 
         formData.set("preview", previewUrl);
@@ -1035,7 +1035,7 @@ export function VocabularyEditor({
     const formData = new FormData();
     submit(formData, {
       method: "post",
-      action: `/admin/picture-lesson/${params.id}/${params.slug}/delete`,
+      action: `/admin/picture-vocab/${params.id}/${params.slug}/delete`,
     });
   };
 
@@ -1136,7 +1136,7 @@ export function VocabularyEditor({
       {mode === "edit" && (
         <div className="flex items-center  shrink-0">
           <Text as={"h3"}>
-            {operation === "create" ? "Create a Picture Lesson" : "Edit"}
+            {operation === "create" ? "Create a Picture Vocab" : "Edit"}
           </Text>
         </div>
       )}
@@ -1318,7 +1318,7 @@ export function VocabularyEditor({
             <Card className="w-full shadow-sm">
               <CardHeader className="">
                 <CardTitle className="text-base font-medium">
-                  Lesson settings
+                  Vocab settings
                 </CardTitle>
               </CardHeader>
               <CardContent className="w-full flex flex-col gap-6">
@@ -1456,7 +1456,7 @@ export function VocabularyEditor({
                         <Text as="h5">Confirm Deletion?</Text>
                       </DialogHeader>
                       <DialogDescription className="text-xl p-4 py-6">
-                        Are you sure you want to delete this lesson? This action
+                        Are you sure you want to delete this vocab? This action
                         cannot be undone.
                       </DialogDescription>
                       <DialogFooter>
