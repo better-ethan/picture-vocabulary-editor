@@ -2,7 +2,7 @@
 
 **Last Updated: August 9, 2026**
 
-Welcome to Visual Vocab. These Terms of Use ("Terms") explain the rules for using our website and services (the "Service").
+Welcome to PixVocab. These Terms of Use ("Terms") explain the rules for using our website and services (the "Service").
 
 By creating an account or using the Service, you agree to these Terms. If you do not agree with these Terms, please do not use the Service.
 
@@ -20,11 +20,11 @@ You may not use another person's account without their permission.
 
 ## 2. Free and Pro Plans
 
-Visual Vocab offers Free and Pro plans.
+PixVocab offers Free and Pro plans.
 
-The Free Plan allows you to create up to 3 Visual Vocab items.
+The Free Plan allows you to create up to 3 visual vocab items.
 
-The Pro Plan allows you to create an unlimited number of Visual Vocab items.
+The Pro Plan allows you to create an unlimited number of visual vocab items.
 
 We may change the features or limits of our plans from time to time.
 
@@ -65,7 +65,7 @@ You must not:
 
 ## 6. Our Content
 
-The Visual Vocab website, software, design, logo, and other materials provided by us belong to us or our licensors.
+The PixVocab website, software, design, logo, and other materials provided by us belong to us or our licensors.
 
 You may use the Service for its intended purpose, but these Terms do not give you ownership of our content or software.
 
@@ -97,6 +97,6 @@ If you continue to use the Service after the updated Terms become effective, you
 
 If you have questions about these Terms, please contact us:
 
-**Email:** support@visualvocab.com
+**Email:** support@pixvocab.com
 
 **Website:** https://visualvocab.com

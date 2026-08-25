@@ -11,8 +11,8 @@ export default function Page() {
         <Text as="h3">📖 Learn English with Pictures and Audio</Text>
         <div className="text-muted-foreground leading-relaxed flex flex-col gap-3">
           <p>
-            Visual Vocab is a simple tool for learning English with pictures,
-            words, and audio.
+            PixVocab is a simple tool for learning English with pictures, words,
+            and audio.
           </p>
           <p>
             We believe that learning a new word is easier when you can{" "}
@@ -21,14 +21,13 @@ export default function Page() {
             </span>
           </p>
           <p>
-            Visual Vocab lets you create visual vocabulary with pictures and
-            words, making it easier to connect English words with their
-            meanings.
+            PixVocab lets you create visual vocabulary with pictures and words,
+            making it easier to connect English words with their meanings.
           </p>
           <p>
             Whether you're a learner, teacher, or content creator, you can use
-            Visual Vocab to create and explore visual vocabulary that makes
-            English learning more engaging and memorable.
+            PixVocab to create and explore visual vocabulary that makes English
+            learning more engaging and memorable.
           </p>
         </div>
       </section>
@@ -43,8 +42,8 @@ export default function Page() {
             </span>
           </p>
           <p>
-            We hope Visual Vocab can help you learn new words, remember them
-            better, and build a stronger connection with English.
+            We hope PixVocab can help you learn new words, remember them better,
+            and build a stronger connection with English.
           </p>
         </div>
       </section>

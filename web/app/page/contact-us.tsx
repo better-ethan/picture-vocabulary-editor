@@ -9,7 +9,7 @@ export default function Page() {
       <div className="text-muted-foreground leading-relaxed flex flex-col gap-3">
         <p>Have a question, found a problem, or have a suggestion?</p>
         <p>We'd love to hear from you.</p>
-        <p>Email: support@visualvocab.com</p>
+        <p>Email: support@pixvocab.com</p>
         <p>We'll do our best to get back to you as soon as possible.</p>
       </div>
     </div>

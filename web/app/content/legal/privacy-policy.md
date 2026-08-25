@@ -116,6 +116,6 @@ The updated Privacy Policy will be effective on the date shown at the top of the
 
 If you have questions about this Privacy Policy or how we handle your information, please contact us:
 
-**Email:** support@visualvocab.com
+**Email:** support@pixvocab.com
 
 **Website:** [https://visualvocab.com](https://visualvocab.com)

@@ -84,7 +84,7 @@ export default function Page() {
             className="text-blue-600"
             target="_blank"
           >
-            Visual Vocab
+            PixVocab
           </Link>
         </Text>
       </div>
