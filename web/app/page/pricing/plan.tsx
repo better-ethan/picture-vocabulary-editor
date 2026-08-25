@@ -251,7 +251,7 @@ function PlanCard({
           <CardTitle className="uppercase">{plan.name}</CardTitle>
           <CardAction>
             {plan.highlight && (
-              <span className="bg-primary text-accent-foreground px-2 py-1 rounded">
+              <span className="bg-accent text-accent-foreground px-2 py-1 rounded">
                 Recommended
               </span>
             )}
@@ -266,7 +266,7 @@ function PlanCard({
           </span>
         </div>
         {interval === "annual" && plan.highlight && (
-          <span className="text-sm text-accent-foreground bg-primary px-2 py-1 w-fit rounded">
+          <span className="text-sm text-accent-foreground bg-accent px-2 py-1 w-fit rounded">
             Save ~22% with annual
           </span>
         )}

@@ -46,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         className={cn(
           "absolute inset-0 h-full w-full bg-[#F8F8F0] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px]",
           "overflow-hidden",
-          "selection:bg-[#FFD028]"
+          "selection:bg-primary"
         )}
       >
         <Toaster position="top-center" />
