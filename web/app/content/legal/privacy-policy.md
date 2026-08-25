@@ -118,4 +118,4 @@ If you have questions about this Privacy Policy or how we handle your informatio
 
 **Email:** support@pixvocab.com
 
-**Website:** [https://visualvocab.com](https://visualvocab.com)
+**Website:** [https://www.pixvocab.com](https://www.pixvocab.com)
