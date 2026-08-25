@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-picture_lesson}
+      POSTGRES_DB: ${DB_NAME:-picture_vocab}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/picture_lesson
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/picture_vocab
       SERVER_PORT: 4000
       VITE_PIXABAY_API_KEY: ${VITE_PIXABAY_API_KEY}
       CLOUDFLARE_ACCESS_KEY_ID: ${CLOUDFLARE_ACCESS_KEY_ID}

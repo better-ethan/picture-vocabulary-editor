@@ -1,0 +1,1 @@
+ALTER TABLE "picture_lesson" RENAME TO "picture_vocab";

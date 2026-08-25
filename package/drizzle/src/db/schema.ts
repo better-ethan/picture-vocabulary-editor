@@ -15,7 +15,7 @@ const timestampFields = {
   deletedAt: timestamp("deleted_at"),
 };
 
-export const pictureVocab = pgTable("picture_lesson", {
+export const pictureVocab = pgTable("picture_vocab", {
   id: varchar("id", { length: 16 }).primaryKey(),
   userId: text("user_id").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
