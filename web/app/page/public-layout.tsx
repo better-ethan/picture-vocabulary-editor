@@ -104,17 +104,17 @@ export default function PublicLayout() {
                   <NavigationMenuTrigger
                     className={cn("font-bold text-black [&_svg]:size-4")}
                   >
-                    Vocabulary
+                    Vocab
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="grid w-150 grid-cols-[1fr_1.5fr] gap-0">
-                      <div className="flex flex-col justify-between rounded-l-md bg-gradient-to-b from-yellow-400 to-yellow-500 p-5 text-white">
+                      <div className="flex flex-col justify-between rounded-l-md bg-gradient-to-b from-primary to-primary p-5 text-white">
                         <div>
                           <p className="text-sm font-semibold uppercase tracking-widest opacity-90">
                             Get Started
                           </p>
                           <h3 className="mt-2 text-lg font-bold leading-tight">
-                            Find your perfect lesson
+                            Find your perfect vocab
                           </h3>
                           <p className="mt-2 text-sm opacity-90">
                             Browse all categories and skill levels.
@@ -129,7 +129,7 @@ export default function PublicLayout() {
                           }
                           className="mt-4 inline-flex items-center gap-1 text-sm font-semibold underline underline-offset-4 hover:opacity-80"
                         >
-                          View all lessons →
+                          View all vocab →
                         </NavigationMenuLink>
                       </div>
 
@@ -282,7 +282,7 @@ export default function PublicLayout() {
                       )}
                       onClick={() => setLessonsOpened((v) => !v)}
                     >
-                      Lessons
+                      Vocab
                       <ChevronDownIcon
                         className={cn(
                           "size-4 transition-transform duration-200",
