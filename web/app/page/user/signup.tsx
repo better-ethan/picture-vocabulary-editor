@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
@@ -10,6 +16,7 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
+import { DividerWithText, GoogleSignInButton } from "@/components/partial";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -90,6 +97,9 @@ export default function Page() {
           ) : (
             <>
               <CardTitle className="text-2xl">Create your Account</CardTitle>
+              <CardDescription>
+                Welcome! Please fill in the details to get started.
+              </CardDescription>
               <Text>
                 Already have an account?{" "}
                 <Link
@@ -121,54 +131,58 @@ export default function Page() {
               </Button>
             </div>
           ) : (
-            <Form
-              method="POST"
-              className="flex flex-col gap-8"
-              onSubmit={handleSubmit}
-            >
-              <Field>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={email}
-                  required
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="enter your email"
-                  className="shadow-sm"
-                />
-              </Field>
-              <Field>
-                <Label htmlFor="password">Password</Label>
-                <PasswordInput
-                  type="password"
-                  id="password"
-                  name="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="enter your password"
-                  className="shadow-sm"
-                />
-              </Field>
-              <Field>
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <PasswordInput
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="confirm your password"
-                  className="shadow-sm"
-                />
-              </Field>
-              <Button type="submit" className="shadow-sm">
-                Sign Up
-              </Button>
-            </Form>
+            <>
+              <GoogleSignInButton text="Sign up with Google" />
+              <DividerWithText text="or" />
+              <Form
+                method="POST"
+                className="flex flex-col gap-8"
+                onSubmit={handleSubmit}
+              >
+                <Field>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={email}
+                    required
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="enter your email"
+                    className="shadow-sm"
+                  />
+                </Field>
+                <Field>
+                  <Label htmlFor="password">Password</Label>
+                  <PasswordInput
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="enter your password"
+                    className="shadow-sm"
+                  />
+                </Field>
+                <Field>
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <PasswordInput
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="confirm your password"
+                    className="shadow-sm"
+                  />
+                </Field>
+                <Button type="submit" className="shadow-sm">
+                  Sign Up
+                </Button>
+              </Form>
+            </>
           )}
         </CardContent>
       </Card>

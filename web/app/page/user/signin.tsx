@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
@@ -9,6 +15,7 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
+import { DividerWithText, GoogleSignInButton } from "@/components/partial";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -52,7 +59,10 @@ export default function Page() {
       <Card className="w-full max-w-100 shadow-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Sign In</CardTitle>
-          <Text>
+          <CardDescription>
+            Welcome back! Please sign in to continue
+          </CardDescription>
+          <Text className="my-2">
             Don't have an account?{" "}
             <Link to="/signup" className="ml-2 text-blue-600 hover:underline">
               Create one
@@ -60,6 +70,8 @@ export default function Page() {
           </Text>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
+          <GoogleSignInButton />
+          <DividerWithText text="or" />
           <Form
             method="POST"
             className="flex flex-col gap-8"

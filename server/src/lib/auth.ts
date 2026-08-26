@@ -61,6 +61,19 @@ export const auth = betterAuth({
       },
     },
   },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      overrideUserInfoOnSignIn: true,
+    },
+  },
+  account: {
+    accountLinking: {
+      enabled: true,
+      updateUserInfoOnLink: true,
+    },
+  },
   plugins: [
     stripe({
       stripeClient,
