@@ -139,7 +139,7 @@ export default function Page() {
                     value={email}
                     required
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="enter your email"
+                    placeholder="Enter your email"
                     className="shadow-sm"
                   />
                 </Field>
@@ -152,7 +152,7 @@ export default function Page() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="enter your password"
+                    placeholder="Enter your password"
                     className="shadow-sm"
                   />
                 </Field>
@@ -165,7 +165,7 @@ export default function Page() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="confirm your password"
+                    placeholder="Confirm your password"
                     className="shadow-sm"
                   />
                 </Field>

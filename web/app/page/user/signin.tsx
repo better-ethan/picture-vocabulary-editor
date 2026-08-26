@@ -80,7 +80,7 @@ export default function Page() {
                 value={email}
                 required
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="enter your email"
+                placeholder="Enter your email"
                 className="shadow-sm"
               />
             </Field>
@@ -92,7 +92,7 @@ export default function Page() {
                 name="password"
                 required
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="enter your password"
+                placeholder="Enter your password"
                 className="shadow-sm"
               />
             </Field>
