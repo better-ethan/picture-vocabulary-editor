@@ -62,19 +62,13 @@ export default function Page() {
           <CardDescription>
             Welcome back! Please sign in to continue
           </CardDescription>
-          <Text className="my-2">
-            Don't have an account?{" "}
-            <Link to="/signup" className="ml-2 text-blue-600 hover:underline">
-              Create one
-            </Link>
-          </Text>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+        <CardContent className="flex flex-col gap-6">
           <GoogleSignInButton />
           <DividerWithText text="or" />
           <Form
             method="POST"
-            className="flex flex-col gap-8"
+            className="flex flex-col gap-6"
             onSubmit={handleSubmit}
           >
             <Field>
@@ -112,6 +106,12 @@ export default function Page() {
               Sign In
             </Button>
           </Form>
+          <Text className="text-muted-foreground mt-8">
+            Don't have an account?{" "}
+            <Link to="/signup" className="ml-2 text-blue-600 hover:underline">
+              Create one
+            </Link>
+          </Text>
         </CardContent>
       </Card>
     </div>

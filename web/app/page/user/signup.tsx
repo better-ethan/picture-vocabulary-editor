@@ -100,19 +100,10 @@ export default function Page() {
               <CardDescription>
                 Welcome! Please fill in the details to get started.
               </CardDescription>
-              <Text>
-                Already have an account?{" "}
-                <Link
-                  to="/signin"
-                  className="ml-2 text-blue-600 hover:underline"
-                >
-                  Sign In
-                </Link>
-              </Text>
             </>
           )}
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+        <CardContent className="flex flex-col gap-6">
           {signUpSuccess ? (
             <div className="flex flex-col items-center gap-4">
               <Text>Please check your email to verify your account.</Text>
@@ -136,7 +127,7 @@ export default function Page() {
               <DividerWithText text="or" />
               <Form
                 method="POST"
-                className="flex flex-col gap-8"
+                className="flex flex-col gap-6"
                 onSubmit={handleSubmit}
               >
                 <Field>
@@ -182,6 +173,15 @@ export default function Page() {
                   Sign Up
                 </Button>
               </Form>
+              <Text className="text-muted-foreground mt-8">
+                Already have an account?{" "}
+                <Link
+                  to="/signin"
+                  className="ml-2 text-blue-600 hover:underline"
+                >
+                  Sign In
+                </Link>
+              </Text>
             </>
           )}
         </CardContent>
