@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { PictureVocabCard } from "@/components/picture-vocab-card";
 import type { PictureVocab } from "@/types";
+import { UserAvatar } from "@/components/partial";
 
 export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -47,7 +48,8 @@ export default function Page() {
   return (
     <div className="p-4 mx-auto max-w-5xl gap-6 flex flex-col ">
       <div className="flex flex-col gap-2 bg-white shadow-sm p-4 rounded-2xl">
-        <Text as={"h2"} className="">
+        <Text as={"h2"} className="flex flex-row items-center gap-2">
+          <UserAvatar src={currentUser.image ?? undefined} />{" "}
           {currentUser.name.trim() || currentUser.email.trim()}
         </Text>
         <div className="flex items-center gap-2 text-muted-foreground">

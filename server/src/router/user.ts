@@ -45,6 +45,7 @@ export const userRouter = router({
         name: userRow.name,
         email: userRow.email,
         description: userRow.description,
+        image: userRow.image,
       };
     }),
   updateProfile: loggedInProcedure
