@@ -1,9 +1,10 @@
-import { db, user } from "@package/drizzle";
+import { account, db, user } from "@package/drizzle";
 import { fromNodeHeaders } from "better-auth/node";
-import { eq } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import z from "zod";
 import { auth } from "../lib/auth.js";
 import { loggedInProcedure, publicProcedure, router } from "../trpc.js";
+import { decodeJwt } from "jose";
 
 export const userRouter = router({
   getCurrentUser: publicProcedure.query(async ({ ctx }) => {
@@ -63,4 +64,33 @@ export const userRouter = router({
 
       return { success: true };
     }),
+  listLinkedAccount: loggedInProcedure.query(async ({ ctx, input }) => {
+    const linkedAccount = await db
+      .select({
+        accountId: account.accountId,
+        providerId: account.providerId,
+        idToken: account.idToken,
+      })
+      .from(account)
+      .where(
+        and(
+          inArray(account.providerId, ["google"]),
+          eq(account.userId, ctx.user.id)
+        )
+      );
+
+    if (!linkedAccount) {
+      return [];
+    }
+
+    return linkedAccount.map((account) => {
+      const decodedToken = account.idToken ? decodeJwt(account.idToken) : null;
+
+      return {
+        accountId: account.accountId,
+        provider: account.providerId,
+        email: decodedToken?.email as string | null,
+      };
+    });
+  }),
 });

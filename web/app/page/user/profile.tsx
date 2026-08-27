@@ -5,6 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
 import {
   CheckIcon,
+  Link2Icon,
+  LinkIcon,
   MailIcon,
   PencilIcon,
   UserRoundIcon,
@@ -15,9 +17,25 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Route } from "./+types/profile";
 import { createTrpcClient } from "@/util";
-import { redirect, useFetcher, useLoaderData } from "react-router";
+import {
+  redirect,
+  useFetcher,
+  useLoaderData,
+  useRevalidator,
+} from "react-router";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { UserAvatar } from "@/components/partial";
+import { GoogleIcon, UserAvatar } from "@/components/partial";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -28,7 +46,9 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     throw redirect("/signin");
   }
 
-  return { currentUser };
+  const linkedAccounts = await trpc.user.listLinkedAccount.query();
+
+  return { currentUser, linkedAccounts };
 };
 
 export const action = async ({ request }: Route.ActionArgs) => {
@@ -47,7 +67,11 @@ export const action = async ({ request }: Route.ActionArgs) => {
 };
 
 export default function Page() {
-  const { currentUser } = useLoaderData<typeof loader>();
+  const { currentUser, linkedAccounts } = useLoaderData<typeof loader>();
+
+  const linkedGoogleAccount = linkedAccounts.find(
+    (account) => account.provider === "google"
+  );
 
   const [editingNickname, setEditingNickname] = useState(false);
 
@@ -67,6 +91,29 @@ export default function Page() {
       setEditingDescription(false);
     }
   }, [fetcher.state, fetcher.data]);
+
+  const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+
+  const revalidator = useRevalidator();
+
+  const handleDisconnectGoogleAccount = async () => {
+    if (linkedGoogleAccount) {
+      await authClient.unlinkAccount({
+        providerId: linkedGoogleAccount.provider,
+        accountId: linkedGoogleAccount.accountId,
+      });
+      setDisconnectDialogOpen(false);
+      toast.success("Google account disconnected successfully!");
+      revalidator.revalidate();
+    }
+  };
+
+  const handleConnectGoogleAccount = async () => {
+    await authClient.linkSocial({
+      provider: "google",
+      callbackURL: "/admin/user/profile",
+    });
+  };
 
   return (
     <div className="flex justify-center items-start h-dvh w-full p-2">
@@ -198,10 +245,90 @@ export default function Page() {
                   </div>
                 )}
               </Field>
+              <Field>
+                <FieldLabel>
+                  <Link2Icon className="size-5" />
+                  Connected Accounts
+                </FieldLabel>
+                <ul className="flex flex-col gap-2">
+                  <li
+                    key="google"
+                    className="flex flex-col md:flex-row gap-2 items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="flex items-center gap-1">
+                        <span>{getProviderIcon("google")}</span>
+                        Google
+                      </span>
+                      <span className="text-gray-400">
+                        {linkedGoogleAccount?.email}
+                      </span>
+                    </div>
+                    <div>
+                      {linkedGoogleAccount ? (
+                        <AlertDialog
+                          open={disconnectDialogOpen}
+                          onOpenChange={setDisconnectDialogOpen}
+                        >
+                          <AlertDialogTrigger
+                            render={
+                              <Button
+                                variant="destructive"
+                                className="shadow-sm"
+                                size="xs"
+                              />
+                            }
+                          >
+                            Disconnect
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className="shadow-sm">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action will disconnect your Google account
+                                from your profile. You will not be able to use
+                                this account for login until you reconnect it.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel className="shadow-sm">
+                                Cancel
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                className="shadow-sm"
+                                variant="destructive"
+                                onClick={handleDisconnectGoogleAccount}
+                              >
+                                Confirm
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      ) : (
+                        <Button
+                          className="shadow-sm"
+                          size="xs"
+                          variant="secondary"
+                          onClick={handleConnectGoogleAccount}
+                        >
+                          Connect
+                        </Button>
+                      )}
+                    </div>
+                  </li>
+                </ul>
+              </Field>
             </FieldGroup>
           </FieldSet>
         </CardContent>
       </Card>
     </div>
   );
+}
+
+function getProviderIcon(provider: string) {
+  if (provider === "google") return <GoogleIcon className="size-4" />;
+  return null;
 }
