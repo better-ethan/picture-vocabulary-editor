@@ -39,7 +39,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { MainLogo } from "@/components/partial";
+import { MainLogo, UserAvatar } from "@/components/partial";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -131,6 +131,7 @@ export default function AdminLayout() {
               <MenuContent
                 sections={menuSections}
                 username={currentUser?.name?.trim() || currentUser?.email}
+                avatar={currentUser?.image ?? undefined}
                 onItemClick={() => setSidebarCollapsed(false)}
               />
             </div>
@@ -156,10 +157,12 @@ function MenuContent({
   sections,
   onItemClick,
   username,
+  avatar,
 }: {
   sections: MenuSection[];
   onItemClick: () => void;
   username: string;
+  avatar?: string;
 }) {
   const location = useLocation();
   const currentPath = location.pathname + location.search;
@@ -252,9 +255,7 @@ function MenuContent({
         </div>
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="size-7 rounded-full flex justify-center items-center bg-blue-500 text-white shrink-0">
-              <User2Icon fill="white" strokeWidth={0} />
-            </div>
+            <UserAvatar src={avatar} className="size-8" />
             <span className="truncate">{username}</span>
           </div>
           <AlertDialog>
