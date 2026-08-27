@@ -1,7 +1,8 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { CheckIcon, XIcon } from "lucide-react";
+import { CheckIcon, User2Icon, XIcon } from "lucide-react";
 import { Link, useLocation, useSearchParams } from "react-router";
 import { toast } from "sonner";
 
@@ -165,3 +166,31 @@ export const DividerWithText = ({
     <div className="h-px grow bg-gray-200"></div>
   </div>
 );
+
+export const DefaultAvatar = ({ className }: { className?: string }) => (
+  <div
+    className={cn(
+      "size-full rounded-full flex justify-center items-center bg-blue-500 text-white shrink-0",
+      className
+    )}
+  >
+    <User2Icon fill="white" strokeWidth={0} />
+  </div>
+);
+
+export const UserAvatar = ({
+  src,
+  className,
+}: {
+  src?: string;
+  className?: string;
+}) => {
+  return (
+    <Avatar className={cn("size-10", className)}>
+      <AvatarImage src={src} alt="user avatar" />
+      <AvatarFallback>
+        <DefaultAvatar />
+      </AvatarFallback>
+    </Avatar>
+  );
+};

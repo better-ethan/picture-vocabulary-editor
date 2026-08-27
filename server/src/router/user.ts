@@ -20,6 +20,7 @@ export const userRouter = router({
       name: session.user.name as string,
       email: session.user.email as string,
       description: session.user.description as string | null,
+      image: session.user.image as string | null,
     };
   }),
   getUserById: publicProcedure

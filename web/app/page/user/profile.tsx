@@ -17,6 +17,7 @@ import type { Route } from "./+types/profile";
 import { createTrpcClient } from "@/util";
 import { redirect, useFetcher, useLoaderData } from "react-router";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import { UserAvatar } from "@/components/partial";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -73,7 +74,8 @@ export default function Page() {
         <CardHeader>
           <CardTitle>My Profile</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
+          <UserAvatar src={currentUser.image ?? undefined} />
           <FieldSet>
             <FieldGroup>
               <Field>
