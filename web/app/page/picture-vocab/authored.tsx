@@ -98,6 +98,7 @@ export default function Page() {
               <Button
                 className="shadow-sm"
                 render={<Link to="/admin/picture-vocab/create">Create</Link>}
+                nativeButton={false}
               ></Button>
             </EmptyContent>
           </Empty>
@@ -122,6 +123,7 @@ export default function Page() {
                 variant="secondary"
                 className="shadow-sm text-sm"
                 render={<Link to="/pricing/plan">✨ Upgrade to Pro</Link>}
+                nativeButton={false}
               />
             </div>
           )}
@@ -161,6 +163,7 @@ export default function Page() {
                         Edit
                       </Link>
                     }
+                    nativeButton={false}
                     className="shadow-sm"
                   ></Button>
                   <Button
@@ -175,6 +178,7 @@ export default function Page() {
                         <ArrowUpRightIcon className="size-5" />
                       </Link>
                     }
+                    nativeButton={false}
                     className="shadow-sm"
                   ></Button>
                 </CardContent>

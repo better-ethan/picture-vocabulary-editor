@@ -323,6 +323,7 @@ function PlanCardAction({
         className="w-full shadow-sm"
         disabled={isLoggedIn}
         render={<Link to="/signup?redirect=/pricing/plan" />}
+        nativeButton={false}
       >
         {plan.cta}
       </Button>
@@ -337,6 +338,7 @@ function PlanCardAction({
         variant="secondary"
         className="w-full shadow-sm"
         render={<Link to="/admin/user/current-plan">Manage Subscription</Link>}
+        nativeButton={false}
       />
     );
   }

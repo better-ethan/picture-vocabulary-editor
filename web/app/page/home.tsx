@@ -65,6 +65,7 @@ export default function Page() {
         <Button
           className="shadow-sm mt-6"
           render={<Link to={"/category/all"}>Explore Visual Vocabulary</Link>}
+          nativeButton={false}
         />
       </div>
       <div className="flex flex-col items-center w-full gap-8">
@@ -209,6 +210,7 @@ export default function Page() {
               Create Your Visual Vocabulary Now
             </Link>
           }
+          nativeButton={false}
           className="shadow-sm"
         />
       </div>
