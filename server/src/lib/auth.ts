@@ -72,6 +72,7 @@ export const auth = betterAuth({
     accountLinking: {
       enabled: true,
       updateUserInfoOnLink: true,
+      allowDifferentEmails: true,
     },
   },
   plugins: [
