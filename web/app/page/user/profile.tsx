@@ -109,10 +109,14 @@ export default function Page() {
   };
 
   const handleConnectGoogleAccount = async () => {
-    await authClient.linkSocial({
-      provider: "google",
-      callbackURL: "/admin/user/profile",
-    });
+    try {
+      await authClient.linkSocial({
+        provider: "google",
+        callbackURL: "/admin/user/profile",
+      });
+    } catch (error) {
+      toast.error("Failed to connect Google account. Please try again.");
+    }
   };
 
   return (
