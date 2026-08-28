@@ -7,6 +7,7 @@ import {
   CheckIcon,
   Link2Icon,
   LinkIcon,
+  Loader2Icon,
   MailIcon,
   PencilIcon,
   UserRoundIcon,
@@ -93,22 +94,28 @@ export default function Page() {
   }, [fetcher.state, fetcher.data]);
 
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   const revalidator = useRevalidator();
 
   const handleDisconnectGoogleAccount = async () => {
     if (linkedGoogleAccount) {
+      setIsDisconnecting(true);
       await authClient.unlinkAccount({
         providerId: linkedGoogleAccount.provider,
         accountId: linkedGoogleAccount.accountId,
       });
       setDisconnectDialogOpen(false);
+      setIsDisconnecting(false);
       toast.success("Google account disconnected successfully!");
       revalidator.revalidate();
     }
   };
 
+  const [isConnecting, setIsConnecting] = useState(false);
+
   const handleConnectGoogleAccount = async () => {
+    setIsConnecting(true);
     try {
       await authClient.linkSocial({
         provider: "google",
@@ -116,6 +123,8 @@ export default function Page() {
       });
     } catch (error) {
       toast.error("Failed to connect Google account. Please try again.");
+    } finally {
+      setIsConnecting(false);
     }
   };
 
@@ -304,8 +313,12 @@ export default function Page() {
                                 className="shadow-sm"
                                 variant="destructive"
                                 onClick={handleDisconnectGoogleAccount}
+                                disabled={isDisconnecting}
                               >
-                                Confirm
+                                Confirm{" "}
+                                {isDisconnecting && (
+                                  <Loader2Icon className="size-4 animate-spin" />
+                                )}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -316,8 +329,12 @@ export default function Page() {
                           size="xs"
                           variant="secondary"
                           onClick={handleConnectGoogleAccount}
+                          disabled={isConnecting}
                         >
-                          Connect
+                          Connect{" "}
+                          {isConnecting && (
+                            <Loader2Icon className="size-4 animate-spin" />
+                          )}
                         </Button>
                       )}
                     </div>
