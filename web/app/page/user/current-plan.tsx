@@ -127,6 +127,7 @@ export default function Page() {
               variant="secondary"
               className="w-full shadow-sm"
               render={<Link to="/pricing/plan">Upgrade to Pro</Link>}
+              nativeButton={false}
             ></Button>
           )}
           {isPro && !isCanceled && (
