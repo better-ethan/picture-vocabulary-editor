@@ -19,11 +19,16 @@ import type { Route } from "./+types/list";
 import { Text } from "@/components/ui/text";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRightIcon, CloudAlertIcon } from "lucide-react";
+import { CloudAlertIcon, EyeIcon, PenLineIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { FREE_LIMIT } from "@package/shared";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -154,33 +159,55 @@ export default function Page() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
-                  <Button
-                    size={"sm"}
-                    render={
-                      <Link
-                        to={`/admin/picture-vocab/${item.id}/${item.slug}/edit`}
-                      >
-                        Edit
-                      </Link>
-                    }
-                    nativeButton={false}
-                    className="shadow-sm"
-                  ></Button>
-                  <Button
-                    size={"sm"}
-                    variant={"secondary"}
-                    render={
-                      <Link
-                        to={`/picture-vocab/${item.id}/${item.slug}`}
-                        target="_blank"
-                      >
-                        View
-                        <ArrowUpRightIcon className="size-5" />
-                      </Link>
-                    }
-                    nativeButton={false}
-                    className="shadow-sm"
-                  ></Button>
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          size={"sm"}
+                          render={
+                            <Link
+                              to={`/admin/picture-vocab/${item.id}/${item.slug}/edit`}
+                            >
+                              <PenLineIcon className="size-4" />
+                            </Link>
+                          }
+                          nativeButton={false}
+                          className="shadow-sm"
+                        ></Button>
+                      }
+                    >
+                      <PenLineIcon />
+                    </TooltipTrigger>
+                    <TooltipContent className="shadow-none">
+                      Edit
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          size={"sm"}
+                          variant={"secondary"}
+                          render={
+                            <Link
+                              to={`/picture-vocab/${item.id}/${item.slug}`}
+                              target="_blank"
+                            >
+                              <EyeIcon className="size-4" />
+                            </Link>
+                          }
+                          nativeButton={false}
+                          className="shadow-sm"
+                        ></Button>
+                      }
+                    >
+                      <PenLineIcon />
+                    </TooltipTrigger>
+                    <TooltipContent className="shadow-none">
+                      View
+                    </TooltipContent>
+                  </Tooltip>
                 </CardContent>
               </Card>
             ))}
