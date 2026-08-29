@@ -260,16 +260,18 @@ function MenuContent({
           </div>
           <AlertDialog>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <AlertDialogTrigger
-                  render={
-                    <Button variant={"link"} size={"icon"}>
-                      <LogOutIcon />
-                    </Button>
-                  }
-                ></AlertDialogTrigger>
-              </TooltipTrigger>
-              <TooltipContent variant="solid">Log Out</TooltipContent>
+              <TooltipTrigger
+                render={
+                  <AlertDialogTrigger
+                    render={
+                      <Button variant={"link"} size={"icon"}>
+                        <LogOutIcon />
+                      </Button>
+                    }
+                  />
+                }
+              />
+              <TooltipContent className="shadow-none">Log Out</TooltipContent>
             </Tooltip>
             <AlertDialogContent className="shadow-sm">
               <AlertDialogHeader>
