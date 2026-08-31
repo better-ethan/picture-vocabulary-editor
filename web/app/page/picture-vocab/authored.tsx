@@ -19,9 +19,9 @@ import type { Route } from "./+types/list";
 import { Text } from "@/components/ui/text";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CloudAlertIcon, EyeIcon, PenLineIcon } from "lucide-react";
+import { CloudAlertIcon, Code2Icon, EyeIcon, PenLineIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { FREE_LIMIT } from "@package/shared";
 import {
@@ -29,6 +29,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -158,56 +159,63 @@ export default function Page() {
                     {item.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end">
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Button
-                          size={"sm"}
-                          render={
-                            <Link
-                              to={`/admin/picture-vocab/${item.id}/${item.slug}/edit`}
-                            >
-                              <PenLineIcon className="size-4" />
-                            </Link>
-                          }
-                          nativeButton={false}
-                          className="shadow-sm"
-                        ></Button>
-                      }
-                    >
-                      <PenLineIcon />
-                    </TooltipTrigger>
-                    <TooltipContent className="shadow-none">
-                      Edit
-                    </TooltipContent>
-                  </Tooltip>
+                <CardContent className="flex flex-row items-center gap-2 justify-between">
+                  <EmbedButton
+                    id={item.id}
+                    slug={item.slug}
+                    title={item.title}
+                  />
+                  <div className="flex items-center gap-2">
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            size={"sm"}
+                            render={
+                              <Link
+                                to={`/admin/picture-vocab/${item.id}/${item.slug}/edit`}
+                              >
+                                <PenLineIcon className="size-4" />
+                              </Link>
+                            }
+                            nativeButton={false}
+                            className="shadow-sm"
+                          ></Button>
+                        }
+                      >
+                        <PenLineIcon />
+                      </TooltipTrigger>
+                      <TooltipContent className="shadow-none">
+                        Edit
+                      </TooltipContent>
+                    </Tooltip>
 
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Button
-                          size={"sm"}
-                          variant={"secondary"}
-                          render={
-                            <Link
-                              to={`/picture-vocab/${item.id}/${item.slug}`}
-                              target="_blank"
-                            >
-                              <EyeIcon className="size-4" />
-                            </Link>
-                          }
-                          nativeButton={false}
-                          className="shadow-sm"
-                        ></Button>
-                      }
-                    >
-                      <PenLineIcon />
-                    </TooltipTrigger>
-                    <TooltipContent className="shadow-none">
-                      View
-                    </TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            size={"sm"}
+                            variant={"secondary"}
+                            render={
+                              <Link
+                                to={`/picture-vocab/${item.id}/${item.slug}`}
+                                target="_blank"
+                              >
+                                <EyeIcon className="size-4" />
+                              </Link>
+                            }
+                            nativeButton={false}
+                            className="shadow-sm"
+                          ></Button>
+                        }
+                      >
+                        <PenLineIcon />
+                      </TooltipTrigger>
+                      <TooltipContent className="shadow-none">
+                        View
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -215,5 +223,87 @@ export default function Page() {
         </div>
       )}
     </div>
+  );
+}
+
+function EmbedButton({
+  id,
+  slug,
+  title,
+}: {
+  id: string;
+  slug: string;
+  title: string;
+}) {
+  const [embedCopied, setEmbedCopied] = useState(false);
+  const [origin, setOrigin] = useState("");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, [location.pathname, location.search]);
+
+  const embedUrl = `${origin}/embed/vocab/${id}/${slug}`;
+
+  const embedCode =
+    `<style>` +
+    `.pv-iframe{max-width:520px;width:100%;height:auto;aspect-ratio:52/68;}` +
+    `@media(max-width:480px){.pv-iframe{aspect-ratio:300/485;}}` +
+    `</style>` +
+    `<iframe class="pv-iframe" src="${embedUrl}" width="520" height="680" allowfullscreen></iframe>`;
+
+  const handleCopy = (text: string, setCopiedState: (v: boolean) => void) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedState(true);
+      setTimeout(() => setCopiedState(false), 2500);
+    });
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button
+            className={"flex items-center gap-2 shadow-sm"}
+            variant="outline"
+            size="sm"
+            title="Embed"
+          >
+            <Code2Icon />
+          </Button>
+        }
+      ></DialogTrigger>
+      <DialogContent className="sm:max-w-md shadow-sm p-6">
+        <div className="flex flex-col gap-2 mb-2">
+          <p className="text-sm text-muted-foreground">Embed on your site</p>
+          <h2 className="text-lg font-bold leading-tight">{title}</h2>
+        </div>
+
+        <div className="flex border-b border-gray-200"></div>
+
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-muted-foreground">
+            Paste this code into your website's HTML:
+          </p>
+          <textarea
+            readOnly
+            value={embedCode}
+            rows={4}
+            className="w-full p-2 text-sm border border-gray-300 rounded bg-gray-50 resize-none font-mono"
+            onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => handleCopy(embedCode, setEmbedCopied)}
+            className="shadow-sm"
+          >
+            {embedCopied ? "✓ Copied!" : "Copy embed code"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
