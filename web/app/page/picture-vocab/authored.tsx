@@ -166,55 +166,35 @@ export default function Page() {
                     title={item.title}
                   />
                   <div className="flex items-center gap-2">
-                    <Tooltip>
-                      <TooltipTrigger
-                        render={
-                          <Button
-                            size={"sm"}
-                            render={
-                              <Link
-                                to={`/admin/picture-vocab/${item.id}/${item.slug}/edit`}
-                              >
-                                <PenLineIcon className="size-4" />
-                              </Link>
-                            }
-                            nativeButton={false}
-                            className="shadow-sm"
-                          ></Button>
-                        }
-                      >
-                        <PenLineIcon />
-                      </TooltipTrigger>
-                      <TooltipContent className="shadow-none">
-                        Edit
-                      </TooltipContent>
-                    </Tooltip>
+                    <Button
+                      size={"sm"}
+                      render={
+                        <Link
+                          to={`/admin/picture-vocab/${item.id}/${item.slug}/edit`}
+                        >
+                          <PenLineIcon className="size-4" />
+                        </Link>
+                      }
+                      nativeButton={false}
+                      className="shadow-sm"
+                      title="Edit"
+                    ></Button>
 
-                    <Tooltip>
-                      <TooltipTrigger
-                        render={
-                          <Button
-                            size={"sm"}
-                            variant={"secondary"}
-                            render={
-                              <Link
-                                to={`/picture-vocab/${item.id}/${item.slug}`}
-                                target="_blank"
-                              >
-                                <EyeIcon className="size-4" />
-                              </Link>
-                            }
-                            nativeButton={false}
-                            className="shadow-sm"
-                          ></Button>
-                        }
-                      >
-                        <PenLineIcon />
-                      </TooltipTrigger>
-                      <TooltipContent className="shadow-none">
-                        View
-                      </TooltipContent>
-                    </Tooltip>
+                    <Button
+                      size={"sm"}
+                      variant={"secondary"}
+                      render={
+                        <Link
+                          to={`/picture-vocab/${item.id}/${item.slug}`}
+                          target="_blank"
+                        >
+                          <EyeIcon className="size-4" />
+                        </Link>
+                      }
+                      nativeButton={false}
+                      className="shadow-sm"
+                      title="View"
+                    ></Button>
                   </div>
                 </CardContent>
               </Card>
