@@ -164,6 +164,7 @@ export default function Page() {
                     id={item.id}
                     slug={item.slug}
                     title={item.title}
+                    disabled={item.status !== "published"}
                   />
                   <div className="flex items-center gap-2">
                     <Button
@@ -210,10 +211,12 @@ function EmbedButton({
   id,
   slug,
   title,
+  disabled,
 }: {
   id: string;
   slug: string;
   title: string;
+  disabled?: boolean;
 }) {
   const [embedCopied, setEmbedCopied] = useState(false);
   const [origin, setOrigin] = useState("");
@@ -250,6 +253,7 @@ function EmbedButton({
             variant="outline"
             size="sm"
             title="Embed"
+            disabled={disabled}
           >
             <Code2Icon />
           </Button>
