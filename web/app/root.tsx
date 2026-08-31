@@ -33,6 +33,14 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export const meta: Route.MetaFunction = () => [
+  { title: "PixVocab" },
+  {
+    name: "description",
+    content: "Learning English through Picture and Audio",
+  },
+];
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

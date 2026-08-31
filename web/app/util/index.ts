@@ -1,7 +1,7 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "@app/server";
-import { redirect } from "react-router";
+import { redirect, type MetaDescriptor } from "react-router";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
@@ -104,3 +104,22 @@ export const proxyResponse = (response: Response) => {
   }
   return response;
 };
+
+export interface MatchItem {
+  id?: string;
+  meta?: MetaDescriptor[];
+}
+
+export function getRootTitle(matches: Array<MatchItem>): string | undefined {
+  const rootMeta = matches.find((match) => match?.id === "root")?.meta;
+  return rootMeta?.find((meta): meta is { title: string } => "title" in meta)
+    ?.title;
+}
+
+export function buildPageTitle(
+  pageTitle: string,
+  matches: Array<MatchItem>
+): string {
+  const rootTitle = getRootTitle(matches);
+  return pageTitle + (rootTitle ? ` | ${rootTitle}` : "");
+}

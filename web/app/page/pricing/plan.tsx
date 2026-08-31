@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { BadgeInfoIcon, ShieldCheckIcon } from "lucide-react";
 import { Form, Link, redirect, useLoaderData } from "react-router";
 import type { Route } from "./+types/plan";
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import { authClient } from "@/lib/auth-client";
 import {
   AlertDialog,
@@ -48,6 +48,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const subscriptionStatus = await trpc.stripe.getSubscriptionStatus.query();
 
   return { subscriptionStatus };
+};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("Pricing", matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export const action = async ({ request }: Route.ActionArgs) => {

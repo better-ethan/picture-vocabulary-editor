@@ -1,5 +1,5 @@
 import type { Route } from "./+types/list";
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import { Link, useLoaderData } from "react-router";
 import { Text } from "@/components/ui/text";
 import {
@@ -18,6 +18,11 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const result = await trpc.blog.list.query();
 
   return result;
+};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("Blog", matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export default function Page() {

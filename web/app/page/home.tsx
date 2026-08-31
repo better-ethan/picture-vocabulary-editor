@@ -1,10 +1,10 @@
-import { createTrpcClient, trpc } from "@/util";
+import { buildPageTitle, createTrpcClient, trpc, type MatchItem } from "@/util";
 import type { Route } from "./+types/home";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, type MetaDescriptor } from "react-router";
 import {
   VocabularyCanvas,
   type CanvasContent,
@@ -12,15 +12,16 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export function meta({}: Route.MetaArgs) {
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("Home", matches as MatchItem[]);
   return [
-    { title: "Learning English through Picture and Audio" },
+    { title: pageTitle },
     {
       name: "description",
       content: "Learning English through Picture and Audio",
     },
   ];
-}
+};
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const id = process.env.HOME_PAGE_VOCAB_ID as string;

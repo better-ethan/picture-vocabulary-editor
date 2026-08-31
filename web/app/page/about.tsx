@@ -1,4 +1,11 @@
 import { Text } from "@/components/ui/text";
+import type { Route } from "./+types/about";
+import { buildPageTitle, type MatchItem } from "@/util";
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("About", matches as MatchItem[]);
+  return [{ title: pageTitle }];
+};
 
 export default function Page() {
   return (
