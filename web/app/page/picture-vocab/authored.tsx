@@ -135,7 +135,7 @@ export default function Page() {
           )}
           <div
             className={cn(
-              "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 overflow-y-auto p-2",
+              "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 overflow-y-auto p-2",
               "justify-items-center w-full "
             )}
           >
