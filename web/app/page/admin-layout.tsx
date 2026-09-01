@@ -81,7 +81,9 @@ export default function AdminLayout() {
         </Drawer.Trigger>
         <Drawer.Content>
           <Drawer.Header className="flex flex-row items-center justify-between">
-            <Drawer.Title>MENU</Drawer.Title>
+            <Link to="/" onClick={() => setOpen(false)}>
+              <MainLogo className="h-8" />
+            </Link>
             <Drawer.Close asChild>
               <Button type="button" variant={"link"} size={"icon"}>
                 <XIcon />
