@@ -8,7 +8,13 @@ import {
 } from "@/components/ui/popover";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { ChevronDownIcon, Loader2, MenuIcon, User2Icon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  Loader2,
+  LogOutIcon,
+  MenuIcon,
+  User2Icon,
+} from "lucide-react";
 import {
   isRouteErrorResponse,
   Link,
@@ -70,6 +76,7 @@ export default function PublicLayout() {
     setIsSigningOut(true);
     await authClient.signOut();
     setIsSigningOut(false);
+    setDrawerOpened(false);
   };
 
   return (
@@ -335,17 +342,39 @@ export default function PublicLayout() {
                       >
                         Profile
                       </Link>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          authClient.signOut();
-                          setDrawerOpened(false);
-                        }}
-                        className="shadow-sm"
-                      >
-                        Log out
-                      </Button>
+
+                      <Drawer direction="bottom">
+                        <Drawer.Trigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="shadow-sm"
+                          >
+                            Log out <LogOutIcon />
+                          </Button>
+                        </Drawer.Trigger>
+                        <Drawer.Content>
+                          <Drawer.Header>
+                            <Drawer.Title>
+                              Are you sure you want to log out?
+                            </Drawer.Title>
+                          </Drawer.Header>
+                          <Drawer.Footer>
+                            <Button
+                              onClick={handleLogout}
+                              variant="destructive"
+                              className="shadow-sm"
+                            >
+                              Confirm
+                            </Button>
+                            <Drawer.Close asChild>
+                              <Button variant="outline" className="shadow-sm">
+                                Cancel
+                              </Button>
+                            </Drawer.Close>
+                          </Drawer.Footer>
+                        </Drawer.Content>
+                      </Drawer>
                     </>
                   ) : (
                     <Link
