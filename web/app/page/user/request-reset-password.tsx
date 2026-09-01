@@ -9,6 +9,16 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Form } from "react-router";
 import { toast } from "sonner";
+import type { Route } from "./+types/request-reset-password";
+import { buildPageTitle, type MatchItem } from "@/util";
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle(
+    "Request reset password",
+    matches as MatchItem[]
+  );
+  return [{ title: pageTitle }];
+};
 
 export default function Page() {
   const [email, setEmail] = useState("");

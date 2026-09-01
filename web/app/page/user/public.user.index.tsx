@@ -6,7 +6,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router";
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/empty";
 import type { Route } from "./+types/public.user.index";
 import { Text } from "@/components/ui/text";
@@ -40,6 +40,17 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     currentUser,
     vocabs: result,
   };
+};
+
+export const meta: Route.MetaFunction = ({
+  loaderData,
+  matches,
+}: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle(
+    "User | " + loaderData?.currentUser?.name,
+    matches as MatchItem[]
+  );
+  return [{ title: pageTitle }];
 };
 
 export default function Page() {

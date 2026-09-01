@@ -1,4 +1,4 @@
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import type { Route } from "./+types/current-plan";
 import { Form, Link, redirect, useLoaderData } from "react-router";
 import {
@@ -18,6 +18,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const subscriptionRecord = await trpc.stripe.getSubscriptionStatus.query();
 
   return subscriptionRecord;
+};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("My plan", matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export const action = async ({ request }: Route.ActionArgs) => {

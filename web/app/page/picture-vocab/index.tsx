@@ -1,6 +1,6 @@
 import { Link, useLoaderData, useLocation, useParams } from "react-router";
 import type { Route } from "./+types/index";
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import {
   playAudio,
   speak,
@@ -50,6 +50,14 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   }
 
   return result;
+};
+
+export const meta: Route.MetaFunction = ({
+  loaderData,
+  matches,
+}: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle(loaderData.title, matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export default function Page() {

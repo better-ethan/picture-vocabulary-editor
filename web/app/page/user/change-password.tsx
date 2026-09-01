@@ -7,8 +7,15 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";
+import type { Route } from "./+types/change-password";
+import { buildPageTitle, type MatchItem } from "@/util";
 
 export const loader = async () => {};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("Change password", matches as MatchItem[]);
+  return [{ title: pageTitle }];
+};
 
 export default function Page() {
   const { data: session } = authClient.useSession();

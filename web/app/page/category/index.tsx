@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from "react-router";
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import { EmptyContent, EmptyTitle, Empty } from "@/components/ui/empty";
 import type { Route } from "./+types/index";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,6 +43,17 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     currentCategory: { name: currentCategory.name },
     vocabs,
   };
+};
+
+export const meta: Route.MetaFunction = ({
+  loaderData,
+  matches,
+}: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle(
+    "Category | " + loaderData.currentCategory.name,
+    matches as MatchItem[]
+  );
+  return [{ title: pageTitle }];
 };
 
 export default function Page() {

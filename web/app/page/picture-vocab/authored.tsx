@@ -6,7 +6,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router";
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import {
   EmptyContent,
   EmptyTitle,
@@ -42,6 +42,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     vocab,
     subscriptionStatus,
   };
+};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("My authored", matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export default function Page() {

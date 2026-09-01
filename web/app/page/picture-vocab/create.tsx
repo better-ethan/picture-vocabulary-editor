@@ -1,4 +1,4 @@
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import {
   VocabularyEditor,
   type CanvasContent,
@@ -34,6 +34,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   return {
     category,
   };
+};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("Create", matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export const action = async ({ request }: Route.ActionArgs) => {

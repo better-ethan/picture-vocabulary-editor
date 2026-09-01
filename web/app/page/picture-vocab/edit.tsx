@@ -1,4 +1,4 @@
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import { VocabularyEditor } from "@/components/vocabulary-edit";
 import { toast } from "sonner";
 import {
@@ -33,6 +33,11 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const category = await trpc.category.list.query();
 
   return { data: result, category };
+};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("Edit", matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export const action = async ({ params, request }: Route.ActionArgs) => {

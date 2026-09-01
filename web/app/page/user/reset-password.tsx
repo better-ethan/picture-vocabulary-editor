@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Field } from "@/components/ui/field";
+import { buildPageTitle, type MatchItem } from "@/util";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
@@ -19,6 +20,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   } else {
     return { token };
   }
+};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("Reset password", matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export default function Page() {

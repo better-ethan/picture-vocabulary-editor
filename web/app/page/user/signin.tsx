@@ -16,6 +16,13 @@ import { toast } from "sonner";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
 import { DividerWithText, GoogleSignInButton } from "@/components/partial";
+import type { Route } from "./+types/signin";
+import { buildPageTitle, type MatchItem } from "@/util";
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("Sign in", matches as MatchItem[]);
+  return [{ title: pageTitle }];
+};
 
 export default function Page() {
   const [email, setEmail] = useState("");

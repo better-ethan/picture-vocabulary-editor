@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Route } from "./+types/profile";
-import { createTrpcClient } from "@/util";
+import { buildPageTitle, createTrpcClient, type MatchItem } from "@/util";
 import {
   redirect,
   useFetcher,
@@ -50,6 +50,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const linkedAccounts = await trpc.user.listLinkedAccount.query();
 
   return { currentUser, linkedAccounts };
+};
+
+export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
+  const pageTitle = buildPageTitle("My profile", matches as MatchItem[]);
+  return [{ title: pageTitle }];
 };
 
 export const action = async ({ request }: Route.ActionArgs) => {
