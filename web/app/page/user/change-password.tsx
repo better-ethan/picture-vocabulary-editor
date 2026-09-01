@@ -47,8 +47,8 @@ export default function Page() {
   const handleCancel = () => {};
 
   return (
-    <div className="flex justify-center items-start h-full px-4">
-      <Card className="w-full max-w-100 shadow-sm">
+    <div className="flex justify-center items-start h-dvh w-full p-2">
+      <Card className="w-full max-w-lg sm:min-w-96 shadow-sm">
         <CardHeader>
           <CardTitle>Change Password</CardTitle>
         </CardHeader>

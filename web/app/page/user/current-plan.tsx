@@ -53,7 +53,7 @@ export default function Page() {
     : null;
 
   return (
-    <div className="">
+    <div className="flex justify-center items-start h-dvh w-full p-2">
       <Card className="w-full max-w-lg sm:min-w-96 shadow-sm">
         <CardHeader>
           <CardTitle>Current Plan</CardTitle>
