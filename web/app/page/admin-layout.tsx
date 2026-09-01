@@ -10,6 +10,7 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import {
   BookAIcon,
+  CheckIcon,
   Loader2,
   LogOutIcon,
   MenuIcon,
@@ -129,6 +130,7 @@ export default function AdminLayout() {
 
             <div className="flex-1">
               <MenuContent
+                variant="desktop"
                 sections={menuSections}
                 username={currentUser?.name?.trim() || currentUser?.email}
                 avatar={currentUser?.image ?? undefined}
@@ -158,11 +160,13 @@ function MenuContent({
   onItemClick,
   username,
   avatar,
+  variant = "mobile",
 }: {
   sections: MenuSection[];
   onItemClick: () => void;
   username: string;
   avatar?: string;
+  variant?: "mobile" | "desktop";
 }) {
   const location = useLocation();
   const currentPath = location.pathname + location.search;
@@ -178,6 +182,7 @@ function MenuContent({
     setIsSigningOut(false);
     navigate("/signin");
   };
+
   return (
     <nav className="flex flex-col justify-between h-full p-2">
       <div>
@@ -258,46 +263,77 @@ function MenuContent({
             <UserAvatar src={avatar} className="size-8" />
             <span className="truncate">{username}</span>
           </div>
-          <AlertDialog>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <AlertDialogTrigger
-                    render={
-                      <Button variant={"link"} size={"icon"}>
-                        <LogOutIcon />
-                      </Button>
-                    }
-                  />
-                }
-              />
-              <TooltipContent className="shadow-none">Log Out</TooltipContent>
-            </Tooltip>
-            <AlertDialogContent className="shadow-sm">
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Are you sure you want to log out?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  You will log out from the current account and return to the
-                  sign-in page. Do you want to continue?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="shadow-sm">
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleLogout}
-                  disabled={isSigningOut}
-                  className="shadow-sm"
-                >
-                  Confirm{" "}
-                  {isSigningOut && <Loader2 className="size-4 animate-spin" />}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          {variant === "mobile" ? (
+            <Drawer direction="bottom">
+              <Drawer.Trigger asChild>
+                <Button variant="link" size="icon">
+                  <LogOutIcon />
+                </Button>
+              </Drawer.Trigger>
+              <Drawer.Content>
+                <Drawer.Header>
+                  <Drawer.Title>Are you sure you want to log out?</Drawer.Title>
+                </Drawer.Header>
+                <Drawer.Footer>
+                  <Button
+                    onClick={handleLogout}
+                    variant="destructive"
+                    className="shadow-sm"
+                  >
+                    Confirm
+                  </Button>
+                  <Drawer.Close asChild>
+                    <Button variant="outline" className="shadow-sm">
+                      Cancel
+                    </Button>
+                  </Drawer.Close>
+                </Drawer.Footer>
+              </Drawer.Content>
+            </Drawer>
+          ) : (
+            <AlertDialog>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <AlertDialogTrigger
+                      render={
+                        <Button variant={"link"} size={"icon"}>
+                          <LogOutIcon />
+                        </Button>
+                      }
+                    />
+                  }
+                />
+                <TooltipContent className="shadow-none">Log Out</TooltipContent>
+              </Tooltip>
+              <AlertDialogContent className="shadow-sm">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to log out?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You will log out from the current account and return to the
+                    sign-in page. Do you want to continue?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="shadow-sm">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleLogout}
+                    disabled={isSigningOut}
+                    className="shadow-sm"
+                  >
+                    Confirm{" "}
+                    {isSigningOut && (
+                      <Loader2 className="size-4 animate-spin" />
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </div>
     </nav>
