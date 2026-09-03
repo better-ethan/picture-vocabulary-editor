@@ -41,9 +41,9 @@ export default function Page() {
     (vocab?.content as unknown as CanvasContent) ?? {};
 
   return (
-    <div className="flex flex-col items-center gap-12 p-4 max-w-5xl mx-auto">
-      <div className="flex flex-col items-center gap-4 w-full">
-        <div className="flex flex-col items-center gap-4 w-full">
+    <div className="flex flex-col items-center gap-24 p-4 max-w-5xl mx-auto">
+      <div className="flex flex-col items-center gap-8 w-full mt-4">
+        <div className="flex flex-col items-center gap-6 w-full">
           <Text as={"h2"} className="text-center">
             Learning English through <TextWithHighlight text="Picture" /> and{" "}
             <TextWithHighlight text="Audio" />
@@ -64,13 +64,13 @@ export default function Page() {
           )}
         </div>
         <Button
-          className="shadow-sm mt-6"
-          render={<Link to={"/category/all"}>Explore Visual Vocabulary</Link>}
+          className="shadow-sm mt-4"
+          render={<Link to={"/category/all"}>Explore More Visual Vocab</Link>}
           nativeButton={false}
         />
       </div>
       <div className="flex flex-col items-center w-full gap-8">
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-6">
           <Text as="h2" className="text-center">
             The Power of Pictures and Audio
           </Text>
@@ -141,13 +141,13 @@ export default function Page() {
         </div>
       </div>
       <div className="flex flex-col items-center w-full gap-8">
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-6">
           <Text as="h2" className="text-center">
-            How to Create a Visual Vocabulary in{" "}
+            How to Create a Visual Vocab in{" "}
             <TextWithHighlight text="3 Simple Steps" />
           </Text>
           <Text className="text-muted-foreground">
-            It's designed to make creating visual vocabulary super easy
+            It's designed to make creating visual vocab super easy
           </Text>
         </div>
 
@@ -208,7 +208,7 @@ export default function Page() {
         <Button
           render={
             <Link to={"/admin/picture-vocab/create"}>
-              Create Your Visual Vocabulary Now
+              Create Your Visual Vocab Now
             </Link>
           }
           nativeButton={false}
@@ -217,13 +217,19 @@ export default function Page() {
       </div>
 
       <div className="flex flex-col items-center w-full gap-8">
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-6">
           <Text as="h2">Bring Your English to Life</Text>
           <Text className="text-muted-foreground text-center">
             Language isn't just something you read. It's something you see,
             hear, and experience. Visual vocabulary combines pictures and native
             audio to make every word easier to understand, remember, and use.
           </Text>
+        </div>
+        <div>
+          <img
+            src="/images/bring-english-to-life.webp"
+            alt="bring your English to life"
+          />
         </div>
       </div>
     </div>
