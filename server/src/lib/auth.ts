@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { stripe } from "@better-auth/stripe";
+import { captcha } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
   db,
@@ -90,6 +91,10 @@ export const auth = betterAuth({
           },
         ],
       },
+    }),
+    captcha({
+      provider: "google-recaptcha",
+      secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY!,
     }),
   ],
 });

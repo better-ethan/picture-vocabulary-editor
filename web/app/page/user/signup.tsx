@@ -14,6 +14,7 @@ import type { Route } from "./+types/signup";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import ReCAPTCHA from "react-google-recaptcha";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
 import { DividerWithText, GoogleSignInButton } from "@/components/partial";
@@ -31,8 +32,12 @@ export default function Page() {
   const [signUpSuccess, setSignUpSuccess] = useState(false);
   const [isResending, setIsResending] = useState(false);
 
+  const [token, setToken] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!token) return;
 
     if (password !== confirmPassword) {
       toast.error("Password and confirm password do not match!");
@@ -45,21 +50,25 @@ export default function Page() {
         password,
         name: email.split("@")[0],
         callbackURL: `${window.location.origin}/`,
+        fetchOptions: {
+          headers: {
+            "x-captcha-response": token,
+          },
+          onRequest: () => {
+            toast.info("Sign up in progress...");
+          },
+          onSuccess: () => {
+            setSignUpSuccess(true);
+            toast.success(
+              "Sign up successful! Please check your email to verify your account."
+            );
+          },
+          onError(ctx: { error: { message: string } }) {
+            toast.error(`Sign up failed: ${ctx.error.message}`);
+          },
+        },
       },
-      {
-        onRequest: (ctx) => {
-          toast.info("Sign up in progress...");
-        },
-        onSuccess: () => {
-          setSignUpSuccess(true);
-          toast.success(
-            "Sign up successful! Please check your email to verify your account."
-          );
-        },
-        onError: (ctx) => {
-          toast.error(`Sign up failed: ${ctx.error.message}`);
-        },
-      }
+      {}
     );
   };
 
@@ -175,6 +184,10 @@ export default function Page() {
                     className="shadow-sm"
                   />
                 </Field>
+                <ReCAPTCHA
+                  sitekey={import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY!}
+                  size="invisible"
+                />
                 <Button type="submit" className="shadow-sm">
                   Sign Up
                 </Button>
