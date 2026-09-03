@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Form } from "react-router";
 import { toast } from "sonner";
+import ReCAPTCHA from "react-google-recaptcha";
 import type { Route } from "./+types/request-reset-password";
 import { buildPageTitle, type MatchItem } from "@/util";
 
@@ -26,14 +27,23 @@ export default function Page() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const [token, setToken] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!token) return;
 
     setIsProcessing(true);
 
     const { error } = await authClient.requestPasswordReset({
       email,
       redirectTo: `${window.location.origin}/user/reset-password`,
+      fetchOptions: {
+        headers: {
+          "x-captcha-response": token,
+        },
+      },
     });
 
     if (error) {
@@ -89,6 +99,10 @@ export default function Page() {
                   className="shadow-sm"
                 />
               </Field>
+              <ReCAPTCHA
+                sitekey={import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY!}
+                size="invisible"
+              />
               <Button
                 type="submit"
                 className="w-full shadow-sm"
