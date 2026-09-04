@@ -166,7 +166,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col items-center px-4 py-12 gap-12">
+    <div className="flex flex-col items-center px-4 py-12 gap-24">
       <div className="flex flex-col items-center gap-4">
         <Text as="h2" className="text-center text-3xl font-bold">
           Unlock Unlimited Visual Vocabulary
@@ -176,14 +176,14 @@ export default function Page() {
           effectively
         </Text>
       </div>
-      <div className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-8">
         <Tabs defaultValue="annual" className="w-full max-w-2xl">
           <TabsList className="mb-6 mx-auto shadow-sm flex gap-2">
             <TabsTrigger
               value="annual"
               className="shadow-none data-active:shadow-sm"
             >
-              Annual
+              Annual (save ~17%)
             </TabsTrigger>
             <TabsTrigger value="monthly" className="shadow-none">
               Monthly
@@ -207,9 +207,13 @@ export default function Page() {
           ))}
         </Tabs>
 
-        <Text className="text-muted-foreground">
-          Cancel anytime. No hidden fees. No credit card required for free plan.
-        </Text>
+        <div className="flex items-center gap-1 text-muted-foreground">
+          <BadgeInfoIcon className="size-5" />
+          <Text className="text-muted-foreground">
+            Cancel anytime. No hidden fees. No credit card required for free
+            plan.
+          </Text>
+        </div>
         <div className="flex gap-1 text-green-600">
           <span>
             <ShieldCheckIcon />
@@ -270,11 +274,11 @@ function PlanCard({
             {interval === "annual" ? "/per year" : "/per month"}
           </span>
         </div>
-        {interval === "annual" && plan.highlight && (
+        {/* {interval === "annual" && plan.highlight && (
           <span className="text-sm text-accent-foreground bg-accent px-2 py-1 w-fit rounded">
             Save ~22% with annual
           </span>
-        )}
+        )} */}
         <Text className="text-muted-foreground">{plan.description}</Text>
         <Text className="font-medium mb-2">What's included</Text>
         <ul className="space-y-1">
