@@ -9,11 +9,13 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import {
+  BookAIcon,
   ChevronDownIcon,
   Loader2,
   LogOutIcon,
   MenuIcon,
   User2Icon,
+  UserIcon,
 } from "lucide-react";
 import {
   isRouteErrorResponse,
@@ -45,6 +47,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { MainLogo } from "@/components/partial";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const trpc = createTrpcClient(request);
@@ -71,12 +80,14 @@ export default function PublicLayout() {
   const [vocabsOpened, setvocabsOpened] = useState(false);
 
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isLogoutAlertDialogOpening, setIsAlertDialogOpening] = useState(false);
 
   const handleLogout = async () => {
     setIsSigningOut(true);
     await authClient.signOut();
     setIsSigningOut(false);
     setDrawerOpened(false);
+    setIsAlertDialogOpening(false);
   };
 
   return (
@@ -183,68 +194,75 @@ export default function PublicLayout() {
             </NavigationMenu>
             <div className="ml-2 flex items-center gap-3">
               {session ? (
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button size="icon" className="shadow-sm">
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={<Button size="icon" className="shadow-sm" />}
+                    >
                       <User2Icon className="size-5" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="flex flex-col gap-6">
-                      <Button
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="shadow-sm min-w-42">
+                      <DropdownMenuItem
                         render={
-                          <Link to="/admin/user/profile" className="uppercase">
-                            Profile
-                          </Link>
+                          <Link
+                            to="/admin/user/profile"
+                            className="capitalize"
+                          ></Link>
                         }
-                        nativeButton={false}
-                        variant="outline"
-                        size="sm"
-                        className="shadow-sm"
-                      ></Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger
-                          render={
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="shadow-sm"
-                            >
-                              Log out
-                            </Button>
-                          }
-                        ></AlertDialogTrigger>
-                        <AlertDialogContent className="shadow-sm">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you sure you want to log out?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              You will log out from the current account and
-                              return to the sign-in page. Do you want to
-                              continue?
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="shadow-sm">
-                              Cancel
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={handleLogout}
-                              disabled={isSigningOut}
-                              className="shadow-sm"
-                            >
-                              Confirm{" "}
-                              {isSigningOut && (
-                                <Loader2 className="size-4 animate-spin" />
-                              )}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                      >
+                        <UserIcon /> My Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        render={
+                          <Link
+                            to="/admin/picture-vocab/authored"
+                            className="capitalize"
+                          ></Link>
+                        }
+                      >
+                        <BookAIcon /> My Authored
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => setIsAlertDialogOpening(true)}
+                      >
+                        <LogOutIcon /> Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <AlertDialog
+                    open={isLogoutAlertDialogOpening}
+                    onOpenChange={setIsAlertDialogOpening}
+                  >
+                    <AlertDialogTrigger></AlertDialogTrigger>
+                    <AlertDialogContent className="shadow-sm">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you sure you want to log out?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You will log out from the current account and return
+                          to the sign-in page. Do you want to continue?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="shadow-sm">
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleLogout}
+                          disabled={isSigningOut}
+                          className="shadow-sm"
+                        >
+                          Confirm{" "}
+                          {isSigningOut && (
+                            <Loader2 className="size-4 animate-spin" />
+                          )}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
               ) : (
                 <Button
                   render={
