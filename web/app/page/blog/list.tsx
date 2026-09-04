@@ -79,7 +79,7 @@ function BlogCard({
         </CardHeader>
         <CardFooter>
           <Button type="button" size="sm" className="shadow-sm">
-            Read More
+            Continue
           </Button>
         </CardFooter>
       </Card>
