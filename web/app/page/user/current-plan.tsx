@@ -131,7 +131,7 @@ export default function Page() {
             <Button
               variant="secondary"
               className="w-full shadow-sm"
-              render={<Link to="/pricing/plan">Upgrade to Pro</Link>}
+              render={<Link to="/pricing">Upgrade to Pro</Link>}
               nativeButton={false}
             ></Button>
           )}

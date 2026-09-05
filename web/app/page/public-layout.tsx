@@ -173,7 +173,7 @@ export default function PublicLayout() {
                   <NavigationMenuLink
                     render={
                       <Link
-                        to="/pricing/plan"
+                        to="/pricing"
                         className={cn("font-bold text-black")}
                       />
                     }

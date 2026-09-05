@@ -139,7 +139,7 @@ export default function Page() {
               <Button
                 variant="secondary"
                 className="shadow-sm text-sm"
-                render={<Link to="/pricing/plan">✨ Upgrade to Pro</Link>}
+                render={<Link to="/pricing">✨ Upgrade to Pro</Link>}
                 nativeButton={false}
               />
             </div>
@@ -320,7 +320,7 @@ function EmbedButton({
                 size="sm"
                 nativeButton={false}
                 className="shadow-sm"
-                render={<Link to="/pricing/plan" />}
+                render={<Link to="/pricing" />}
               >
                 ✨ Upgrade
               </Button>

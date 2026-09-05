@@ -24,7 +24,7 @@ export default [
 
     route("/user/:id/:slug", "page/user/public.user.index.tsx"),
 
-    route("/pricing/plan", "page/pricing/plan.tsx"),
+    route("/pricing", "page/pricing/plan.tsx"),
     route("/pricing/success", "page/pricing/success.tsx"),
     route("/pricing/cancel", "page/pricing/cancel.tsx"),
 

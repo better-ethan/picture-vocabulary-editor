@@ -331,7 +331,7 @@ function PlanCardAction({
         variant="outline"
         className="w-full shadow-sm"
         disabled={isLoggedIn}
-        render={<Link to="/signup?redirect=/pricing/plan" />}
+        render={<Link to="/signup?redirect=/pricing" />}
         nativeButton={false}
       >
         {plan.cta}
@@ -379,7 +379,7 @@ function PlanCardAction({
             <AlertDialogCancel className="shadow-sm">Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="shadow-sm"
-              render={<Link to="/signin?redirect=/pricing/plan">Log in</Link>}
+              render={<Link to="/signin?redirect=/pricing">Log in</Link>}
             />
           </AlertDialogFooter>
         </AlertDialogContent>
