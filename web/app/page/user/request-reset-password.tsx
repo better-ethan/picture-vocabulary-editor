@@ -6,7 +6,7 @@ import { Text } from "@/components/ui/text";
 import { Field } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Form } from "react-router";
 import { toast } from "sonner";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -27,12 +27,14 @@ export default function Page() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const [token, setToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!token) return;
+    const recaptchaToken = await recaptchaRef.current?.executeAsync();
+
+    if (!recaptchaToken) return;
 
     setIsProcessing(true);
 
@@ -41,7 +43,7 @@ export default function Page() {
       redirectTo: `${window.location.origin}/user/reset-password`,
       fetchOptions: {
         headers: {
-          "x-captcha-response": token,
+          "x-captcha-response": recaptchaToken,
         },
       },
     });
@@ -100,6 +102,7 @@ export default function Page() {
                 />
               </Field>
               <ReCAPTCHA
+                ref={recaptchaRef}
                 sitekey={import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY!}
                 size="invisible"
               />

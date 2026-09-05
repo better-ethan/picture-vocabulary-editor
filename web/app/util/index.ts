@@ -72,6 +72,9 @@ export const fetchUtil = async ({
       "X-Forwarded-For": request?.headers.get("X-Forwarded-For") ?? "",
       "X-Forwarded-Host": request?.headers.get("X-Forwarded-Host") ?? "",
 
+      // better-auth captcha plugin
+      "x-captcha-response": request?.headers.get("x-captcha-response") ?? "",
+
       // stripe webhook
       ...(request?.headers.get("stripe-signature")
         ? {

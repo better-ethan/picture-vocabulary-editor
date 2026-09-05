@@ -10,9 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
 import { Form, Link, useSearchParams } from "react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import ReCAPTCHA from "react-google-recaptcha";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
 import { DividerWithText, GoogleSignInButton } from "@/components/partial";
@@ -31,15 +32,23 @@ export default function Page() {
   const [searchParams, setSearchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/admin/user/profile";
 
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { data, error } = await authClient.signIn.email(
-      {
-        email,
-        password,
-        callbackURL: redirectTo,
-      },
-      {
+
+    const recaptchaToken = await recaptchaRef.current?.executeAsync();
+
+    if (!recaptchaToken) return;
+
+    const { data, error } = await authClient.signIn.email({
+      email,
+      password,
+      callbackURL: redirectTo,
+      fetchOptions: {
+        headers: {
+          "x-captcha-response": recaptchaToken,
+        },
         onRequest: (ctx) => {
           toast.info("Sign in in progress...");
         },
@@ -53,8 +62,8 @@ export default function Page() {
             toast.error(`Sign in failed: ${ctx.error.message}`);
           }
         },
-      }
-    );
+      },
+    });
 
     if (error) {
       toast.error(`Sign in failed: ${error.message}`);
@@ -103,6 +112,11 @@ export default function Page() {
                 className="shadow-sm"
               />
             </Field>
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY!}
+              size="invisible"
+            />
             <Link
               to="/user/request-reset-password"
               className="text-end text-blue-600 hover:underline"

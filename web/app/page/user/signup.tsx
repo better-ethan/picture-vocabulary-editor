@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
 import { Form, Link } from "react-router";
 import type { Route } from "./+types/signup";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -32,12 +32,14 @@ export default function Page() {
   const [signUpSuccess, setSignUpSuccess] = useState(false);
   const [isResending, setIsResending] = useState(false);
 
-  const [token, setToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!token) return;
+    const recaptchaToken = await recaptchaRef.current?.executeAsync();
+
+    if (!recaptchaToken) return;
 
     if (password !== confirmPassword) {
       toast.error("Password and confirm password do not match!");
@@ -52,7 +54,7 @@ export default function Page() {
         callbackURL: `${window.location.origin}/`,
         fetchOptions: {
           headers: {
-            "x-captcha-response": token,
+            "x-captcha-response": recaptchaToken,
           },
           onRequest: () => {
             toast.info("Sign up in progress...");
@@ -185,6 +187,7 @@ export default function Page() {
                   />
                 </Field>
                 <ReCAPTCHA
+                  ref={recaptchaRef}
                   sitekey={import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY!}
                   size="invisible"
                 />
