@@ -72,6 +72,10 @@ export default function Page() {
       },
       {}
     );
+
+    if (recaptchaRef.current) {
+      recaptchaRef.current.reset();
+    }
   };
 
   const [cooldown, setCooldown] = useState(0);

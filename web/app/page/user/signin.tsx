@@ -19,6 +19,7 @@ import { Field } from "@/components/ui/field";
 import { DividerWithText, GoogleSignInButton } from "@/components/partial";
 import type { Route } from "./+types/signin";
 import { buildPageTitle, type MatchItem } from "@/util";
+import { Loader2Icon } from "lucide-react";
 
 export const meta: Route.MetaFunction = ({ matches }: Route.MetaArgs) => {
   const pageTitle = buildPageTitle("Sign in", matches as MatchItem[]);
@@ -34,8 +35,12 @@ export default function Page() {
 
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
+  const [isOperating, setIsOperating] = useState(false);
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setIsOperating(true);
 
     const recaptchaToken = await recaptchaRef.current?.executeAsync();
 
@@ -67,6 +72,12 @@ export default function Page() {
 
     if (error) {
       toast.error(`Sign in failed: ${error.message}`);
+    }
+
+    setIsOperating(false);
+
+    if (recaptchaRef.current) {
+      recaptchaRef.current.reset();
     }
   };
 
@@ -123,8 +134,11 @@ export default function Page() {
             >
               <Text>Forget password?</Text>
             </Link>
-            <Button type="submit" className="shadow-sm">
-              Sign In
+            <Button type="submit" className="shadow-sm" disabled={isOperating}>
+              Sign In{" "}
+              {isOperating && (
+                <Loader2Icon className="ml-2 size-4 animate-spin" />
+              )}
             </Button>
           </Form>
           <Text className="text-muted-foreground mt-8">

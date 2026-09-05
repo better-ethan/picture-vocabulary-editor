@@ -54,6 +54,10 @@ export default function Page() {
     } else {
       setIsSuccess(true);
     }
+
+    if (recaptchaRef.current) {
+      recaptchaRef.current.reset();
+    }
   };
   return (
     <div className="flex h-full items-center justify-center">
