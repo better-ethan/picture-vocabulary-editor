@@ -204,7 +204,7 @@ function ShareButton() {
           >
             Share
           </button>
-          <button
+          {/* <button
             className={`px-4 py-2 text-sm font-medium ${
               activeTab === "embed"
                 ? "border-b-2 border-primary text-black"
@@ -213,7 +213,7 @@ function ShareButton() {
             onClick={() => setActiveTab("embed")}
           >
             Embed
-          </button>
+          </button> */}
         </div>
 
         {activeTab === "share" && (
@@ -256,7 +256,7 @@ function ShareButton() {
           </div>
         )}
 
-        {activeTab === "embed" && (
+        {/* {activeTab === "embed" && (
           <div className="flex flex-col gap-4">
             <p className="text-sm text-gray-500">
               Paste this code into your website's HTML:
@@ -277,7 +277,7 @@ function ShareButton() {
               {embedCopied ? "✓ Copied!" : "Copy embed code"}
             </Button>
           </div>
-        )}
+        )} */}
       </DialogContent>
     </Dialog>
   );
