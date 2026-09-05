@@ -19,7 +19,13 @@ import type { Route } from "./+types/list";
 import { Text } from "@/components/ui/text";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CloudAlertIcon, Code2Icon, EyeIcon, PenLineIcon } from "lucide-react";
+import {
+  BadgeInfoIcon,
+  CloudAlertIcon,
+  Code2Icon,
+  EyeIcon,
+  PenLineIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -169,6 +175,7 @@ export default function Page() {
                     id={item.id}
                     slug={item.slug}
                     title={item.title}
+                    isPro={isPro ?? undefined}
                     disabled={item.status !== "published"}
                   />
                   <div className="flex items-center gap-2">
@@ -216,12 +223,14 @@ function EmbedButton({
   id,
   slug,
   title,
+  isPro = false,
   disabled,
 }: {
   id: string;
   slug: string;
   title: string;
   disabled?: boolean;
+  isPro?: boolean;
 }) {
   const [embedCopied, setEmbedCopied] = useState(false);
   const [origin, setOrigin] = useState("");
@@ -264,7 +273,7 @@ function EmbedButton({
           </Button>
         }
       ></DialogTrigger>
-      <DialogContent className="sm:max-w-md shadow-sm p-6">
+      <DialogContent className="sm:max-w-md shadow-sm p-6" initialFocus={false}>
         <div className="flex flex-col gap-2 mb-2">
           <p className="text-sm text-muted-foreground">Embed on your site</p>
           <h2 className="text-lg font-bold leading-tight">{title}</h2>
@@ -280,17 +289,43 @@ function EmbedButton({
             readOnly
             value={embedCode}
             rows={4}
-            className="w-full p-2 text-sm border border-gray-300 rounded bg-gray-50 resize-none font-mono"
-            onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+            disabled={!isPro}
+            className={cn(
+              "w-full p-2 text-sm border border-gray-300 rounded bg-gray-50 resize-none font-mono",
+              !isPro && "pointer-events-none cursor-not-allowed"
+            )}
+            onClick={(e) => {
+              if (isPro) {
+                (e.target as HTMLTextAreaElement).select();
+              } else {
+                e.preventDefault();
+              }
+            }}
           />
           <Button
             type="button"
             variant="secondary"
             onClick={() => handleCopy(embedCode, setEmbedCopied)}
             className="shadow-sm"
+            disabled={!isPro}
           >
             {embedCopied ? "✓ Copied!" : "Copy embed code"}
           </Button>
+          {!isPro && (
+            <div className="flex flex-row items-center gap-2 text-sm">
+              <BadgeInfoIcon className="size-6 fill-red-500 stroke-white" />
+              <span>Pro users only. </span>
+              <Button
+                variant="secondary"
+                size="sm"
+                nativeButton={false}
+                className="shadow-sm"
+                render={<Link to="/pricing/plan" />}
+              >
+                ✨ Upgrade
+              </Button>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
