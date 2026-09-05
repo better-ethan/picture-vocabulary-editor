@@ -40,7 +40,7 @@ export default function Page() {
           <Text as="p">No blog posts found.</Text>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col items-center gap-4">
           {blogs.map((blog) => (
             <BlogCard
               key={blog.slug}
@@ -69,19 +69,16 @@ function BlogCard({
 }) {
   return (
     <Link to={`/blog/${slug}`}>
-      <Card className="shadow-sm">
-        <CardContent>
+      <Card className="shadow-sm flex flex-col lg:flex-row">
+        <CardContent className="lg:w-1/2">
           <img src={cover} alt={title} />
         </CardContent>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <Button type="button" size="sm" className="shadow-sm">
-            Continue
-          </Button>
-        </CardFooter>
+        <div className="flex flex-col lg:w-1/2">
+          <CardHeader>
+            <CardTitle className="lg:text-2xl">{title}</CardTitle>
+            <CardDescription className="lg:mt-4">{description}</CardDescription>
+          </CardHeader>
+        </div>
       </Card>
     </Link>
   );

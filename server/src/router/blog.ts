@@ -22,7 +22,8 @@ export const blogRouter = router({
         return { slug, meta: data };
       })
     );
-    return blogs;
+    const publishedBlogs = blogs.filter((blog) => blog.meta.published);
+    return publishedBlogs;
   }),
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
@@ -31,6 +32,9 @@ export const blogRouter = router({
       try {
         const fileData = await readFile(filePath, "utf-8");
         const { data, content } = matter(fileData);
+
+        if (!data.published) return null;
+
         return { meta: data, content };
       } catch (error) {
         console.log("### Error reading blog file: ", error);
